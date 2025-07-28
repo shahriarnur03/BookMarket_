@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Sign Up - BookMarket</title>
+        <meta
+            name="description"
+            content="Create your BookMarket account to start buying and selling books online."
+        />
+        <link rel="stylesheet" href="styles/main.css" />
+        <link rel="icon" type="image/x-icon" href="images/favicon.ico" />
+    </head>
+    <body>
+        <!-- Header -->
+        <header class="header">
+            <div class="container">
+                <nav class="navbar">
+                    <a href="index.html" class="logo">BookMarket</a>
+
+                    <ul class="nav-menu">
+                        <li><a href="index.html" class="nav-link">Home</a></li>
+                        <li>
+                            <a href="search.html" class="nav-link"
+                                >Browse Books</a
+                            >
+                        </li>
+                        <li>
+                            <a href="add-book.html" class="nav-link"
+                                >Sell Books</a
+                            >
+                        </li>
+                        <li>
+                            <a href="cart.html" class="nav-link"
+                                >Cart <span class="cart-count">0</span></a
+                            >
+                        </li>
+                    </ul>
+
+                    <div class="nav-actions">
+                        <a href="login.html" class="btn btn-outline">Login</a>
+                        <a href="signup.html" class="btn btn-primary"
+                            >Sign Up</a
+                        >
+                    </div>
+                </nav>
+            </div>
+        </header>
+
+        <!-- Signup Section -->
+        <section class="section">
+            <div class="container">
+                <div class="row">
+                    <div class="col-6" style="margin: 0 auto">
+                        <div class="card">
+                            <div
+                                class="card-body"
+                                style="padding: var(--spacing-xl)"
+                            >
+                                <h2 class="text-center mb-4">
+                                    Create Your Account
+                                </h2>
+                                <p class="text-center mb-4">
+                                    Join BookMarket to start buying and selling
+                                    books
+                                </p>
+
+                                <form id="signup-form">
+                                    <div class="form-group">
+                                        <label for="name" class="form-label"
+                                            >Full Name *</label
+                                        >
+                                        <input
+                                            type="text"
+                                            id="name"
+                                            name="name"
+                                            class="form-control"
+                                            required
+                                        />
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="email" class="form-label"
+                                            >Email Address *</label
+                                        >
+                                        <input
+                                            type="email"
+                                            id="email"
+                                            name="email"
+                                            class="form-control"
+                                            required
+                                        />
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="password" class="form-label"
+                                            >Password *</label
+                                        >
+                                        <input
+                                            type="password"
+                                            id="password"
+                                            name="password"
+                                            class="form-control"
+                                            required
+                                            minlength="6"
+                                        />
+                                        <small class="form-text"
+                                            >Password must be at least 6
+                                            characters long</small
+                                        >
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label
+                                            for="confirm-password"
+                                            class="form-label"
+                                            >Confirm Password *</label
+                                        >
+                                        <input
+                                            type="password"
+                                            id="confirm-password"
+                                            name="confirm-password"
+                                            class="form-control"
+                                            required
+                                        />
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label
+                                            for="user-type"
+                                            class="form-label"
+                                            >I want to *</label
+                                        >
+                                        <select
+                                            id="user-type"
+                                            name="user-type"
+                                            class="form-control form-select"
+                                            required
+                                        >
+                                            <option value="">
+                                                Select your primary interest
+                                            </option>
+                                            <option value="buyer">
+                                                Buy Books
+                                            </option>
+                                            <option value="seller">
+                                                Sell Books
+                                            </option>
+                                            <option value="both">
+                                                Both Buy and Sell
+                                            </option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="form-check">
+                                            <input
+                                                type="checkbox"
+                                                id="terms"
+                                                name="terms"
+                                                required
+                                            />
+                                            <label
+                                                for="terms"
+                                                class="form-check-label"
+                                            >
+                                                I agree to the
+                                                <a href="#" target="_blank"
+                                                    >Terms & Conditions</a
+                                                >
+                                                and
+                                                <a href="#" target="_blank"
+                                                    >Privacy Policy</a
+                                                >
+                                                *
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="form-check">
+                                            <input
+                                                type="checkbox"
+                                                id="newsletter"
+                                                name="newsletter"
+                                            />
+                                            <label
+                                                for="newsletter"
+                                                class="form-check-label"
+                                            >
+                                                Subscribe to our newsletter for
+                                                book recommendations and deals
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <button
+                                        type="submit"
+                                        class="btn btn-primary btn-lg"
+                                        style="width: 100%"
+                                    >
+                                        Create Account
+                                    </button>
+                                </form>
+
+                                <div class="text-center mt-4">
+                                    <p>
+                                        Already have an account?
+                                        <a href="login.html">Sign in here</a>
+                                    </p>
+                                </div>
+
+                                <div class="divider">
+                                    <span>OR</span>
+                                </div>
+
+                                <div class="social-signup">
+                                    <button
+                                        class="btn btn-outline"
+                                        style="
+                                            width: 100%;
+                                            margin-bottom: var(--spacing-sm);
+                                        "
+                                    >
+                                        📘 Continue with Facebook
+                                    </button>
+                                    <button
+                                        class="btn btn-outline"
+                                        style="width: 100%"
+                                    >
+                                        🔍 Continue with Google
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="container">
+                <div class="footer-content">
+                    <div class="footer-section">
+                        <h4>BookMarket</h4>
+                        <p>
+                            Your premium online marketplace for buying and
+                            selling books.
+                        </p>
+                    </div>
+
+                    <div class="footer-section">
+                        <h4>Quick Links</h4>
+                        <ul class="footer-links">
+                            <li><a href="search.html">Browse Books</a></li>
+                            <li><a href="add-book.html">Sell Books</a></li>
+                            <li><a href="cart.html">Shopping Cart</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="footer-section">
+                        <h4>Support</h4>
+                        <ul class="footer-links">
+                            <li><a href="#">Help Center</a></li>
+                            <li><a href="#">Contact Us</a></li>
+                            <li><a href="#">Terms & Conditions</a></li>
+                            <li><a href="#">Privacy Policy</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="footer-bottom">
+                    <p>&copy; 2024 BookMarket. All rights reserved.</p>
+                </div>
+            </div>
+        </footer>
+
+        <script src="scripts/main.js"></script>
+    </body>
+</html>

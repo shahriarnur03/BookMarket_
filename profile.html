@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - BookMarket</title>
+    <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <nav class="navbar">
+                <a href="index.html" class="logo">BookMarket</a>
+                <ul class="nav-menu">
+                    <li><a href="index.html" class="nav-link">Home</a></li>
+                    <li><a href="search.html" class="nav-link">Browse Books</a></li>
+                    <li><a href="add-book.html" class="nav-link">Sell Books</a></li>
+                    <li><a href="cart.html" class="nav-link">Cart</a></li>
+                </ul>
+                <div class="nav-actions">
+                    <a href="profile.html" class="btn btn-outline">Profile</a>
+                    <button class="btn btn-primary" onclick="logout()">Logout</button>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <section class="section">
+        <div class="container">
+            <div class="row">
+                <div class="col-3">
+                    <div class="profile-sidebar">
+                        <div class="profile-avatar">
+                            <div class="avatar-circle">JD</div>
+                            <h3>John Doe</h3>
+                            <p>Member since 2024</p>
+                        </div>
+                        <nav class="profile-nav">
+                            <a href="#profile-info" class="profile-nav-link active">Profile Info</a>
+                            <a href="#my-books" class="profile-nav-link">My Books</a>
+                            <a href="#order-history" class="profile-nav-link">Order History</a>
+                            <a href="#settings" class="profile-nav-link">Settings</a>
+                        </nav>
+                    </div>
+                </div>
+                
+                <div class="col-9">
+                    <div class="profile-content">
+                        <div id="profile-info" class="profile-section">
+                            <h2>Profile Information</h2>
+                            <form class="profile-form">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label class="form-label">First Name</label>
+                                            <input type="text" class="form-control" value="John">
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label class="form-label">Last Name</label>
+                                            <input type="text" class="form-control" value="Doe">
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">Email</label>
+                                    <input type="email" class="form-control" value="john.doe@email.com">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">Phone</label>
+                                    <input type="tel" class="form-control" value="+1 (555) 123-4567">
+                                </div>
+                                
+                                <button type="submit" class="btn btn-primary">Update Profile</button>
+                            </form>
+                        </div>
+                        
+                        <div id="my-books" class="profile-section" style="display: none;">
+                            <h2>My Listed Books</h2>
+                            <div class="books-grid">
+                                <div class="book-listing">
+                                    <img src="images/book1.jpg" alt="Book" onerror="this.src='images/placeholder-book.jpg'">
+                                    <div class="listing-info">
+                                        <h4>The Great Gatsby</h4>
+                                        <p>$15.99 • Like New</p>
+                                        <div class="listing-actions">
+                                            <button class="btn btn-sm btn-outline">Edit</button>
+                                            <button class="btn btn-sm btn-secondary">Remove</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2024 BookMarket. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="scripts/main.js"></script>
+</body>
+</html>

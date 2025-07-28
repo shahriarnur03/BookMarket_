@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sell Your Books - BookMarket</title>
+    <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <nav class="navbar">
+                <a href="index.html" class="logo">BookMarket</a>
+                <ul class="nav-menu">
+                    <li><a href="index.html" class="nav-link">Home</a></li>
+                    <li><a href="search.html" class="nav-link">Browse Books</a></li>
+                    <li><a href="add-book.html" class="nav-link active">Sell Books</a></li>
+                    <li><a href="cart.html" class="nav-link">Cart</a></li>
+                </ul>
+                <div class="nav-actions">
+                    <a href="login.html" class="btn btn-outline">Login</a>
+                    <a href="signup.html" class="btn btn-primary">Sign Up</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <section class="section">
+        <div class="container">
+            <h1>Sell Your Books</h1>
+            <div class="card">
+                <div class="card-body">
+                    <form id="add-book-form">
+                        <div class="form-group">
+                            <label for="title" class="form-label">Book Title</label>
+                            <input type="text" id="title" name="title" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="author" class="form-label">Author</label>
+                            <input type="text" id="author" name="author" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="genre" class="form-label">Genre</label>
+                            <select id="genre" name="genre" class="form-control" required>
+                                <option value="">Select Genre</option>
+                                <option value="fiction">Fiction</option>
+                                <option value="non-fiction">Non-Fiction</option>
+                                <option value="mystery">Mystery</option>
+                                <option value="romance">Romance</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="condition" class="form-label">Condition</label>
+                            <select id="condition" name="condition" class="form-control" required>
+                                <option value="">Select Condition</option>
+                                <option value="new">New</option>
+                                <option value="like-new">Like New</option>
+                                <option value="good">Good</option>
+                                <option value="used">Used</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="price" class="form-label">Price ($)</label>
+                            <input type="number" id="price" name="price" class="form-control" step="0.01" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea id="description" name="description" class="form-control" rows="4" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-lg">List Book</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2024 BookMarket. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="scripts/main.js"></script>
+</body>
+</html>

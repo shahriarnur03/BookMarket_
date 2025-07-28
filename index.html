@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>BookMarket - Your Premium Online Book Marketplace</title>
+        <meta
+            name="description"
+            content="Buy and sell books online at BookMarket. Find rare books, textbooks, fiction, and more at great prices."
+        />
+        <meta
+            name="keywords"
+            content="books, marketplace, buy books, sell books, online bookstore"
+        />
+        <link rel="stylesheet" href="styles/main.css" />
+        <link rel="icon" type="image/x-icon" href="images/favicon.ico" />
+    </head>
+    <body>
+        <!-- Header -->
+        <header class="header">
+            <div class="container">
+                <nav class="navbar">
+                    <a href="index.html" class="logo">BookMarket</a>
+
+                    <ul class="nav-menu">
+                        <li><a href="index.html" class="nav-link">Home</a></li>
+                        <li>
+                            <a href="search.html" class="nav-link"
+                                >Browse Books</a
+                            >
+                        </li>
+                        <li>
+                            <a href="add-book.html" class="nav-link"
+                                >Sell Books</a
+                            >
+                        </li>
+                        <li>
+                            <a href="cart.html" class="nav-link"
+                                >Cart <span class="cart-count">0</span></a
+                            >
+                        </li>
+                    </ul>
+
+                    <div class="nav-actions">
+                        <a href="login.html" class="btn btn-outline">Login</a>
+                        <a href="signup.html" class="btn btn-primary"
+                            >Sign Up</a
+                        >
+                    </div>
+                </nav>
+            </div>
+        </header>
+
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="container">
+                <div class="hero-content">
+                    <h1>Discover Your Next Great Read</h1>
+                    <p class="hero-subtitle">
+                        Buy and sell books in our premium online marketplace.
+                        From rare collectibles to everyday reads, find exactly
+                        what you're looking for.
+                    </p>
+
+                    <div class="hero-search">
+                        <form class="search-form">
+                            <input
+                                type="text"
+                                class="search-input"
+                                placeholder="Search for books, authors, or genres..."
+                            />
+                            <button type="submit" class="search-btn">
+                                Search
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="hero-actions">
+                        <a href="search.html" class="btn btn-lg btn-primary"
+                            >Browse Books</a
+                        >
+                        <a href="add-book.html" class="btn btn-lg btn-secondary"
+                            >Sell Your Books</a
+                        >
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Featured Books Section -->
+        <section class="section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">Featured Books</h2>
+                    <p class="section-subtitle">
+                        Discover popular and new releases handpicked by our
+                        community
+                    </p>
+                </div>
+
+                <div class="row" id="featured-books">
+                    <!-- Books will be loaded dynamically -->
+                    <div class="col-4">
+                        <div class="card">
+                            <img
+                                src="images/book1.jpg"
+                                alt="The Great Gatsby"
+                                class="card-img"
+                                onerror="this.src='images/placeholder-book.jpg'"
+                            />
+                            <div class="card-body">
+                                <h3 class="card-title">The Great Gatsby</h3>
+                                <p class="card-text">by F. Scott Fitzgerald</p>
+                                <p class="card-text">Fiction • Like New</p>
+                                <div class="card-price">$15.99</div>
+                                <div class="mt-3">
+                                    <button
+                                        class="btn btn-primary add-to-cart"
+                                        data-book-id="1"
+                                    >
+                                        Add to Cart
+                                    </button>
+                                    <a
+                                        href="book-detail.html?id=1"
+                                        class="btn btn-outline"
+                                        >View Details</a
+                                    >
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-4">
+                        <div class="card">
+                            <img
+                                src="images/book2.jpg"
+                                alt="To Kill a Mockingbird"
+                                class="card-img"
+                                onerror="this.src='images/placeholder-book.jpg'"
+                            />
+                            <div class="card-body">
+                                <h3 class="card-title">
+                                    To Kill a Mockingbird
+                                </h3>
+                                <p class="card-text">by Harper Lee</p>
+                                <p class="card-text">Fiction • Good</p>
+                                <div class="card-price">$12.99</div>
+                                <div class="mt-3">
+                                    <button
+                                        class="btn btn-primary add-to-cart"
+                                        data-book-id="2"
+                                    >
+                                        Add to Cart
+                                    </button>
+                                    <a
+                                        href="book-detail.html?id=2"
+                                        class="btn btn-outline"
+                                        >View Details</a
+                                    >
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-4">
+                        <div class="card">
+                            <img
+                                src="images/book3.jpg"
+                                alt="1984"
+                                class="card-img"
+                                onerror="this.src='images/placeholder-book.jpg'"
+                            />
+                            <div class="card-body">
+                                <h3 class="card-title">1984</h3>
+                                <p class="card-text">by George Orwell</p>
+                                <p class="card-text">Dystopian • New</p>
+                                <div class="card-price">$14.99</div>
+                                <div class="mt-3">
+                                    <button
+                                        class="btn btn-primary add-to-cart"
+                                        data-book-id="3"
+                                    >
+                                        Add to Cart
+                                    </button>
+                                    <a
+                                        href="book-detail.html?id=3"
+                                        class="btn btn-outline"
+                                        >View Details</a
+                                    >
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-4">
+                        <div class="card">
+                            <img
+                                src="images/book4.jpg"
+                                alt="Pride and Prejudice"
+                                class="card-img"
+                                onerror="this.src='images/placeholder-book.jpg'"
+                            />
+                            <div class="card-body">
+                                <h3 class="card-title">Pride and Prejudice</h3>
+                                <p class="card-text">by Jane Austen</p>
+                                <p class="card-text">Romance • Used</p>
+                                <div class="card-price">$11.99</div>
+                                <div class="mt-3">
+                                    <button
+                                        class="btn btn-primary add-to-cart"
+                                        data-book-id="4"
+                                    >
+                                        Add to Cart
+                                    </button>
+                                    <a
+                                        href="book-detail.html?id=4"
+                                        class="btn btn-outline"
+                                        >View Details</a
+                                    >
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-4">
+                        <div class="card">
+                            <img
+                                src="images/book5.jpg"
+                                alt="The Catcher in the Rye"
+                                class="card-img"
+                                onerror="this.src='images/placeholder-book.jpg'"
+                            />
+                            <div class="card-body">
+                                <h3 class="card-title">
+                                    The Catcher in the Rye
+                                </h3>
+                                <p class="card-text">by J.D. Salinger</p>
+                                <p class="card-text">Fiction • Good</p>
+                                <div class="card-price">$13.99</div>
+                                <div class="mt-3">
+                                    <button
+                                        class="btn btn-primary add-to-cart"
+                                        data-book-id="5"
+                                    >
+                                        Add to Cart
+                                    </button>
+                                    <a
+                                        href="book-detail.html?id=5"
+                                        class="btn btn-outline"
+                                        >View Details</a
+                                    >
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-4">
+                        <div class="card">
+                            <img
+                                src="images/book6.jpg"
+                                alt="Dune"
+                                class="card-img"
+                                onerror="this.src='images/placeholder-book.jpg'"
+                            />
+                            <div class="card-body">
+                                <h3 class="card-title">Dune</h3>
+                                <p class="card-text">by Frank Herbert</p>
+                                <p class="card-text">Science Fiction • New</p>
+                                <div class="card-price">$18.99</div>
+                                <div class="mt-3">
+                                    <button
+                                        class="btn btn-primary add-to-cart"
+                                        data-book-id="6"
+                                    >
+                                        Add to Cart
+                                    </button>
+                                    <a
+                                        href="book-detail.html?id=6"
+                                        class="btn btn-outline"
+                                        >View Details</a
+                                    >
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center mt-5">
+                    <a href="search.html" class="btn btn-lg btn-outline"
+                        >View All Books</a
+                    >
+                </div>
+            </div>
+        </section>
+
+        <!-- Categories Section -->
+        <section class="section" style="background-color: var(--white)">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">Browse by Category</h2>
+                    <p class="section-subtitle">
+                        Find books in your favorite genres
+                    </p>
+                </div>
+
+                <div class="row">
+                    <div class="col-3">
+                        <div class="category-card">
+                            <h4>Fiction</h4>
+                            <p>Novels, short stories, and literary works</p>
+                            <a
+                                href="search.html?category=fiction"
+                                class="btn btn-primary"
+                                >Browse Fiction</a
+                            >
+                        </div>
+                    </div>
+
+                    <div class="col-3">
+                        <div class="category-card">
+                            <h4>Non-Fiction</h4>
+                            <p>Biographies, memoirs, and factual books</p>
+                            <a
+                                href="search.html?category=non-fiction"
+                                class="btn btn-primary"
+                                >Browse Non-Fiction</a
+                            >
+                        </div>
+                    </div>
+
+                    <div class="col-3">
+                        <div class="category-card">
+                            <h4>Educational</h4>
+                            <p>Textbooks and educational materials</p>
+                            <a
+                                href="search.html?category=educational"
+                                class="btn btn-primary"
+                                >Browse Educational</a
+                            >
+                        </div>
+                    </div>
+
+                    <div class="col-3">
+                        <div class="category-card">
+                            <h4>Children's Books</h4>
+                            <p>Books for young readers of all ages</p>
+                            <a
+                                href="search.html?category=children"
+                                class="btn btn-primary"
+                                >Browse Children's</a
+                            >
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- How It Works Section -->
+        <section class="section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">How BookMarket Works</h2>
+                    <p class="section-subtitle">
+                        Simple steps to buy and sell books
+                    </p>
+                </div>
+
+                <div class="row">
+                    <div class="col-4">
+                        <div class="step-card text-center">
+                            <div class="step-number">1</div>
+                            <h4>Browse & Search</h4>
+                            <p>
+                                Find books by title, author, genre, or use our
+                                advanced search filters
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="col-4">
+                        <div class="step-card text-center">
+                            <div class="step-number">2</div>
+                            <h4>Add to Cart</h4>
+                            <p>
+                                Select the books you want and add them to your
+                                shopping cart
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="col-4">
+                        <div class="step-card text-center">
+                            <div class="step-number">3</div>
+                            <h4>Secure Checkout</h4>
+                            <p>
+                                Complete your purchase with our secure payment
+                                system
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="container">
+                <div class="footer-content">
+                    <div class="footer-section">
+                        <h4>BookMarket</h4>
+                        <p>
+                            Your premium online marketplace for buying and
+                            selling books. Discover, connect, and trade with
+                            book lovers worldwide.
+                        </p>
+                        <div class="social-links">
+                            <a href="#" aria-label="Facebook">📘</a>
+                            <a href="#" aria-label="Twitter">🐦</a>
+                            <a href="#" aria-label="Instagram">📷</a>
+                        </div>
+                    </div>
+
+                    <div class="footer-section">
+                        <h4>Quick Links</h4>
+                        <ul class="footer-links">
+                            <li><a href="search.html">Browse Books</a></li>
+                            <li><a href="add-book.html">Sell Books</a></li>
+                            <li><a href="cart.html">Shopping Cart</a></li>
+                            <li><a href="profile.html">My Account</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="footer-section">
+                        <h4>Support</h4>
+                        <ul class="footer-links">
+                            <li><a href="#">Help Center</a></li>
+                            <li><a href="#">Contact Us</a></li>
+                            <li><a href="#">Shipping Info</a></li>
+                            <li><a href="#">Returns</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="footer-section">
+                        <h4>Legal</h4>
+                        <ul class="footer-links">
+                            <li><a href="#">Terms & Conditions</a></li>
+                            <li><a href="#">Privacy Policy</a></li>
+                            <li><a href="#">Cookie Policy</a></li>
+                            <li><a href="#">GDPR</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="footer-bottom">
+                    <p>
+                        &copy; 2024 BookMarket. All rights reserved. | Built
+                        with ❤️ for book lovers
+                    </p>
+                </div>
+            </div>
+        </footer>
+
+        <script src="scripts/main.js"></script>
+    </body>
+</html>

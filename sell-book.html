@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Books - BookMarket</title>
+    <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <nav class="navbar">
+                <a href="index.html" class="logo">BookMarket</a>
+                <ul class="nav-menu">
+                    <li><a href="index.html" class="nav-link">Home</a></li>
+                    <li><a href="search.html" class="nav-link">Browse Books</a></li>
+                    <li><a href="add-book.html" class="nav-link">Sell Books</a></li>
+                    <li><a href="cart.html" class="nav-link">Cart</a></li>
+                </ul>
+                <div class="nav-actions">
+                    <a href="profile.html" class="btn btn-outline">Profile</a>
+                    <button class="btn btn-primary" onclick="logout()">Logout</button>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <section class="section">
+        <div class="container">
+            <div class="page-header">
+                <h1>Manage Your Books</h1>
+                <a href="add-book.html" class="btn btn-primary">Add New Book</a>
+            </div>
+            
+            <div class="books-table">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Book</th>
+                            <th>Title</th>
+                            <th>Price</th>
+                            <th>Condition</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <img src="images/book1.jpg" alt="Book" class="table-book-img" onerror="this.src='images/placeholder-book.jpg'">
+                            </td>
+                            <td>
+                                <div class="book-title">The Great Gatsby</div>
+                                <div class="book-author">by F. Scott Fitzgerald</div>
+                            </td>
+                            <td>$15.99</td>
+                            <td>Like New</td>
+                            <td><span class="status active">Active</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-outline">Edit</button>
+                                <button class="btn btn-sm btn-secondary">Remove</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <img src="images/book2.jpg" alt="Book" class="table-book-img" onerror="this.src='images/placeholder-book.jpg'">
+                            </td>
+                            <td>
+                                <div class="book-title">To Kill a Mockingbird</div>
+                                <div class="book-author">by Harper Lee</div>
+                            </td>
+                            <td>$12.99</td>
+                            <td>Good</td>
+                            <td><span class="status sold">Sold</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-outline" disabled>Edit</button>
+                                <button class="btn btn-sm btn-secondary">Archive</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2024 BookMarket. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="scripts/main.js"></script>
+</body>
+</html>

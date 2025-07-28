@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Shopping Cart - BookMarket</title>
+        <meta
+            name="description"
+            content="Review your selected books and proceed to checkout on BookMarket."
+        />
+        <link rel="stylesheet" href="styles/main.css" />
+        <link rel="icon" type="image/x-icon" href="images/favicon.ico" />
+    </head>
+    <body>
+        <!-- Header -->
+        <header class="header">
+            <div class="container">
+                <nav class="navbar">
+                    <a href="index.html" class="logo">BookMarket</a>
+
+                    <ul class="nav-menu">
+                        <li><a href="index.html" class="nav-link">Home</a></li>
+                        <li>
+                            <a href="search.html" class="nav-link"
+                                >Browse Books</a
+                            >
+                        </li>
+                        <li>
+                            <a href="add-book.html" class="nav-link"
+                                >Sell Books</a
+                            >
+                        </li>
+                        <li>
+                            <a href="cart.html" class="nav-link active"
+                                >Cart <span class="cart-count">0</span></a
+                            >
+                        </li>
+                    </ul>
+
+                    <div class="nav-actions">
+                        <a href="login.html" class="btn btn-outline">Login</a>
+                        <a href="signup.html" class="btn btn-primary"
+                            >Sign Up</a
+                        >
+                    </div>
+                </nav>
+            </div>
+        </header>
+
+        <!-- Cart Section -->
+        <section class="section">
+            <div class="container">
+                <h1 class="mb-4">Shopping Cart</h1>
+
+                <div class="row">
+                    <!-- Cart Items -->
+                    <div class="col-8">
+                        <div class="cart-container">
+                            <div id="cart-items">
+                                <!-- Cart items will be loaded dynamically -->
+                                <div class="cart-item">
+                                    <div class="row">
+                                        <div class="col-2">
+                                            <img
+                                                src="images/book1.jpg"
+                                                alt="The Great Gatsby"
+                                                class="cart-item-img"
+                                                onerror="this.src='images/placeholder-book.jpg'"
+                                            />
+                                        </div>
+                                        <div class="col-6">
+                                            <h4>The Great Gatsby</h4>
+                                            <p>by F. Scott Fitzgerald</p>
+                                            <p>Condition: Like New</p>
+                                            <p>Seller: John Doe</p>
+                                        </div>
+                                        <div class="col-2">
+                                            <div class="quantity-controls">
+                                                <label>Quantity:</label>
+                                                <div class="quantity-input">
+                                                    <button
+                                                        class="qty-btn"
+                                                        onclick="decreaseQuantity(1)"
+                                                    >
+                                                        -
+                                                    </button>
+                                                    <span class="qty-display"
+                                                        >1</span
+                                                    >
+                                                    <button
+                                                        class="qty-btn"
+                                                        onclick="increaseQuantity(1)"
+                                                    >
+                                                        +
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-2">
+                                            <div class="item-price">$15.99</div>
+                                            <button
+                                                class="btn btn-sm btn-outline remove-from-cart"
+                                                data-book-id="1"
+                                            >
+                                                Remove
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="cart-item">
+                                    <div class="row">
+                                        <div class="col-2">
+                                            <img
+                                                src="images/book2.jpg"
+                                                alt="To Kill a Mockingbird"
+                                                class="cart-item-img"
+                                                onerror="this.src='images/placeholder-book.jpg'"
+                                            />
+                                        </div>
+                                        <div class="col-6">
+                                            <h4>To Kill a Mockingbird</h4>
+                                            <p>by Harper Lee</p>
+                                            <p>Condition: Good</p>
+                                            <p>Seller: Jane Smith</p>
+                                        </div>
+                                        <div class="col-2">
+                                            <div class="quantity-controls">
+                                                <label>Quantity:</label>
+                                                <div class="quantity-input">
+                                                    <button
+                                                        class="qty-btn"
+                                                        onclick="decreaseQuantity(2)"
+                                                    >
+                                                        -
+                                                    </button>
+                                                    <span class="qty-display"
+                                                        >1</span
+                                                    >
+                                                    <button
+                                                        class="qty-btn"
+                                                        onclick="increaseQuantity(2)"
+                                                    >
+                                                        +
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-2">
+                                            <div class="item-price">$12.99</div>
+                                            <button
+                                                class="btn btn-sm btn-outline remove-from-cart"
+                                                data-book-id="2"
+                                            >
+                                                Remove
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="cart-actions">
+                                <a href="search.html" class="btn btn-outline"
+                                    >Continue Shopping</a
+                                >
+                                <button
+                                    class="btn btn-secondary"
+                                    onclick="clearCart()"
+                                >
+                                    Clear Cart
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Order Summary -->
+                    <div class="col-4">
+                        <div class="order-summary">
+                            <h3>Order Summary</h3>
+
+                            <div class="summary-row">
+                                <span>Subtotal:</span>
+                                <span id="cart-subtotal">$28.98</span>
+                            </div>
+
+                            <div class="summary-row">
+                                <span>Shipping:</span>
+                                <span id="shipping-cost">$4.99</span>
+                            </div>
+
+                            <div class="summary-row">
+                                <span>Tax:</span>
+                                <span id="tax-amount">$2.32</span>
+                            </div>
+
+                            <hr />
+
+                            <div class="summary-row total">
+                                <span><strong>Total:</strong></span>
+                                <span id="cart-total"
+                                    ><strong>$36.29</strong></span
+                                >
+                            </div>
+
+                            <div class="promo-code">
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    placeholder="Enter promo code"
+                                />
+                                <button class="btn btn-outline">Apply</button>
+                            </div>
+
+                            <a
+                                href="checkout.html"
+                                class="btn btn-primary btn-lg checkout-btn"
+                                >Proceed to Checkout</a
+                            >
+
+                            <div class="security-badges">
+                                <p>🔒 Secure checkout guaranteed</p>
+                                <div class="payment-methods">
+                                    <span>💳</span>
+                                    <span>🏦</span>
+                                    <span>📱</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Recommended Books -->
+        <section class="section" style="background-color: var(--white)">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">You Might Also Like</h2>
+                    <p class="section-subtitle">
+                        Discover more books similar to your interests
+                    </p>
+                </div>
+
+                <div class="row">
+                    <div class="col-4">
+                        <div class="card">
+                            <img
+                                src="images/book3.jpg"
+                                alt="1984"
+                                class="card-img"
+                                onerror="this.src='images/placeholder-book.jpg'"
+                            />
+                            <div class="card-body">
+                                <h3 class="card-title">1984</h3>
+                                <p class="card-text">by George Orwell</p>
+                                <div class="card-price">$14.99</div>
+                                <div class="mt-3">
+                                    <button
+                                        class="btn btn-primary add-to-cart"
+                                        data-book-id="3"
+                                    >
+                                        Add to Cart
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-4">
+                        <div class="card">
+                            <img
+                                src="images/book4.jpg"
+                                alt="Pride and Prejudice"
+                                class="card-img"
+                                onerror="this.src='images/placeholder-book.jpg'"
+                            />
+                            <div class="card-body">
+                                <h3 class="card-title">Pride and Prejudice</h3>
+                                <p class="card-text">by Jane Austen</p>
+                                <div class="card-price">$11.99</div>
+                                <div class="mt-3">
+                                    <button
+                                        class="btn btn-primary add-to-cart"
+                                        data-book-id="4"
+                                    >
+                                        Add to Cart
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-4">
+                        <div class="card">
+                            <img
+                                src="images/book5.jpg"
+                                alt="The Catcher in the Rye"
+                                class="card-img"
+                                onerror="this.src='images/placeholder-book.jpg'"
+                            />
+                            <div class="card-body">
+                                <h3 class="card-title">
+                                    The Catcher in the Rye
+                                </h3>
+                                <p class="card-text">by J.D. Salinger</p>
+                                <div class="card-price">$13.99</div>
+                                <div class="mt-3">
+                                    <button
+                                        class="btn btn-primary add-to-cart"
+                                        data-book-id="5"
+                                    >
+                                        Add to Cart
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="container">
+                <div class="footer-content">
+                    <div class="footer-section">
+                        <h4>BookMarket</h4>
+                        <p>
+                            Your premium online marketplace for buying and
+                            selling books.
+                        </p>
+                    </div>
+
+                    <div class="footer-section">
+                        <h4>Quick Links</h4>
+                        <ul class="footer-links">
+                            <li><a href="search.html">Browse Books</a></li>
+                            <li><a href="add-book.html">Sell Books</a></li>
+                            <li><a href="cart.html">Shopping Cart</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="footer-section">
+                        <h4>Support</h4>
+                        <ul class="footer-links">
+                            <li><a href="#">Help Center</a></li>
+                            <li><a href="#">Contact Us</a></li>
+                            <li><a href="#">Terms & Conditions</a></li>
+                            <li><a href="#">Privacy Policy</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="footer-bottom">
+                    <p>&copy; 2024 BookMarket. All rights reserved.</p>
+                </div>
+            </div>
+        </footer>
+
+        <script src="scripts/main.js"></script>
+        <script>
+            function increaseQuantity(bookId) {
+                const qtyDisplay =
+                    event.target.parentElement.querySelector(".qty-display");
+                let currentQty = parseInt(qtyDisplay.textContent);
+                qtyDisplay.textContent = currentQty + 1;
+                updateCartTotals();
+            }
+
+            function decreaseQuantity(bookId) {
+                const qtyDisplay =
+                    event.target.parentElement.querySelector(".qty-display");
+                let currentQty = parseInt(qtyDisplay.textContent);
+                if (currentQty > 1) {
+                    qtyDisplay.textContent = currentQty - 1;
+                    updateCartTotals();
+                }
+            }
+
+            function clearCart() {
+                if (confirm("Are you sure you want to clear your cart?")) {
+                    document.getElementById("cart-items").innerHTML =
+                        '<p class="text-center">Your cart is empty.</p>';
+                    updateCartTotals();
+                }
+            }
+
+            function updateCartTotals() {
+                // Calculate totals based on current cart items
+                // This would be connected to the main cart functionality
+                console.log("Updating cart totals...");
+            }
+        </script>
+    </body>
+</html>

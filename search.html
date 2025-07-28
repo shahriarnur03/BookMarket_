@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Browse Books - BookMarket</title>
+        <meta
+            name="description"
+            content="Search and browse thousands of books by title, author, genre, and price on BookMarket."
+        />
+        <link rel="stylesheet" href="styles/main.css" />
+        <link rel="icon" type="image/x-icon" href="images/favicon.ico" />
+    </head>
+    <body>
+        <!-- Header -->
+        <header class="header">
+            <div class="container">
+                <nav class="navbar">
+                    <a href="index.html" class="logo">BookMarket</a>
+
+                    <ul class="nav-menu">
+                        <li><a href="index.html" class="nav-link">Home</a></li>
+                        <li>
+                            <a href="search.html" class="nav-link active"
+                                >Browse Books</a
+                            >
+                        </li>
+                        <li>
+                            <a href="add-book.html" class="nav-link"
+                                >Sell Books</a
+                            >
+                        </li>
+                        <li>
+                            <a href="cart.html" class="nav-link"
+                                >Cart <span class="cart-count">0</span></a
+                            >
+                        </li>
+                    </ul>
+
+                    <div class="nav-actions">
+                        <a href="login.html" class="btn btn-outline">Login</a>
+                        <a href="signup.html" class="btn btn-primary"
+                            >Sign Up</a
+                        >
+                    </div>
+                </nav>
+            </div>
+        </header>
+
+        <!-- Search Hero -->
+        <section class="search-hero">
+            <div class="container">
+                <h1>Find Your Perfect Book</h1>
+                <p>
+                    Search through thousands of books from various genres and
+                    authors
+                </p>
+
+                <div class="search-bar">
+                    <form class="search-form">
+                        <input
+                            type="text"
+                            class="search-input"
+                            placeholder="Search for books, authors, or genres..."
+                        />
+                        <button type="submit" class="search-btn">Search</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- Filters and Results -->
+        <section class="section">
+            <div class="container">
+                <div class="row">
+                    <!-- Filters Sidebar -->
+                    <div class="col-3">
+                        <div class="filters-sidebar">
+                            <h3>Filters</h3>
+
+                            <div class="filter-group">
+                                <h4>Genre</h4>
+                                <div class="filter-options">
+                                    <label class="filter-option">
+                                        <input
+                                            type="checkbox"
+                                            value="fiction"
+                                        />
+                                        Fiction
+                                    </label>
+                                    <label class="filter-option">
+                                        <input
+                                            type="checkbox"
+                                            value="non-fiction"
+                                        />
+                                        Non-Fiction
+                                    </label>
+                                    <label class="filter-option">
+                                        <input
+                                            type="checkbox"
+                                            value="mystery"
+                                        />
+                                        Mystery
+                                    </label>
+                                    <label class="filter-option">
+                                        <input
+                                            type="checkbox"
+                                            value="romance"
+                                        />
+                                        Romance
+                                    </label>
+                                    <label class="filter-option">
+                                        <input
+                                            type="checkbox"
+                                            value="science-fiction"
+                                        />
+                                        Science Fiction
+                                    </label>
+                                    <label class="filter-option">
+                                        <input
+                                            type="checkbox"
+                                            value="fantasy"
+                                        />
+                                        Fantasy
+                                    </label>
+                                    <label class="filter-option">
+                                        <input
+                                            type="checkbox"
+                                            value="biography"
+                                        />
+                                        Biography
+                                    </label>
+                                    <label class="filter-option">
+                                        <input
+                                            type="checkbox"
+                                            value="educational"
+                                        />
+                                        Educational
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="filter-group">
+                                <h4>Condition</h4>
+                                <div class="filter-options">
+                                    <label class="filter-option">
+                                        <input type="checkbox" value="new" />
+                                        New
+                                    </label>
+                                    <label class="filter-option">
+                                        <input
+                                            type="checkbox"
+                                            value="like-new"
+                                        />
+                                        Like New
+                                    </label>
+                                    <label class="filter-option">
+                                        <input type="checkbox" value="good" />
+                                        Good
+                                    </label>
+                                    <label class="filter-option">
+                                        <input type="checkbox" value="used" />
+                                        Used
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="filter-group">
+                                <h4>Price Range</h4>
+                                <div class="price-range">
+                                    <div class="price-inputs">
+                                        <input
+                                            type="number"
+                                            placeholder="Min"
+                                            class="price-input"
+                                            id="min-price"
+                                        />
+                                        <span>to</span>
+                                        <input
+                                            type="number"
+                                            placeholder="Max"
+                                            class="price-input"
+                                            id="max-price"
+                                        />
+                                    </div>
+                                    <button
+                                        class="btn btn-sm btn-outline"
+                                        onclick="applyPriceFilter()"
+                                    >
+                                        Apply
+                                    </button>
+                                </div>
+                            </div>
+
+                            <button
+                                class="btn btn-outline"
+                                style="width: 100%"
+                                onclick="clearFilters()"
+                            >
+                                Clear All Filters
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Results Area -->
+                    <div class="col-9">
+                        <div class="results-header">
+                            <div class="results-info">
+                                <h3 id="results-count">Showing all books</h3>
+                            </div>
+
+                            <div class="sort-options">
+                                <label for="sort-by">Sort by:</label>
+                                <select
+                                    id="sort-by"
+                                    class="form-control form-select"
+                                >
+                                    <option value="relevance">Relevance</option>
+                                    <option value="price-low">
+                                        Price: Low to High
+                                    </option>
+                                    <option value="price-high">
+                                        Price: High to Low
+                                    </option>
+                                    <option value="title">Title A-Z</option>
+                                    <option value="author">Author A-Z</option>
+                                    <option value="newest">Newest First</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row" id="search-results">
+                            <!-- Books will be loaded here dynamically -->
+                            <div class="col-4">
+                                <div class="card">
+                                    <img
+                                        src="images/book1.jpg"
+                                        alt="The Great Gatsby"
+                                        class="card-img"
+                                        onerror="this.src='images/placeholder-book.jpg'"
+                                    />
+                                    <div class="card-body">
+                                        <h3 class="card-title">
+                                            The Great Gatsby
+                                        </h3>
+                                        <p class="card-text">
+                                            by F. Scott Fitzgerald
+                                        </p>
+                                        <p class="card-text">
+                                            Fiction • Like New
+                                        </p>
+                                        <div class="card-price">$15.99</div>
+                                        <div class="mt-3">
+                                            <button
+                                                class="btn btn-primary add-to-cart"
+                                                data-book-id="1"
+                                            >
+                                                Add to Cart
+                                            </button>
+                                            <a
+                                                href="book-detail.html?id=1"
+                                                class="btn btn-outline"
+                                                >View Details</a
+                                            >
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-4">
+                                <div class="card">
+                                    <img
+                                        src="images/book2.jpg"
+                                        alt="To Kill a Mockingbird"
+                                        class="card-img"
+                                        onerror="this.src='images/placeholder-book.jpg'"
+                                    />
+                                    <div class="card-body">
+                                        <h3 class="card-title">
+                                            To Kill a Mockingbird
+                                        </h3>
+                                        <p class="card-text">by Harper Lee</p>
+                                        <p class="card-text">Fiction • Good</p>
+                                        <div class="card-price">$12.99</div>
+                                        <div class="mt-3">
+                                            <button
+                                                class="btn btn-primary add-to-cart"
+                                                data-book-id="2"
+                                            >
+                                                Add to Cart
+                                            </button>
+                                            <a
+                                                href="book-detail.html?id=2"
+                                                class="btn btn-outline"
+                                                >View Details</a
+                                            >
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-4">
+                                <div class="card">
+                                    <img
+                                        src="images/book3.jpg"
+                                        alt="1984"
+                                        class="card-img"
+                                        onerror="this.src='images/placeholder-book.jpg'"
+                                    />
+                                    <div class="card-body">
+                                        <h3 class="card-title">1984</h3>
+                                        <p class="card-text">
+                                            by George Orwell
+                                        </p>
+                                        <p class="card-text">Dystopian • New</p>
+                                        <div class="card-price">$14.99</div>
+                                        <div class="mt-3">
+                                            <button
+                                                class="btn btn-primary add-to-cart"
+                                                data-book-id="3"
+                                            >
+                                                Add to Cart
+                                            </button>
+                                            <a
+                                                href="book-detail.html?id=3"
+                                                class="btn btn-outline"
+                                                >View Details</a
+                                            >
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Pagination -->
+                        <div class="pagination-wrapper">
+                            <nav class="pagination">
+                                <button class="page-btn" disabled>
+                                    Previous
+                                </button>
+                                <button class="page-btn active">1</button>
+                                <button class="page-btn">2</button>
+                                <button class="page-btn">3</button>
+                                <span class="page-dots">...</span>
+                                <button class="page-btn">10</button>
+                                <button class="page-btn">Next</button>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="container">
+                <div class="footer-content">
+                    <div class="footer-section">
+                        <h4>BookMarket</h4>
+                        <p>
+                            Your premium online marketplace for buying and
+                            selling books.
+                        </p>
+                    </div>
+
+                    <div class="footer-section">
+                        <h4>Quick Links</h4>
+                        <ul class="footer-links">
+                            <li><a href="search.html">Browse Books</a></li>
+                            <li><a href="add-book.html">Sell Books</a></li>
+                            <li><a href="cart.html">Shopping Cart</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="footer-section">
+                        <h4>Support</h4>
+                        <ul class="footer-links">
+                            <li><a href="#">Help Center</a></li>
+                            <li><a href="#">Contact Us</a></li>
+                            <li><a href="#">Terms & Conditions</a></li>
+                            <li><a href="#">Privacy Policy</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="footer-bottom">
+                    <p>&copy; 2024 BookMarket. All rights reserved.</p>
+                </div>
+            </div>
+        </footer>
+
+        <script src="scripts/main.js"></script>
+        <script>
+            function applyPriceFilter() {
+                const minPrice = document.getElementById("min-price").value;
+                const maxPrice = document.getElementById("max-price").value;
+                // Filter logic would go here
+                console.log("Filtering by price:", minPrice, "to", maxPrice);
+            }
+
+            function clearFilters() {
+                document
+                    .querySelectorAll(".filter-option input")
+                    .forEach((input) => {
+                        input.checked = false;
+                    });
+                document.getElementById("min-price").value = "";
+                document.getElementById("max-price").value = "";
+                // Reset display logic would go here
+            }
+        </script>
+    </body>
+</html>
