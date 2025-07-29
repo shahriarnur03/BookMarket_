@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Sell Your Books - BookMarket</title>
+        <meta
+            name="description"
+            content="Turn your books into cash! Sell your textbooks, novels, and academic books on BookMarket. Easy listing, secure payments, and wide reach."
+        />
+
+        <!-- CSS -->
+        <link rel="stylesheet" href="../css/styles.css" />
+
+        <!-- FontAwesome -->
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        />
+
+        <!-- Favicon -->
+        <link rel="icon" type="image/x-icon" href="../assets/img/favicon.ico" />
+    </head>
+    <body>
+        <!-- Navigation -->
+        <div id="navbar-container"></div>
+
+        <!-- Main Content -->
+        <main style="padding-top: 100px">
+            <!-- Hero Section -->
+            <section
+                class="hero"
+                style="
+                    background: linear-gradient(
+                        135deg,
+                        var(--secondary-gold) 0%,
+                        #e8c547 100%
+                    );
+                "
+            >
+                <div class="container">
+                    <div class="hero-content fade-in-up">
+                        <h1 style="color: white">Turn Your Books Into Cash</h1>
+                        <p
+                            style="
+                                color: rgba(255, 255, 255, 0.9);
+                                font-size: 1.2rem;
+                            "
+                        >
+                            Sell your textbooks, novels, and academic books to
+                            thousands of readers. Easy listing, secure payments,
+                            and maximum reach for your books.
+                        </p>
+                        <div class="hero-actions">
+                            <a
+                                href="add-book.html"
+                                class="btn btn-primary btn-lg"
+                            >
+                                <i class="fas fa-plus-circle"></i>
+                                Start Selling Now
+                            </a>
+                            <a
+                                href="#how-it-works"
+                                class="btn"
+                                style="
+                                    background: rgba(255, 255, 255, 0.2);
+                                    color: white;
+                                    border: 2px solid white;
+                                "
+                            >
+                                <i class="fas fa-play-circle"></i>
+                                How It Works
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Stats Section -->
+            <section class="section" style="background: var(--white)">
+                <div class="container">
+                    <div
+                        style="
+                            display: grid;
+                            grid-template-columns: repeat(
+                                auto-fit,
+                                minmax(200px, 1fr)
+                            );
+                            gap: 2rem;
+                            text-align: center;
+                        "
+                    >
+                        <div>
+                            <div
+                                style="
+                                    font-size: 3rem;
+                                    font-weight: bold;
+                                    color: var(--primary-navy);
+                                    margin-bottom: 0.5rem;
+                                "
+                            >
+                                10,000+
+                            </div>
+                            <p
+                                style="
+                                    color: var(--text-light);
+                                    font-weight: 500;
+                                "
+                            >
+                                Books Sold
+                            </p>
+                        </div>
+                        <div>
+                            <div
+                                style="
+                                    font-size: 3rem;
+                                    font-weight: bold;
+                                    color: var(--primary-navy);
+                                    margin-bottom: 0.5rem;
+                                "
+                            >
+                                95%
+                            </div>
+                            <p
+                                style="
+                                    color: var(--text-light);
+                                    font-weight: 500;
+                                "
+                            >
+                                Seller Satisfaction
+                            </p>
+                        </div>
+                        <div>
+                            <div
+                                style="
+                                    font-size: 3rem;
+                                    font-weight: bold;
+                                    color: var(--primary-navy);
+                                    margin-bottom: 0.5rem;
+                                "
+                            >
+                                $2.5M+
+                            </div>
+                            <p
+                                style="
+                                    color: var(--text-light);
+                                    font-weight: 500;
+                                "
+                            >
+                                Earned by Sellers
+                            </p>
+                        </div>
+                        <div>
+                            <div
+                                style="
+                                    font-size: 3rem;
+                                    font-weight: bold;
+                                    color: var(--primary-navy);
+                                    margin-bottom: 0.5rem;
+                                "
+                            >
+                                24h
+                            </div>
+                            <p
+                                style="
+                                    color: var(--text-light);
+                                    font-weight: 500;
+                                "
+                            >
+                                Average Sale Time
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Why Sell With Us Section -->
+            <section class="section" style="background: var(--light-gray)">
+                <div class="container">
+                    <div class="text-center mb-4">
+                        <h2>Why Sell With BookMarket?</h2>
+                        <p>
+                            Join thousands of successful sellers and maximize
+                            your book's value
+                        </p>
+                    </div>
+
+                    <div class="grid grid-3">
+                        <div class="card">
+                            <div class="card-content text-center">
+                                <div
+                                    style="
+                                        font-size: 3rem;
+                                        color: var(--secondary-gold);
+                                        margin-bottom: 1rem;
+                                    "
+                                >
+                                    <i class="fas fa-dollar-sign"></i>
+                                </div>
+                                <h3 class="card-title">Maximum Earnings</h3>
+                                <p class="card-text">
+                                    Set your own prices and keep up to 95% of
+                                    the sale price. No hidden fees or surprise
+                                    deductions.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-content text-center">
+                                <div
+                                    style="
+                                        font-size: 3rem;
+                                        color: var(--secondary-gold);
+                                        margin-bottom: 1rem;
+                                    "
+                                >
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <h3 class="card-title">Wide Reach</h3>
+                                <p class="card-text">
+                                    Access to thousands of potential buyers
+                                    including students, professionals, and book
+                                    enthusiasts.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-content text-center">
+                                <div
+                                    style="
+                                        font-size: 3rem;
+                                        color: var(--secondary-gold);
+                                        margin-bottom: 1rem;
+                                    "
+                                >
+                                    <i class="fas fa-shield-alt"></i>
+                                </div>
+                                <h3 class="card-title">Secure Transactions</h3>
+                                <p class="card-text">
+                                    Protected payments, buyer verification, and
+                                    dispute resolution. Your earnings are always
+                                    safe.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-content text-center">
+                                <div
+                                    style="
+                                        font-size: 3rem;
+                                        color: var(--secondary-gold);
+                                        margin-bottom: 1rem;
+                                    "
+                                >
+                                    <i class="fas fa-clock"></i>
+                                </div>
+                                <h3 class="card-title">Quick & Easy</h3>
+                                <p class="card-text">
+                                    List your books in minutes with our simple
+                                    form. Take photos, add details, and you're
+                                    ready to sell.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-content text-center">
+                                <div
+                                    style="
+                                        font-size: 3rem;
+                                        color: var(--secondary-gold);
+                                        margin-bottom: 1rem;
+                                    "
+                                >
+                                    <i class="fas fa-shipping-fast"></i>
+                                </div>
+                                <h3 class="card-title">Shipping Support</h3>
+                                <p class="card-text">
+                                    We provide shipping labels and tracking.
+                                    Just pack your book and drop it off at any
+                                    post office.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-content text-center">
+                                <div
+                                    style="
+                                        font-size: 3rem;
+                                        color: var(--secondary-gold);
+                                        margin-bottom: 1rem;
+                                    "
+                                >
+                                    <i class="fas fa-headset"></i>
+                                </div>
+                                <h3 class="card-title">Seller Support</h3>
+                                <p class="card-text">
+                                    Dedicated seller support team available 24/7
+                                    to help you maximize your sales and resolve
+                                    issues.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- How It Works Section -->
+            <section id="how-it-works" class="section">
+                <div class="container">
+                    <div class="text-center mb-4">
+                        <h2>How It Works</h2>
+                        <p>Start selling your books in just 3 simple steps</p>
+                    </div>
+
+                    <div class="grid grid-3">
+                        <div class="text-center">
+                            <div
+                                style="
+                                    width: 80px;
+                                    height: 80px;
+                                    background: var(--primary-navy);
+                                    border-radius: 50%;
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: center;
+                                    margin: 0 auto 1.5rem;
+                                    color: white;
+                                    font-size: 2rem;
+                                    font-weight: bold;
+                                "
+                            >
+                                1
+                            </div>
+                            <h3
+                                style="
+                                    color: var(--primary-navy);
+                                    margin-bottom: 1rem;
+                                "
+                            >
+                                List Your Book
+                            </h3>
+                            <p
+                                style="
+                                    color: var(--text-light);
+                                    line-height: 1.6;
+                                "
+                            >
+                                Add your book details, upload photos, set your
+                                price, and describe the condition. Our form
+                                makes it quick and easy.
+                            </p>
+                            <div style="margin-top: 1rem">
+                                <i
+                                    class="fas fa-camera"
+                                    style="
+                                        color: var(--secondary-gold);
+                                        margin-right: 0.5rem;
+                                    "
+                                ></i>
+                                <small style="color: var(--text-light)"
+                                    >Tips: Good photos sell faster!</small
+                                >
+                            </div>
+                        </div>
+
+                        <div class="text-center">
+                            <div
+                                style="
+                                    width: 80px;
+                                    height: 80px;
+                                    background: var(--primary-navy);
+                                    border-radius: 50%;
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: center;
+                                    margin: 0 auto 1.5rem;
+                                    color: white;
+                                    font-size: 2rem;
+                                    font-weight: bold;
+                                "
+                            >
+                                2
+                            </div>
+                            <h3
+                                style="
+                                    color: var(--primary-navy);
+                                    margin-bottom: 1rem;
+                                "
+                            >
+                                Get Orders
+                            </h3>
+                            <p
+                                style="
+                                    color: var(--text-light);
+                                    line-height: 1.6;
+                                "
+                            >
+                                Buyers will find your book and place orders.
+                                You'll receive instant notifications and can
+                                track all your sales.
+                            </p>
+                            <div style="margin-top: 1rem">
+                                <i
+                                    class="fas fa-bell"
+                                    style="
+                                        color: var(--secondary-gold);
+                                        margin-right: 0.5rem;
+                                    "
+                                ></i>
+                                <small style="color: var(--text-light)"
+                                    >Get notified instantly!</small
+                                >
+                            </div>
+                        </div>
+
+                        <div class="text-center">
+                            <div
+                                style="
+                                    width: 80px;
+                                    height: 80px;
+                                    background: var(--primary-navy);
+                                    border-radius: 50%;
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: center;
+                                    margin: 0 auto 1.5rem;
+                                    color: white;
+                                    font-size: 2rem;
+                                    font-weight: bold;
+                                "
+                            >
+                                3
+                            </div>
+                            <h3
+                                style="
+                                    color: var(--primary-navy);
+                                    margin-bottom: 1rem;
+                                "
+                            >
+                                Ship & Get Paid
+                            </h3>
+                            <p
+                                style="
+                                    color: var(--text-light);
+                                    line-height: 1.6;
+                                "
+                            >
+                                Pack your book, print the prepaid shipping
+                                label, and drop it off. Payment is released once
+                                delivered.
+                            </p>
+                            <div style="margin-top: 1rem">
+                                <i
+                                    class="fas fa-money-bill-wave"
+                                    style="
+                                        color: var(--secondary-gold);
+                                        margin-right: 0.5rem;
+                                    "
+                                ></i>
+                                <small style="color: var(--text-light)"
+                                    >Fast & secure payments!</small
+                                >
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-4">
+                        <a href="add-book.html" class="btn btn-primary btn-lg">
+                            <i class="fas fa-rocket"></i>
+                            Start Your First Listing
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Success Stories Section -->
+            <section class="section" style="background: var(--accent-beige)">
+                <div class="container">
+                    <div class="text-center mb-4">
+                        <h2>Success Stories</h2>
+                        <p>Hear from our successful sellers</p>
+                    </div>
+
+                    <div class="grid grid-3">
+                        <div class="card">
+                            <div class="card-content">
+                                <div class="d-flex align-center gap-3 mb-3">
+                                    <div
+                                        style="
+                                            width: 60px;
+                                            height: 60px;
+                                            background: var(--primary-navy);
+                                            border-radius: 50%;
+                                            display: flex;
+                                            align-items: center;
+                                            justify-content: center;
+                                            color: white;
+                                            font-weight: bold;
+                                            font-size: 1.2rem;
+                                        "
+                                    >
+                                        AM
+                                    </div>
+                                    <div>
+                                        <strong>Alex Mitchell</strong>
+                                        <br />
+                                        <small style="color: var(--text-light)"
+                                            >College Student</small
+                                        >
+                                    </div>
+                                </div>
+                                <p class="card-text">
+                                    "I sold my old textbooks after graduation
+                                    and made over $800! The process was so
+                                    simple, and the money helped me pay off
+                                    student loans."
+                                </p>
+                                <div
+                                    style="
+                                        color: var(--secondary-gold);
+                                        font-weight: bold;
+                                    "
+                                >
+                                    Earned: $847 from 12 books
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-content">
+                                <div class="d-flex align-center gap-3 mb-3">
+                                    <div
+                                        style="
+                                            width: 60px;
+                                            height: 60px;
+                                            background: var(--secondary-gold);
+                                            border-radius: 50%;
+                                            display: flex;
+                                            align-items: center;
+                                            justify-content: center;
+                                            color: white;
+                                            font-weight: bold;
+                                            font-size: 1.2rem;
+                                        "
+                                    >
+                                        LC
+                                    </div>
+                                    <div>
+                                        <strong>Lisa Chen</strong>
+                                        <br />
+                                        <small style="color: var(--text-light)"
+                                            >Professor</small
+                                        >
+                                    </div>
+                                </div>
+                                <p class="card-text">
+                                    "As a professor, I regularly sell review
+                                    copies and older editions. BookMarket has
+                                    become my go-to platform with its
+                                    professional buyer base."
+                                </p>
+                                <div
+                                    style="
+                                        color: var(--secondary-gold);
+                                        font-weight: bold;
+                                    "
+                                >
+                                    Earned: $2,340 from 35 books
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-content">
+                                <div class="d-flex align-center gap-3 mb-3">
+                                    <div
+                                        style="
+                                            width: 60px;
+                                            height: 60px;
+                                            background: var(--primary-navy);
+                                            border-radius: 50%;
+                                            display: flex;
+                                            align-items: center;
+                                            justify-content: center;
+                                            color: white;
+                                            font-weight: bold;
+                                            font-size: 1.2rem;
+                                        "
+                                    >
+                                        RJ
+                                    </div>
+                                    <div>
+                                        <strong>Robert Johnson</strong>
+                                        <br />
+                                        <small style="color: var(--text-light)"
+                                            >Book Collector</small
+                                        >
+                                    </div>
+                                </div>
+                                <p class="card-text">
+                                    "I've been collecting books for years and
+                                    now sell rare finds here. The community
+                                    appreciates quality books and pays fair
+                                    prices."
+                                </p>
+                                <div
+                                    style="
+                                        color: var(--secondary-gold);
+                                        font-weight: bold;
+                                    "
+                                >
+                                    Earned: $5,620 from 89 books
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Pricing Section -->
+            <section class="section">
+                <div class="container">
+                    <div class="text-center mb-4">
+                        <h2>Simple, Transparent Pricing</h2>
+                        <p>No hidden fees. You keep most of what you earn.</p>
+                    </div>
+
+                    <div style="max-width: 600px; margin: 0 auto">
+                        <div class="card" style="padding: 3rem">
+                            <div class="text-center">
+                                <h3
+                                    style="
+                                        color: var(--primary-navy);
+                                        margin-bottom: 2rem;
+                                    "
+                                >
+                                    How Much You Keep
+                                </h3>
+
+                                <div
+                                    style="
+                                        display: grid;
+                                        grid-template-columns: 1fr auto 1fr;
+                                        gap: 1rem;
+                                        align-items: center;
+                                        margin-bottom: 2rem;
+                                    "
+                                >
+                                    <div class="text-center">
+                                        <div
+                                            style="
+                                                font-size: 2rem;
+                                                color: var(--secondary-gold);
+                                                margin-bottom: 0.5rem;
+                                            "
+                                        >
+                                            <i class="fas fa-book"></i>
+                                        </div>
+                                        <p>Book Sale</p>
+                                        <strong
+                                            style="
+                                                color: var(--primary-navy);
+                                                font-size: 1.2rem;
+                                            "
+                                            >$50.00</strong
+                                        >
+                                    </div>
+
+                                    <div
+                                        style="
+                                            color: var(--text-light);
+                                            font-size: 1.5rem;
+                                        "
+                                    >
+                                        <i class="fas fa-arrow-right"></i>
+                                    </div>
+
+                                    <div class="text-center">
+                                        <div
+                                            style="
+                                                font-size: 2rem;
+                                                color: var(--success);
+                                                margin-bottom: 0.5rem;
+                                            "
+                                        >
+                                            <i class="fas fa-wallet"></i>
+                                        </div>
+                                        <p>You Keep</p>
+                                        <strong
+                                            style="
+                                                color: var(--success);
+                                                font-size: 1.2rem;
+                                            "
+                                            >$47.50</strong
+                                        >
+                                    </div>
+                                </div>
+
+                                <div
+                                    style="
+                                        background: var(--light-gray);
+                                        padding: 1.5rem;
+                                        border-radius: var(--border-radius);
+                                        margin-bottom: 2rem;
+                                    "
+                                >
+                                    <p
+                                        style="
+                                            margin: 0;
+                                            color: var(--text-light);
+                                        "
+                                    >
+                                        <strong>BookMarket fee: 5%</strong>
+                                        (includes payment processing, shipping
+                                        labels, and seller protection)
+                                    </p>
+                                </div>
+
+                                <ul
+                                    style="
+                                        text-align: left;
+                                        color: var(--text-dark);
+                                        line-height: 2;
+                                    "
+                                >
+                                    <li>
+                                        <i
+                                            class="fas fa-check"
+                                            style="
+                                                color: var(--success);
+                                                margin-right: 0.5rem;
+                                            "
+                                        ></i
+                                        >No listing fees
+                                    </li>
+                                    <li>
+                                        <i
+                                            class="fas fa-check"
+                                            style="
+                                                color: var(--success);
+                                                margin-right: 0.5rem;
+                                            "
+                                        ></i
+                                        >No monthly fees
+                                    </li>
+                                    <li>
+                                        <i
+                                            class="fas fa-check"
+                                            style="
+                                                color: var(--success);
+                                                margin-right: 0.5rem;
+                                            "
+                                        ></i
+                                        >Free shipping labels
+                                    </li>
+                                    <li>
+                                        <i
+                                            class="fas fa-check"
+                                            style="
+                                                color: var(--success);
+                                                margin-right: 0.5rem;
+                                            "
+                                        ></i
+                                        >Seller protection included
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- FAQ Section -->
+            <section class="section" style="background: var(--light-gray)">
+                <div class="container">
+                    <div class="text-center mb-4">
+                        <h2>Frequently Asked Questions</h2>
+                        <p>
+                            Everything you need to know about selling on
+                            BookMarket
+                        </p>
+                    </div>
+
+                    <div style="max-width: 800px; margin: 0 auto">
+                        <div
+                            class="faq-item"
+                            style="
+                                background: white;
+                                padding: 2rem;
+                                border-radius: var(--border-radius);
+                                margin-bottom: 1rem;
+                            "
+                        >
+                            <h4
+                                style="
+                                    color: var(--primary-navy);
+                                    margin-bottom: 1rem;
+                                "
+                            >
+                                How do I price my books?
+                            </h4>
+                            <p
+                                style="
+                                    color: var(--text-dark);
+                                    line-height: 1.6;
+                                    margin: 0;
+                                "
+                            >
+                                We provide pricing suggestions based on current
+                                market value, condition, and demand. You can
+                                also check similar listings to set competitive
+                                prices. Remember, books in better condition and
+                                popular titles typically sell faster.
+                            </p>
+                        </div>
+
+                        <div
+                            class="faq-item"
+                            style="
+                                background: white;
+                                padding: 2rem;
+                                border-radius: var(--border-radius);
+                                margin-bottom: 1rem;
+                            "
+                        >
+                            <h4
+                                style="
+                                    color: var(--primary-navy);
+                                    margin-bottom: 1rem;
+                                "
+                            >
+                                When do I get paid?
+                            </h4>
+                            <p
+                                style="
+                                    color: var(--text-dark);
+                                    line-height: 1.6;
+                                    margin: 0;
+                                "
+                            >
+                                Payment is released to your account within 24
+                                hours after the buyer confirms delivery. You can
+                                withdraw funds to your bank account or keep them
+                                in your BookMarket wallet for future purchases.
+                            </p>
+                        </div>
+
+                        <div
+                            class="faq-item"
+                            style="
+                                background: white;
+                                padding: 2rem;
+                                border-radius: var(--border-radius);
+                                margin-bottom: 1rem;
+                            "
+                        >
+                            <h4
+                                style="
+                                    color: var(--primary-navy);
+                                    margin-bottom: 1rem;
+                                "
+                            >
+                                What if my book doesn't sell?
+                            </h4>
+                            <p
+                                style="
+                                    color: var(--text-dark);
+                                    line-height: 1.6;
+                                    margin: 0;
+                                "
+                            >
+                                Your listing stays active until you remove it.
+                                You can adjust the price, update photos, or
+                                improve the description at any time. Our seller
+                                support team can also provide tips to improve
+                                your listing's visibility.
+                            </p>
+                        </div>
+
+                        <div
+                            class="faq-item"
+                            style="
+                                background: white;
+                                padding: 2rem;
+                                border-radius: var(--border-radius);
+                            "
+                        >
+                            <h4
+                                style="
+                                    color: var(--primary-navy);
+                                    margin-bottom: 1rem;
+                                "
+                            >
+                                What books can I sell?
+                            </h4>
+                            <p
+                                style="
+                                    color: var(--text-dark);
+                                    line-height: 1.6;
+                                    margin: 0;
+                                "
+                            >
+                                You can sell textbooks, novels, academic books,
+                                professional references, children's books, and
+                                more. Books should be in readable condition
+                                without excessive damage, markings, or missing
+                                pages.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- CTA Section -->
+            <section
+                class="section"
+                style="background: var(--primary-navy); color: white"
+            >
+                <div class="container text-center">
+                    <h2 style="color: white; margin-bottom: 1rem">
+                        Ready to Turn Your Books Into Cash?
+                    </h2>
+                    <p
+                        style="
+                            color: rgba(255, 255, 255, 0.8);
+                            font-size: 1.1rem;
+                            margin-bottom: 2rem;
+                        "
+                    >
+                        Join thousands of successful sellers and start earning
+                        from your books today.
+                    </p>
+                    <a href="add-book.html" class="btn btn-secondary btn-lg">
+                        <i class="fas fa-plus-circle"></i>
+                        List Your First Book
+                    </a>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <div id="footer-container"></div>
+
+        <!-- JavaScript -->
+        <script src="../js/main.js"></script>
+        <script>
+            // Load navigation and footer with proper auth state
+            loadNavbarAndInitialize();
+
+            fetch("../components/footer.html")
+                .then((response) => response.text())
+                .then((data) => {
+                    document.getElementById("footer-container").innerHTML =
+                        data;
+                });
+
+            // Smooth scrolling for anchor links
+            document.addEventListener("DOMContentLoaded", function () {
+                const links = document.querySelectorAll('a[href^="#"]');
+                links.forEach((link) => {
+                    link.addEventListener("click", function (e) {
+                        e.preventDefault();
+                        const target = document.querySelector(
+                            this.getAttribute("href")
+                        );
+                        if (target) {
+                            target.scrollIntoView({
+                                behavior: "smooth",
+                                block: "start",
+                            });
+                        }
+                    });
+                });
+            });
+        </script>
+    </body>
+</html>

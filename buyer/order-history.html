@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Order History - BookMarket</title>
+
+        <!-- Google Fonts -->
+        <link
+            href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Lora:wght@400;500;600&display=swap"
+            rel="stylesheet"
+        />
+
+        <!-- Font Awesome -->
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+        />
+
+        <!-- Custom CSS -->
+        <link rel="stylesheet" href="../css/styles.css" />
+
+        <style>
+            .orders-header {
+                background: linear-gradient(
+                    135deg,
+                    var(--primary-navy) 0%,
+                    #2c3e50 100%
+                );
+                color: white;
+                padding: 3rem 0;
+                text-align: center;
+                position: relative;
+                overflow: hidden;
+            }
+
+            .orders-header::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 20"><defs><radialGradient id="a" cx="50%" cy="0%" r="100%"><stop offset="0%" stop-color="%23ffffff" stop-opacity="0.1"/><stop offset="100%" stop-color="%23ffffff" stop-opacity="0"/></radialGradient></defs><rect width="100" height="20" fill="url(%23a)"/></svg>');
+                opacity: 0.1;
+            }
+
+            .order-stats {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 1rem;
+                margin: 2rem 0;
+            }
+
+            .stat-card {
+                background: white;
+                padding: 1.5rem;
+                border-radius: var(--border-radius);
+                border: 1px solid var(--border-gray);
+                text-align: center;
+                transition: var(--transition);
+            }
+
+            .stat-card:hover {
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+                transform: translateY(-2px);
+            }
+
+            .stat-number {
+                font-size: 2rem;
+                font-weight: bold;
+                color: var(--secondary-gold);
+                margin-bottom: 0.5rem;
+            }
+
+            .orders-filters {
+                background: white;
+                padding: 1.5rem;
+                border-radius: var(--border-radius);
+                border: 1px solid var(--border-gray);
+                margin-bottom: 2rem;
+                display: flex;
+                flex-wrap: wrap;
+                gap: 1rem;
+                align-items: center;
+            }
+
+            .filter-group {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+            .filter-select {
+                padding: 0.5rem 1rem;
+                border: 1px solid var(--border-gray);
+                border-radius: var(--border-radius);
+                background: white;
+                min-width: 150px;
+            }
+
+            .date-input {
+                padding: 0.5rem 1rem;
+                border: 1px solid var(--border-gray);
+                border-radius: var(--border-radius);
+                background: white;
+            }
+
+            .order-card {
+                background: white;
+                border: 1px solid var(--border-gray);
+                border-radius: var(--border-radius);
+                margin-bottom: 1.5rem;
+                overflow: hidden;
+                transition: var(--transition);
+            }
+
+            .order-card:hover {
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            }
+
+            .order-header {
+                padding: 1.5rem;
+                border-bottom: 1px solid var(--border-gray);
+                background: var(--light-gray);
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 1rem;
+            }
+
+            .order-info {
+                display: flex;
+                flex-direction: column;
+                gap: 0.25rem;
+            }
+
+            .order-id {
+                font-weight: bold;
+                color: var(--primary-navy);
+                font-size: 1.1rem;
+            }
+
+            .order-date {
+                color: var(--text-light);
+                font-size: 0.9rem;
+            }
+
+            .order-status {
+                padding: 0.5rem 1rem;
+                border-radius: 2rem;
+                font-weight: 500;
+                font-size: 0.9rem;
+                text-align: center;
+                width: fit-content;
+            }
+
+            .status-pending {
+                background: #fef3c7;
+                color: #92400e;
+                border: 1px solid #f59e0b;
+            }
+
+            .status-processing {
+                background: #dbeafe;
+                color: #1e40af;
+                border: 1px solid #3b82f6;
+            }
+
+            .status-shipped {
+                background: #d1fae5;
+                color: #065f46;
+                border: 1px solid #10b981;
+            }
+
+            .status-delivered {
+                background: #dcfce7;
+                color: #166534;
+                border: 1px solid #22c55e;
+            }
+
+            .status-cancelled {
+                background: #fee2e2;
+                color: #991b1b;
+                border: 1px solid #ef4444;
+            }
+
+            .order-items {
+                padding: 1.5rem;
+            }
+
+            .order-item {
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+                padding: 1rem 0;
+                border-bottom: 1px solid var(--border-gray);
+            }
+
+            .order-item:last-child {
+                border-bottom: none;
+            }
+
+            .item-image {
+                width: 60px;
+                height: 75px;
+                object-fit: cover;
+                border-radius: var(--border-radius);
+            }
+
+            .item-details {
+                flex: 1;
+            }
+
+            .item-title {
+                font-weight: 500;
+                color: var(--primary-navy);
+                margin-bottom: 0.25rem;
+            }
+
+            .item-author {
+                color: var(--text-light);
+                font-size: 0.9rem;
+                margin-bottom: 0.25rem;
+            }
+
+            .item-price {
+                color: var(--secondary-gold);
+                font-weight: bold;
+            }
+
+            .order-actions {
+                padding: 1rem 1.5rem;
+                border-top: 1px solid var(--border-gray);
+                background: #f9fafb;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                flex-wrap: wrap;
+                gap: 1rem;
+            }
+
+            .order-total {
+                font-size: 1.2rem;
+                font-weight: bold;
+                color: var(--primary-navy);
+            }
+
+            .action-buttons {
+                display: flex;
+                gap: 0.5rem;
+                flex-wrap: wrap;
+            }
+
+            .tracking-info {
+                background: #f0f9ff;
+                border: 1px solid #0ea5e9;
+                border-radius: var(--border-radius);
+                padding: 1rem;
+                margin-top: 1rem;
+            }
+
+            .tracking-number {
+                font-family: monospace;
+                font-weight: bold;
+                color: var(--primary-navy);
+            }
+
+            .empty-orders {
+                text-align: center;
+                padding: 4rem 2rem;
+                color: var(--text-light);
+            }
+
+            .empty-orders i {
+                font-size: 4rem;
+                margin-bottom: 1rem;
+                opacity: 0.3;
+            }
+
+            @media (max-width: 768px) {
+                .orders-filters {
+                    flex-direction: column;
+                    align-items: stretch;
+                }
+
+                .filter-group {
+                    justify-content: space-between;
+                }
+
+                .filter-select,
+                .date-input {
+                    min-width: auto;
+                    flex: 1;
+                }
+
+                .order-header {
+                    grid-template-columns: 1fr;
+                    gap: 0.5rem;
+                }
+
+                .order-actions {
+                    flex-direction: column;
+                    align-items: stretch;
+                }
+
+                .action-buttons {
+                    justify-content: center;
+                }
+
+                .order-item {
+                    flex-direction: column;
+                    text-align: center;
+                    gap: 0.5rem;
+                }
+
+                .item-image {
+                    width: 80px;
+                    height: 100px;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <!-- Navigation -->
+        <div id="navbar-container"></div>
+
+        <!-- Orders Header -->
+        <section class="orders-header">
+            <div class="container">
+                <h1><i class="fas fa-shopping-bag"></i> Order History</h1>
+                <p>Track and manage all your orders</p>
+            </div>
+        </section>
+
+        <!-- Main Content -->
+        <main class="container" style="padding: 2rem 0">
+            <!-- Order Stats -->
+            <div class="order-stats">
+                <div class="stat-card">
+                    <div class="stat-number" id="total-orders">15</div>
+                    <div>Total Orders</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="pending-orders">2</div>
+                    <div>Pending</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="total-spent">$1,247.50</div>
+                    <div>Total Spent</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="avg-order">$83.17</div>
+                    <div>Avg Order</div>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="orders-filters">
+                <div class="filter-group">
+                    <label>Status:</label>
+                    <select
+                        class="filter-select"
+                        id="status-filter"
+                        onchange="filterOrders()"
+                    >
+                        <option value="">All Status</option>
+                        <option value="pending">Pending</option>
+                        <option value="processing">Processing</option>
+                        <option value="shipped">Shipped</option>
+                        <option value="delivered">Delivered</option>
+                        <option value="cancelled">Cancelled</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label>From:</label>
+                    <input
+                        type="date"
+                        class="date-input"
+                        id="date-from"
+                        onchange="filterOrders()"
+                    />
+                </div>
+
+                <div class="filter-group">
+                    <label>To:</label>
+                    <input
+                        type="date"
+                        class="date-input"
+                        id="date-to"
+                        onchange="filterOrders()"
+                    />
+                </div>
+
+                <div class="filter-group">
+                    <label>Sort by:</label>
+                    <select
+                        class="filter-select"
+                        id="sort-filter"
+                        onchange="sortOrders()"
+                    >
+                        <option value="date-desc">Date (Newest First)</option>
+                        <option value="date-asc">Date (Oldest First)</option>
+                        <option value="total-desc">Total (High to Low)</option>
+                        <option value="total-asc">Total (Low to High)</option>
+                        <option value="status">Status</option>
+                    </select>
+                </div>
+
+                <button class="btn btn-outline" onclick="clearFilters()">
+                    <i class="fas fa-times"></i>
+                    Clear Filters
+                </button>
+            </div>
+
+            <!-- Orders List -->
+            <div id="orders-container">
+                <!-- Orders will be loaded dynamically -->
+            </div>
+
+            <!-- Empty State -->
+            <div class="empty-orders" id="empty-orders" style="display: none">
+                <i class="fas fa-shopping-bag"></i>
+                <h3>No orders found</h3>
+                <p>
+                    You haven't placed any orders yet or no orders match your
+                    filters
+                </p>
+                <a
+                    href="../common/browse.html"
+                    class="btn btn-primary"
+                    style="margin-top: 1rem"
+                >
+                    <i class="fas fa-search"></i>
+                    Start Shopping
+                </a>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <div id="footer-container"></div>
+
+        <!-- Scripts -->
+        <script src="../js/main.js"></script>
+        <script>
+            // Sample orders data
+            let orders = [
+                {
+                    id: "ORD-2024-001",
+                    date: "2024-01-20",
+                    status: "delivered",
+                    total: 89.97,
+                    items: [
+                        {
+                            title: "The Psychology of Money",
+                            author: "Morgan Housel",
+                            price: 22.99,
+                            quantity: 1,
+                            image: "https://via.placeholder.com/200x250/10b981/ffffff?text=Psychology",
+                        },
+                        {
+                            title: "Atomic Habits",
+                            author: "James Clear",
+                            price: 18.99,
+                            quantity: 2,
+                            image: "https://via.placeholder.com/200x250/f97316/ffffff?text=Atomic+Habits",
+                        },
+                        {
+                            title: "Clean Code",
+                            author: "Robert C. Martin",
+                            price: 29.99,
+                            quantity: 1,
+                            image: "https://via.placeholder.com/200x250/1e2a5a/ffffff?text=Clean+Code",
+                        },
+                    ],
+                    shippingAddress: "123 Main Street, New York, NY 10001",
+                    trackingNumber: "1Z999AA1234567890",
+                    deliveryDate: "2024-01-25",
+                },
+                {
+                    id: "ORD-2024-002",
+                    date: "2024-01-18",
+                    status: "shipped",
+                    total: 45.98,
+                    items: [
+                        {
+                            title: "The Lean Startup",
+                            author: "Eric Ries",
+                            price: 18.99,
+                            quantity: 1,
+                            image: "https://via.placeholder.com/200x250/d4af37/ffffff?text=Lean+Startup",
+                        },
+                        {
+                            title: "The Great Gatsby",
+                            author: "F. Scott Fitzgerald",
+                            price: 15.99,
+                            quantity: 1,
+                            image: "https://via.placeholder.com/200x250/1e2a5a/ffffff?text=The+Great+Gatsby",
+                        },
+                    ],
+                    shippingAddress: "456 Business Ave, New York, NY 10002",
+                    trackingNumber: "1Z999AA1234567891",
+                    estimatedDelivery: "2024-01-23",
+                },
+                {
+                    id: "ORD-2024-003",
+                    date: "2024-01-15",
+                    status: "processing",
+                    total: 125.5,
+                    items: [
+                        {
+                            title: "Introduction to Algorithms",
+                            author: "Thomas H. Cormen",
+                            price: 89.99,
+                            quantity: 1,
+                            image: "https://via.placeholder.com/200x250/1e2a5a/ffffff?text=Algorithms",
+                        },
+                        {
+                            title: "Design Patterns",
+                            author: "Gang of Four",
+                            price: 35.51,
+                            quantity: 1,
+                            image: "https://via.placeholder.com/200x250/10b981/ffffff?text=Design+Patterns",
+                        },
+                    ],
+                    shippingAddress: "123 Main Street, New York, NY 10001",
+                },
+                {
+                    id: "ORD-2024-004",
+                    date: "2024-01-10",
+                    status: "pending",
+                    total: 67.47,
+                    items: [
+                        {
+                            title: "You Don't Know JS",
+                            author: "Kyle Simpson",
+                            price: 35.0,
+                            quantity: 1,
+                            image: "https://via.placeholder.com/200x250/ef4444/ffffff?text=You+Dont+Know+JS",
+                        },
+                        {
+                            title: "JavaScript: The Good Parts",
+                            author: "Douglas Crockford",
+                            price: 24.99,
+                            quantity: 1,
+                            image: "https://via.placeholder.com/200x250/8b5cf6/ffffff?text=JS+Good+Parts",
+                        },
+                    ],
+                    shippingAddress: "123 Main Street, New York, NY 10001",
+                },
+            ];
+
+            let filteredOrders = [...orders];
+
+            // Load navigation and footer
+            loadNavbarAndInitialize();
+
+            fetch("../common/components/footer.html")
+                .then((response) => response.text())
+                .then((data) => {
+                    document.getElementById("footer-container").innerHTML =
+                        data;
+                });
+
+            // Initialize orders
+            document.addEventListener("DOMContentLoaded", function () {
+                loadOrders();
+                updateOrderStats();
+            });
+
+            // Load orders
+            function loadOrders() {
+                const container = document.getElementById("orders-container");
+                const emptyState = document.getElementById("empty-orders");
+
+                if (filteredOrders.length === 0) {
+                    container.style.display = "none";
+                    emptyState.style.display = "block";
+                    return;
+                }
+
+                container.style.display = "block";
+                emptyState.style.display = "none";
+
+                container.innerHTML = filteredOrders
+                    .map(
+                        (order) => `
+                <div class="order-card">
+                    <div class="order-header">
+                        <div class="order-info">
+                            <div class="order-id">Order ${order.id}</div>
+                            <div class="order-date">Placed on ${formatDate(
+                                order.date
+                            )}</div>
+                        </div>
+                        <div class="order-info">
+                            <div style="font-weight: 500; margin-bottom: 0.5rem;">Status</div>
+                            <div class="order-status status-${order.status}">
+                                <i class="fas fa-${getStatusIcon(
+                                    order.status
+                                )}"></i>
+                                ${
+                                    order.status.charAt(0).toUpperCase() +
+                                    order.status.slice(1)
+                                }
+                            </div>
+                        </div>
+                        <div class="order-info">
+                            <div style="font-weight: 500; margin-bottom: 0.5rem;">Total</div>
+                            <div style="font-size: 1.2rem; font-weight: bold; color: var(--secondary-gold);">
+                                $${order.total.toFixed(2)}
+                            </div>
+                        </div>
+                        <div class="order-info">
+                            <div style="font-weight: 500; margin-bottom: 0.5rem;">Items</div>
+                            <div>${order.items.reduce(
+                                (sum, item) => sum + item.quantity,
+                                0
+                            )} item(s)</div>
+                        </div>
+                    </div>
+
+                    <div class="order-items">
+                        ${order.items
+                            .map(
+                                (item) => `
+                            <div class="order-item">
+                                <img src="${item.image}" alt="${
+                                    item.title
+                                }" class="item-image">
+                                <div class="item-details">
+                                    <div class="item-title">${item.title}</div>
+                                    <div class="item-author">by ${
+                                        item.author
+                                    }</div>
+                                    <div class="item-price">$${item.price.toFixed(
+                                        2
+                                    )} x ${item.quantity}</div>
+                                </div>
+                                <div style="text-align: right;">
+                                    <div style="font-weight: bold; color: var(--secondary-gold);">
+                                        $${(item.price * item.quantity).toFixed(
+                                            2
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        `
+                            )
+                            .join("")}
+                    </div>
+
+                    ${
+                        order.trackingNumber
+                            ? `
+                        <div class="tracking-info">
+                            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                                <i class="fas fa-truck" style="color: var(--primary-navy);"></i>
+                                <strong>Tracking Information</strong>
+                            </div>
+                            <div>Tracking Number: <span class="tracking-number">${
+                                order.trackingNumber
+                            }</span></div>
+                            ${
+                                order.deliveryDate
+                                    ? `<div>Delivered on: ${formatDate(
+                                          order.deliveryDate
+                                      )}</div>`
+                                    : order.estimatedDelivery
+                                    ? `<div>Estimated Delivery: ${formatDate(
+                                          order.estimatedDelivery
+                                      )}</div>`
+                                    : ""
+                            }
+                        </div>
+                    `
+                            : ""
+                    }
+
+                    <div class="order-actions">
+                        <div class="order-total">Total: $${order.total.toFixed(
+                            2
+                        )}</div>
+                        <div class="action-buttons">
+                            <a href="order-details.html?id=${
+                                order.id
+                            }" class="btn btn-outline btn-sm">
+                                <i class="fas fa-eye"></i>
+                                View Details
+                            </a>
+                            ${
+                                order.status === "delivered"
+                                    ? `
+                                <button class="btn btn-outline btn-sm" onclick="reorderItems('${order.id}')">
+                                    <i class="fas fa-redo"></i>
+                                    Reorder
+                                </button>
+                                <button class="btn btn-outline btn-sm" onclick="downloadInvoice('${order.id}')">
+                                    <i class="fas fa-download"></i>
+                                    Invoice
+                                </button>
+                            `
+                                    : ""
+                            }
+                            ${
+                                order.trackingNumber &&
+                                order.status !== "delivered"
+                                    ? `
+                                <button class="btn btn-primary btn-sm" onclick="trackOrder('${order.id}')">
+                                    <i class="fas fa-truck"></i>
+                                    Track Order
+                                </button>
+                            `
+                                    : ""
+                            }
+                            ${
+                                order.status === "pending"
+                                    ? `
+                                <button class="btn btn-outline btn-sm" style="color: var(--error); border-color: var(--error);" onclick="cancelOrder('${order.id}')">
+                                    <i class="fas fa-times"></i>
+                                    Cancel
+                                </button>
+                            `
+                                    : ""
+                            }
+                            <button class="btn btn-outline btn-sm" onclick="contactSupport('${
+                                order.id
+                            }')">
+                                <i class="fas fa-headset"></i>
+                                Support
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `
+                    )
+                    .join("");
+            }
+
+            // Filter orders
+            function filterOrders() {
+                const statusFilter =
+                    document.getElementById("status-filter").value;
+                const dateFrom = document.getElementById("date-from").value;
+                const dateTo = document.getElementById("date-to").value;
+
+                filteredOrders = orders.filter((order) => {
+                    const matchesStatus =
+                        !statusFilter || order.status === statusFilter;
+                    const matchesDateFrom = !dateFrom || order.date >= dateFrom;
+                    const matchesDateTo = !dateTo || order.date <= dateTo;
+
+                    return matchesStatus && matchesDateFrom && matchesDateTo;
+                });
+
+                loadOrders();
+                updateOrderStats();
+            }
+
+            // Sort orders
+            function sortOrders() {
+                const sortBy = document.getElementById("sort-filter").value;
+
+                switch (sortBy) {
+                    case "date-asc":
+                        filteredOrders.sort(
+                            (a, b) => new Date(a.date) - new Date(b.date)
+                        );
+                        break;
+                    case "date-desc":
+                        filteredOrders.sort(
+                            (a, b) => new Date(b.date) - new Date(a.date)
+                        );
+                        break;
+                    case "total-asc":
+                        filteredOrders.sort((a, b) => a.total - b.total);
+                        break;
+                    case "total-desc":
+                        filteredOrders.sort((a, b) => b.total - a.total);
+                        break;
+                    case "status":
+                        filteredOrders.sort((a, b) =>
+                            a.status.localeCompare(b.status)
+                        );
+                        break;
+                }
+
+                loadOrders();
+            }
+
+            // Clear filters
+            function clearFilters() {
+                document.getElementById("status-filter").value = "";
+                document.getElementById("date-from").value = "";
+                document.getElementById("date-to").value = "";
+                document.getElementById("sort-filter").value = "date-desc";
+
+                filteredOrders = [...orders];
+                loadOrders();
+                updateOrderStats();
+            }
+
+            // Update order stats
+            function updateOrderStats() {
+                const totalOrders = filteredOrders.length;
+                const pendingOrders = filteredOrders.filter(
+                    (order) => order.status === "pending"
+                ).length;
+                const totalSpent = filteredOrders.reduce(
+                    (sum, order) => sum + order.total,
+                    0
+                );
+                const avgOrder = totalOrders > 0 ? totalSpent / totalOrders : 0;
+
+                document.getElementById("total-orders").textContent =
+                    totalOrders;
+                document.getElementById("pending-orders").textContent =
+                    pendingOrders;
+                document.getElementById(
+                    "total-spent"
+                ).textContent = `$${totalSpent.toFixed(2)}`;
+                document.getElementById(
+                    "avg-order"
+                ).textContent = `$${avgOrder.toFixed(2)}`;
+            }
+
+            // Helper functions
+            function getStatusIcon(status) {
+                const icons = {
+                    pending: "clock",
+                    processing: "cog",
+                    shipped: "truck",
+                    delivered: "check-circle",
+                    cancelled: "times-circle",
+                };
+                return icons[status] || "question-circle";
+            }
+
+            function formatDate(dateString) {
+                const date = new Date(dateString);
+                return date.toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                });
+            }
+
+            // Action functions
+            function reorderItems(orderId) {
+                const order = orders.find((o) => o.id === orderId);
+                if (order) {
+                    // Add all items to cart
+                    order.items.forEach((item) => {
+                        for (let i = 0; i < item.quantity; i++) {
+                            addToCart(
+                                Date.now() + Math.random(),
+                                item.title,
+                                item.author,
+                                item.price,
+                                item.image
+                            );
+                        }
+                    });
+                    showAlert("Items added to cart for reorder", "success");
+                }
+            }
+
+            function downloadInvoice(orderId) {
+                showAlert("Invoice download would start here", "info");
+            }
+
+            function trackOrder(orderId) {
+                // Use the global tracking function from main.js
+                if (window.trackOrder) {
+                    window.trackOrder(orderId);
+                } else {
+                    showAlert("Loading tracking system...", "info");
+                    setTimeout(() => {
+                        if (window.trackOrder) {
+                            window.trackOrder(orderId);
+                        } else {
+                            showAlert("Order tracking not available", "error");
+                        }
+                    }, 1000);
+                }
+            }
+
+            function cancelOrder(orderId) {
+                if (true) {
+                    const order = orders.find((o) => o.id === orderId);
+                    if (order) {
+                        order.status = "cancelled";
+                        filterOrders();
+                        showAlert("Order cancelled successfully", "success");
+                    }
+                }
+            }
+
+            function contactSupport(orderId) {
+                showAlert(`Opening support chat for order ${orderId}`, "info");
+            }
+        </script>
+    </body>
+</html>

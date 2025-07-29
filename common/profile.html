@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>My Profile - BookMarket</title>
+
+        <!-- CSS -->
+        <link rel="stylesheet" href="../css/styles.css" />
+
+        <!-- FontAwesome -->
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        />
+
+        <!-- Favicon -->
+        <link rel="icon" type="image/x-icon" href="../assets/img/favicon.ico" />
+
+        <style>
+            .profile-header {
+                background: linear-gradient(
+                    135deg,
+                    var(--primary-navy) 0%,
+                    #2c3e50 100%
+                );
+                color: white;
+                padding: 2rem 0;
+                margin-top: 80px;
+            }
+
+            .profile-avatar {
+                width: 80px;
+                height: 80px;
+                border-radius: 50%;
+                background: var(--secondary-gold);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 2rem;
+                color: var(--primary-navy);
+                margin-right: 1rem;
+            }
+
+            .profile-tabs {
+                display: flex;
+                border-bottom: 2px solid var(--border-gray);
+                margin-bottom: 2rem;
+                background: white;
+                border-radius: 8px 8px 0 0;
+            }
+
+            .profile-tab {
+                padding: 1rem 1.5rem;
+                border: none;
+                background: none;
+                cursor: pointer;
+                transition: all 0.2s;
+                font-weight: 500;
+                color: var(--text-light);
+                border-bottom: 3px solid transparent;
+            }
+
+            .profile-tab.active {
+                color: var(--primary-navy);
+                border-bottom-color: var(--secondary-gold);
+                background: rgba(212, 175, 55, 0.1);
+            }
+
+            .profile-content {
+                display: none;
+                background: white;
+                padding: 2rem;
+                border-radius: 8px;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            }
+
+            .profile-content.active {
+                display: block;
+            }
+
+            .form-group {
+                margin-bottom: 1.5rem;
+            }
+
+            .form-group label {
+                display: block;
+                margin-bottom: 0.5rem;
+                font-weight: 500;
+                color: var(--text-dark);
+            }
+
+            .form-group input {
+                width: 100%;
+                padding: 0.75rem;
+                border: 1px solid var(--border-gray);
+                border-radius: 8px;
+                font-size: 1rem;
+            }
+
+            .address-item {
+                border: 1px solid var(--border-gray);
+                border-radius: 8px;
+                padding: 1.5rem;
+                margin-bottom: 1rem;
+                position: relative;
+            }
+
+            .address-actions {
+                position: absolute;
+                top: 1rem;
+                right: 1rem;
+                display: flex;
+                gap: 0.5rem;
+            }
+
+            .btn-icon {
+                width: 35px;
+                height: 35px;
+                border-radius: 50%;
+                border: 1px solid var(--border-gray);
+                background: white;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                transition: all 0.2s;
+            }
+
+            .btn-icon:hover {
+                background: var(--light-gray);
+            }
+
+            .address-form {
+                display: none;
+                background: var(--light-gray);
+                padding: 1.5rem;
+                border-radius: 8px;
+                margin-top: 1rem;
+            }
+
+            .address-form.active {
+                display: block;
+            }
+        </style>
+    </head>
+    <body>
+        <!-- Navigation -->
+        <div id="navbar-container"></div>
+
+        <!-- Profile Header -->
+        <div class="profile-header">
+            <div class="container">
+                <div style="display: flex; align-items: center">
+                    <div class="profile-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div>
+                        <h1 id="profileName">User Profile</h1>
+                        <p id="profileEmail">user@example.com</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <main
+            style="
+                padding: 2rem 0;
+                background: var(--light-gray);
+                min-height: 60vh;
+            "
+        >
+            <div class="container">
+                <!-- Profile Tabs -->
+                <div class="profile-tabs">
+                    <button
+                        class="profile-tab active"
+                        onclick="showTab('personal')"
+                    >
+                        <i class="fas fa-user"></i>
+                        Personal Info
+                    </button>
+                    <button class="profile-tab" onclick="showTab('password')">
+                        <i class="fas fa-lock"></i>
+                        Change Password
+                    </button>
+                    <button class="profile-tab" onclick="showTab('addresses')">
+                        <i class="fas fa-map-marker-alt"></i>
+                        My Addresses
+                    </button>
+                </div>
+
+                <!-- Personal Info Tab -->
+                <div id="personal" class="profile-content active">
+                    <h3>Personal Information</h3>
+                    <form id="personalInfoForm">
+                        <div class="form-group">
+                            <label for="fullName">Full Name</label>
+                            <input
+                                type="text"
+                                id="fullName"
+                                name="fullName"
+                                value="John Doe"
+                            />
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input
+                                type="email"
+                                id="email"
+                                name="email"
+                                value="john@example.com"
+                                readonly
+                            />
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Phone Number</label>
+                            <input
+                                type="tel"
+                                id="phone"
+                                name="phone"
+                                value="+1 234 567 8900"
+                            />
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i>
+                            Update Information
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Change Password Tab -->
+                <div id="password" class="profile-content">
+                    <h3>Change Password</h3>
+                    <form id="passwordForm">
+                        <div class="form-group">
+                            <label for="currentPassword"
+                                >Current Password</label
+                            >
+                            <input
+                                type="password"
+                                id="currentPassword"
+                                name="currentPassword"
+                                required
+                            />
+                        </div>
+                        <div class="form-group">
+                            <label for="newPassword">New Password</label>
+                            <input
+                                type="password"
+                                id="newPassword"
+                                name="newPassword"
+                                required
+                            />
+                        </div>
+                        <div class="form-group">
+                            <label for="confirmPassword"
+                                >Confirm New Password</label
+                            >
+                            <input
+                                type="password"
+                                id="confirmPassword"
+                                name="confirmPassword"
+                                required
+                            />
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-key"></i>
+                            Change Password
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Addresses Tab -->
+                <div id="addresses" class="profile-content">
+                    <div
+                        style="
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: center;
+                            margin-bottom: 2rem;
+                        "
+                    >
+                        <h3>My Addresses</h3>
+                        <button
+                            class="btn btn-primary"
+                            onclick="toggleAddressForm()"
+                        >
+                            <i class="fas fa-plus"></i>
+                            Add New Address
+                        </button>
+                    </div>
+
+                    <!-- Add Address Form -->
+                    <div id="addressForm" class="address-form">
+                        <h4>Add New Address</h4>
+                        <form id="newAddressForm">
+                            <div
+                                style="
+                                    display: grid;
+                                    grid-template-columns: 1fr 1fr;
+                                    gap: 1rem;
+                                "
+                            >
+                                <div class="form-group">
+                                    <label for="addressType"
+                                        >Address Type</label
+                                    >
+                                    <select
+                                        id="addressType"
+                                        name="addressType"
+                                        style="
+                                            width: 100%;
+                                            padding: 0.75rem;
+                                            border: 1px solid var(--border-gray);
+                                            border-radius: 8px;
+                                        "
+                                    >
+                                        <option value="home">Home</option>
+                                        <option value="work">Work</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="addressName"
+                                        >Name for this address</label
+                                    >
+                                    <input
+                                        type="text"
+                                        id="addressName"
+                                        name="addressName"
+                                        placeholder="e.g., Home, Office"
+                                        required
+                                    />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="street">Street Address</label>
+                                <input
+                                    type="text"
+                                    id="street"
+                                    name="street"
+                                    placeholder="123 Main Street"
+                                    required
+                                />
+                            </div>
+                            <div
+                                style="
+                                    display: grid;
+                                    grid-template-columns: 1fr 1fr 1fr;
+                                    gap: 1rem;
+                                "
+                            >
+                                <div class="form-group">
+                                    <label for="city">City</label>
+                                    <input
+                                        type="text"
+                                        id="city"
+                                        name="city"
+                                        placeholder="New York"
+                                        required
+                                    />
+                                </div>
+                                <div class="form-group">
+                                    <label for="state">State</label>
+                                    <input
+                                        type="text"
+                                        id="state"
+                                        name="state"
+                                        placeholder="NY"
+                                        required
+                                    />
+                                </div>
+                                <div class="form-group">
+                                    <label for="zipCode">ZIP Code</label>
+                                    <input
+                                        type="text"
+                                        id="zipCode"
+                                        name="zipCode"
+                                        placeholder="10001"
+                                        required
+                                    />
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: 1rem">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save"></i>
+                                    Save Address
+                                </button>
+                                <button
+                                    type="button"
+                                    class="btn btn-outline"
+                                    onclick="toggleAddressForm()"
+                                >
+                                    Cancel
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Address List -->
+                    <div id="addressList">
+                        <!-- Addresses will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <div id="footer-container"></div>
+
+        <!-- JavaScript -->
+        <script src="../js/main.js"></script>
+        <script>
+            // Load navigation and footer
+            loadNavbarAndInitialize();
+
+            // Tab functionality
+            function showTab(tabName) {
+                // Hide all content
+                document
+                    .querySelectorAll(".profile-content")
+                    .forEach((content) => {
+                        content.classList.remove("active");
+                    });
+
+                // Remove active from all tabs
+                document.querySelectorAll(".profile-tab").forEach((tab) => {
+                    tab.classList.remove("active");
+                });
+
+                // Show selected content and tab
+                document.getElementById(tabName).classList.add("active");
+                event.target.classList.add("active");
+            }
+
+            // Address form toggle
+            function toggleAddressForm() {
+                const form = document.getElementById("addressForm");
+                form.classList.toggle("active");
+
+                if (!form.classList.contains("active")) {
+                    document.getElementById("newAddressForm").reset();
+                    editingIndex = -1;
+                    // Reset form title and button
+                    document.querySelector("#addressForm h4").textContent =
+                        "Add New Address";
+                    document.querySelector(
+                        '#newAddressForm button[type="submit"]'
+                    ).innerHTML = '<i class="fas fa-save"></i> Save Address';
+                }
+            }
+
+            // Load user info
+            function loadUserInfo() {
+                const userInfo = JSON.parse(
+                    localStorage.getItem("userInfo") || "{}"
+                );
+                if (userInfo.email) {
+                    document.getElementById("profileName").textContent =
+                        userInfo.name || userInfo.email.split("@")[0];
+                    document.getElementById("profileEmail").textContent =
+                        userInfo.email;
+                    document.getElementById("fullName").value =
+                        userInfo.name || userInfo.email.split("@")[0];
+                    document.getElementById("email").value = userInfo.email;
+                }
+            }
+
+            // Load addresses
+            function loadAddresses() {
+                const addresses = JSON.parse(
+                    localStorage.getItem("userAddresses") || "[]"
+                );
+                const addressList = document.getElementById("addressList");
+
+                if (addresses.length === 0) {
+                    addressList.innerHTML = `
+                        <div style="text-align: center; padding: 2rem; color: var(--text-light);">
+                            <i class="fas fa-map-marker-alt" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.3;"></i>
+                            <p>No addresses added yet</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                addressList.innerHTML = addresses
+                    .map(
+                        (address, index) => `
+                    <div class="address-item">
+                        <div class="address-actions">
+                            <button class="btn-icon" onclick="editAddress(${index})" title="Edit">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn-icon" onclick="deleteAddress(${index})" title="Delete" style="color: var(--error);">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                        <h4>${address.name} <span style="color: var(--text-light); font-size: 0.9rem; font-weight: normal;">(${address.type})</span></h4>
+                        <p style="margin: 0.5rem 0; color: var(--text-dark);">
+                            ${address.street}<br>
+                            ${address.city}, ${address.state} ${address.zipCode}
+                        </p>
+                    </div>
+                `
+                    )
+                    .join("");
+            }
+
+            // Add or update address
+            document
+                .getElementById("newAddressForm")
+                .addEventListener("submit", function (e) {
+                    e.preventDefault();
+
+                    const formData = new FormData(this);
+                    const address = {
+                        type: formData.get("addressType"),
+                        name: formData.get("addressName"),
+                        street: formData.get("street"),
+                        city: formData.get("city"),
+                        state: formData.get("state"),
+                        zipCode: formData.get("zipCode"),
+                    };
+
+                    const addresses = JSON.parse(
+                        localStorage.getItem("userAddresses") || "[]"
+                    );
+
+                    if (editingIndex >= 0) {
+                        // Update existing address
+                        addresses[editingIndex] = address;
+                        showAlert("Address updated successfully!", "success");
+                        editingIndex = -1;
+                    } else {
+                        // Add new address
+                        addresses.push(address);
+                        showAlert("Address added successfully!", "success");
+                    }
+
+                    localStorage.setItem(
+                        "userAddresses",
+                        JSON.stringify(addresses)
+                    );
+
+                    loadAddresses();
+                    toggleAddressForm();
+                    this.reset();
+
+                    // Reset form title and button
+                    document.querySelector("#addressForm h4").textContent =
+                        "Add New Address";
+                    document.querySelector(
+                        '#newAddressForm button[type="submit"]'
+                    ).innerHTML = '<i class="fas fa-save"></i> Save Address';
+                });
+
+            // Delete address
+            function deleteAddress(index) {
+                const addresses = JSON.parse(
+                    localStorage.getItem("userAddresses") || "[]"
+                );
+                addresses.splice(index, 1);
+                localStorage.setItem(
+                    "userAddresses",
+                    JSON.stringify(addresses)
+                );
+                showAlert("Address deleted successfully!", "success");
+                loadAddresses();
+            }
+
+            // Edit address functionality
+            let editingIndex = -1;
+
+            function editAddress(index) {
+                const addresses = JSON.parse(
+                    localStorage.getItem("userAddresses") || "[]"
+                );
+                const address = addresses[index];
+
+                // Set editing mode
+                editingIndex = index;
+
+                // Fill form with existing data
+                document.getElementById("addressType").value = address.type;
+                document.getElementById("addressName").value = address.name;
+                document.getElementById("street").value = address.street;
+                document.getElementById("city").value = address.city;
+                document.getElementById("state").value = address.state;
+                document.getElementById("zipCode").value = address.zipCode;
+
+                // Change form title and button text
+                document.querySelector("#addressForm h4").textContent =
+                    "Edit Address";
+                document.querySelector(
+                    '#newAddressForm button[type="submit"]'
+                ).innerHTML = '<i class="fas fa-save"></i> Update Address';
+
+                // Show form
+                toggleAddressForm();
+            }
+
+            // Personal info form
+            document
+                .getElementById("personalInfoForm")
+                .addEventListener("submit", function (e) {
+                    e.preventDefault();
+
+                    const userInfo = JSON.parse(
+                        localStorage.getItem("userInfo") || "{}"
+                    );
+                    userInfo.name = document.getElementById("fullName").value;
+                    userInfo.phone = document.getElementById("phone").value;
+                    localStorage.setItem("userInfo", JSON.stringify(userInfo));
+
+                    showAlert(
+                        "Personal information updated successfully!",
+                        "success"
+                    );
+                    loadUserInfo();
+                });
+
+            // Password form
+            document
+                .getElementById("passwordForm")
+                .addEventListener("submit", function (e) {
+                    e.preventDefault();
+
+                    const currentPassword =
+                        document.getElementById("currentPassword").value;
+                    const newPassword =
+                        document.getElementById("newPassword").value;
+                    const confirmPassword =
+                        document.getElementById("confirmPassword").value;
+
+                    if (newPassword !== confirmPassword) {
+                        showAlert("New passwords don't match!", "error");
+                        return;
+                    }
+
+                    if (newPassword.length < 6) {
+                        showAlert(
+                            "Password must be at least 6 characters!",
+                            "error"
+                        );
+                        return;
+                    }
+
+                    // In a real app, you would verify the current password
+                    showAlert("Password changed successfully!", "success");
+                    this.reset();
+                });
+
+            // Initialize page
+            document.addEventListener("DOMContentLoaded", function () {
+                loadUserInfo();
+                loadAddresses();
+            });
+        </script>
+    </body>
+</html>

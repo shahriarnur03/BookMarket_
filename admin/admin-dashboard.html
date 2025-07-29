@@ -1,0 +1,1480 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Admin Dashboard - BookMarket</title>
+        <meta
+            name="description"
+            content="BookMarket Admin Dashboard - Manage users, approve listings, and view analytics."
+        />
+
+        <!-- CSS -->
+        <link rel="stylesheet" href="../css/styles.css" />
+
+        <!-- FontAwesome -->
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        />
+
+        <!-- Chart.js -->
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+        <!-- Favicon -->
+        <link rel="icon" type="image/x-icon" href="../assets/img/favicon.ico" />
+    </head>
+    <body>
+        <!-- Navigation -->
+        <div id="navbar-container"></div>
+
+        <!-- Main Content -->
+        <main
+            style="
+                padding-top: 100px;
+                min-height: 100vh;
+                background: var(--light-gray);
+            "
+        >
+            <div class="container">
+                <!-- Admin Header -->
+                <div
+                    class="admin-header"
+                    style="
+                        background: white;
+                        padding: 2rem;
+                        border-radius: var(--border-radius);
+                        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+                        margin-bottom: 2rem;
+                    "
+                >
+                    <div class="d-flex justify-between align-center">
+                        <div class="d-flex align-center gap-3">
+                            <div
+                                style="
+                                    width: 80px;
+                                    height: 80px;
+                                    background: var(--error);
+                                    border-radius: 50%;
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: center;
+                                    color: white;
+                                    font-weight: bold;
+                                    font-size: 1.5rem;
+                                "
+                            >
+                                <i class="fas fa-user-shield"></i>
+                            </div>
+                            <div>
+                                <h1
+                                    style="
+                                        margin: 0;
+                                        color: var(--primary-navy);
+                                    "
+                                >
+                                    Admin Dashboard
+                                </h1>
+                                <p style="margin: 0; color: var(--text-light)">
+                                    Welcome back, Administrator
+                                </p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <button class="btn btn-outline" onclick="logout()">
+                                <i class="fas fa-sign-out-alt"></i>
+                                Logout
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Stats -->
+                <div
+                    class="admin-stats mb-4"
+                    style="
+                        display: grid;
+                        grid-template-columns: repeat(
+                            auto-fit,
+                            minmax(200px, 1fr)
+                        );
+                        gap: 1rem;
+                    "
+                >
+                    <div
+                        class="stat-card"
+                        style="
+                            background: white;
+                            padding: 1.5rem;
+                            border-radius: var(--border-radius);
+                            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+                            text-align: center;
+                        "
+                    >
+                        <div
+                            style="
+                                font-size: 2rem;
+                                color: var(--primary-navy);
+                                margin-bottom: 0.5rem;
+                            "
+                        >
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div
+                            style="
+                                font-size: 2rem;
+                                font-weight: bold;
+                                color: var(--primary-navy);
+                                margin-bottom: 0.5rem;
+                            "
+                        >
+                            1,247
+                        </div>
+                        <p style="margin: 0; color: var(--text-light)">
+                            Total Sellers
+                        </p>
+                    </div>
+
+                    <div
+                        class="stat-card"
+                        style="
+                            background: white;
+                            padding: 1.5rem;
+                            border-radius: var(--border-radius);
+                            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+                            text-align: center;
+                        "
+                    >
+                        <div
+                            style="
+                                font-size: 2rem;
+                                color: var(--success);
+                                margin-bottom: 0.5rem;
+                            "
+                        >
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                        <div
+                            style="
+                                font-size: 2rem;
+                                font-weight: bold;
+                                color: var(--primary-navy);
+                                margin-bottom: 0.5rem;
+                            "
+                        >
+                            5,892
+                        </div>
+                        <p style="margin: 0; color: var(--text-light)">
+                            Total Buyers
+                        </p>
+                    </div>
+
+                    <div
+                        class="stat-card"
+                        style="
+                            background: white;
+                            padding: 1.5rem;
+                            border-radius: var(--border-radius);
+                            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+                            text-align: center;
+                        "
+                    >
+                        <div
+                            style="
+                                font-size: 2rem;
+                                color: var(--secondary-gold);
+                                margin-bottom: 0.5rem;
+                            "
+                        >
+                            <i class="fas fa-book"></i>
+                        </div>
+                        <div
+                            style="
+                                font-size: 2rem;
+                                font-weight: bold;
+                                color: var(--primary-navy);
+                                margin-bottom: 0.5rem;
+                            "
+                        >
+                            23,456
+                        </div>
+                        <p style="margin: 0; color: var(--text-light)">
+                            Total Books
+                        </p>
+                    </div>
+
+                    <div
+                        class="stat-card"
+                        style="
+                            background: white;
+                            padding: 1.5rem;
+                            border-radius: var(--border-radius);
+                            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+                            text-align: center;
+                        "
+                    >
+                        <div
+                            style="
+                                font-size: 2rem;
+                                color: var(--warning);
+                                margin-bottom: 0.5rem;
+                            "
+                        >
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div
+                            style="
+                                font-size: 2rem;
+                                font-weight: bold;
+                                color: var(--primary-navy);
+                                margin-bottom: 0.5rem;
+                            "
+                        >
+                            47
+                        </div>
+                        <p style="margin: 0; color: var(--text-light)">
+                            Pending Approvals
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Order Management Section -->
+                <div class="card mb-4">
+                    <div class="card-content">
+                        <h3
+                            style="
+                                margin-bottom: 1.5rem;
+                                color: var(--primary-navy);
+                            "
+                        >
+                            <i class="fas fa-box"></i>
+                            Order Management
+                        </h3>
+                        <div id="ordersList">
+                            <!-- Orders will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Dashboard Content -->
+                <div
+                    style="
+                        display: grid;
+                        grid-template-columns: 1fr 1fr;
+                        gap: 2rem;
+                    "
+                >
+                    <!-- Left Column -->
+                    <div>
+                        <!-- Pending Seller Accounts -->
+                        <div class="card mb-3">
+                            <div class="card-content">
+                                <div
+                                    class="d-flex justify-between align-center mb-3"
+                                >
+                                    <h3
+                                        style="
+                                            margin: 0;
+                                            color: var(--primary-navy);
+                                        "
+                                    >
+                                        <i class="fas fa-user-clock"></i>
+                                        Pending Seller Accounts
+                                    </h3>
+                                    <span
+                                        style="
+                                            background: var(--warning);
+                                            color: white;
+                                            padding: 0.25rem 0.75rem;
+                                            border-radius: 20px;
+                                            font-size: 0.9rem;
+                                        "
+                                    >
+                                        8 Pending
+                                    </span>
+                                </div>
+
+                                <div class="pending-sellers">
+                                    <div
+                                        class="pending-item"
+                                        style="
+                                            padding: 1rem;
+                                            border: 1px solid var(--border-gray);
+                                            border-radius: var(--border-radius);
+                                            margin-bottom: 1rem;
+                                        "
+                                    >
+                                        <div
+                                            class="d-flex justify-between align-center"
+                                        >
+                                            <div>
+                                                <strong
+                                                    style="
+                                                        color: var(
+                                                            --primary-navy
+                                                        );
+                                                    "
+                                                    >John Smith</strong
+                                                >
+                                                <p
+                                                    style="
+                                                        margin: 0;
+                                                        color: var(
+                                                            --text-light
+                                                        );
+                                                        font-size: 0.9rem;
+                                                    "
+                                                >
+                                                    john.smith@email.com
+                                                </p>
+                                                <small
+                                                    style="
+                                                        color: var(
+                                                            --text-light
+                                                        );
+                                                    "
+                                                    >Applied: March 15,
+                                                    2024</small
+                                                >
+                                            </div>
+                                            <div
+                                                style="
+                                                    display: flex;
+                                                    flex-direction: column;
+                                                    gap: 0.5rem;
+                                                "
+                                            >
+                                                <button
+                                                    class="btn btn-primary btn-sm"
+                                                    onclick="viewSellerDetails('John Smith', 'john.smith@email.com', 'March 15, 2024')"
+                                                >
+                                                    <i class="fas fa-eye"></i>
+                                                    Details
+                                                </button>
+                                                <div
+                                                    style="
+                                                        display: flex;
+                                                        gap: 0.5rem;
+                                                    "
+                                                >
+                                                    <button
+                                                        class="btn btn-success btn-sm"
+                                                        onclick="approveSeller(this, 'John Smith')"
+                                                    >
+                                                        <i
+                                                            class="fas fa-check"
+                                                        ></i>
+                                                        Approve
+                                                    </button>
+                                                    <button
+                                                        class="btn btn-outline btn-sm"
+                                                        style="
+                                                            color: var(--error);
+                                                            border-color: var(
+                                                                --error
+                                                            );
+                                                        "
+                                                        onclick="declineSeller(this, 'John Smith')"
+                                                    >
+                                                        <i
+                                                            class="fas fa-times"
+                                                        ></i>
+                                                        Decline
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div
+                                        class="pending-item"
+                                        style="
+                                            padding: 1rem;
+                                            border: 1px solid var(--border-gray);
+                                            border-radius: var(--border-radius);
+                                            margin-bottom: 1rem;
+                                        "
+                                    >
+                                        <div
+                                            class="d-flex justify-between align-center"
+                                        >
+                                            <div>
+                                                <strong
+                                                    style="
+                                                        color: var(
+                                                            --primary-navy
+                                                        );
+                                                    "
+                                                    >Sarah Johnson</strong
+                                                >
+                                                <p
+                                                    style="
+                                                        margin: 0;
+                                                        color: var(
+                                                            --text-light
+                                                        );
+                                                        font-size: 0.9rem;
+                                                    "
+                                                >
+                                                    sarah.j@email.com
+                                                </p>
+                                                <small
+                                                    style="
+                                                        color: var(
+                                                            --text-light
+                                                        );
+                                                    "
+                                                    >Applied: March 14,
+                                                    2024</small
+                                                >
+                                            </div>
+                                            <div
+                                                style="
+                                                    display: flex;
+                                                    flex-direction: column;
+                                                    gap: 0.5rem;
+                                                "
+                                            >
+                                                <button
+                                                    class="btn btn-primary btn-sm"
+                                                    onclick="viewSellerDetails('Sarah Johnson', 'sarah.j@email.com', 'March 14, 2024')"
+                                                >
+                                                    <i class="fas fa-eye"></i>
+                                                    Details
+                                                </button>
+                                                <div
+                                                    style="
+                                                        display: flex;
+                                                        gap: 0.5rem;
+                                                    "
+                                                >
+                                                    <button
+                                                        class="btn btn-success btn-sm"
+                                                        onclick="approveSeller(this, 'Sarah Johnson')"
+                                                    >
+                                                        <i
+                                                            class="fas fa-check"
+                                                        ></i>
+                                                        Approve
+                                                    </button>
+                                                    <button
+                                                        class="btn btn-outline btn-sm"
+                                                        style="
+                                                            color: var(--error);
+                                                            border-color: var(
+                                                                --error
+                                                            );
+                                                        "
+                                                        onclick="declineSeller(this, 'Sarah Johnson')"
+                                                    >
+                                                        <i
+                                                            class="fas fa-times"
+                                                        ></i>
+                                                        Decline
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div
+                                        class="pending-item"
+                                        style="
+                                            padding: 1rem;
+                                            border: 1px solid var(--border-gray);
+                                            border-radius: var(--border-radius);
+                                        "
+                                    >
+                                        <div
+                                            class="d-flex justify-between align-center"
+                                        >
+                                            <div>
+                                                <strong
+                                                    style="
+                                                        color: var(
+                                                            --primary-navy
+                                                        );
+                                                    "
+                                                    >Mike Wilson</strong
+                                                >
+                                                <p
+                                                    style="
+                                                        margin: 0;
+                                                        color: var(
+                                                            --text-light
+                                                        );
+                                                        font-size: 0.9rem;
+                                                    "
+                                                >
+                                                    mike.wilson@email.com
+                                                </p>
+                                                <small
+                                                    style="
+                                                        color: var(
+                                                            --text-light
+                                                        );
+                                                    "
+                                                    >Applied: March 13,
+                                                    2024</small
+                                                >
+                                            </div>
+                                            <div
+                                                style="
+                                                    display: flex;
+                                                    flex-direction: column;
+                                                    gap: 0.5rem;
+                                                "
+                                            >
+                                                <button
+                                                    class="btn btn-primary btn-sm"
+                                                    onclick="viewSellerDetails('Mike Wilson', 'mike.wilson@email.com', 'March 13, 2024')"
+                                                >
+                                                    <i class="fas fa-eye"></i>
+                                                    Details
+                                                </button>
+                                                <div
+                                                    style="
+                                                        display: flex;
+                                                        gap: 0.5rem;
+                                                    "
+                                                >
+                                                    <button
+                                                        class="btn btn-success btn-sm"
+                                                        onclick="approveSeller(this, 'Mike Wilson')"
+                                                    >
+                                                        <i
+                                                            class="fas fa-check"
+                                                        ></i>
+                                                        Approve
+                                                    </button>
+                                                    <button
+                                                        class="btn btn-outline btn-sm"
+                                                        style="
+                                                            color: var(--error);
+                                                            border-color: var(
+                                                                --error
+                                                            );
+                                                        "
+                                                        onclick="declineSeller(this, 'Mike Wilson')"
+                                                    >
+                                                        <i
+                                                            class="fas fa-times"
+                                                        ></i>
+                                                        Decline
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Pending Book Listings -->
+                        <div class="card">
+                            <div class="card-content">
+                                <div
+                                    class="d-flex justify-between align-center mb-3"
+                                >
+                                    <h3
+                                        style="
+                                            margin: 0;
+                                            color: var(--primary-navy);
+                                        "
+                                    >
+                                        <i class="fas fa-book-open"></i>
+                                        Pending Book Listings
+                                    </h3>
+                                    <span
+                                        style="
+                                            background: var(--warning);
+                                            color: white;
+                                            padding: 0.25rem 0.75rem;
+                                            border-radius: 20px;
+                                            font-size: 0.9rem;
+                                        "
+                                    >
+                                        12 Pending
+                                    </span>
+                                </div>
+
+                                <div class="pending-books">
+                                    <div
+                                        class="pending-item"
+                                        style="
+                                            padding: 1rem;
+                                            border: 1px solid var(--border-gray);
+                                            border-radius: var(--border-radius);
+                                            margin-bottom: 1rem;
+                                        "
+                                    >
+                                        <div
+                                            style="
+                                                display: grid;
+                                                grid-template-columns: auto 1fr auto;
+                                                gap: 1rem;
+                                                align-items: center;
+                                            "
+                                        >
+                                            <img
+                                                src="https://via.placeholder.com/60x75/1e2a5a/ffffff?text=Book"
+                                                alt="Book"
+                                                style="
+                                                    width: 50px;
+                                                    height: 65px;
+                                                    object-fit: cover;
+                                                    border-radius: 4px;
+                                                "
+                                            />
+                                            <div>
+                                                <strong
+                                                    style="
+                                                        color: var(
+                                                            --primary-navy
+                                                        );
+                                                    "
+                                                    >Clean Code</strong
+                                                >
+                                                <p
+                                                    style="
+                                                        margin: 0;
+                                                        color: var(
+                                                            --text-light
+                                                        );
+                                                        font-size: 0.9rem;
+                                                    "
+                                                >
+                                                    by Robert C. Martin
+                                                </p>
+                                                <p
+                                                    style="
+                                                        margin: 0;
+                                                        color: var(
+                                                            --secondary-gold
+                                                        );
+                                                        font-weight: bold;
+                                                    "
+                                                >
+                                                    $45.99
+                                                </p>
+                                                <small
+                                                    style="
+                                                        color: var(
+                                                            --text-light
+                                                        );
+                                                    "
+                                                    >Seller: John Smith</small
+                                                >
+                                            </div>
+                                            <div
+                                                style="
+                                                    display: flex;
+                                                    flex-direction: column;
+                                                    gap: 0.5rem;
+                                                "
+                                            >
+                                                <button
+                                                    class="btn btn-primary btn-sm"
+                                                    onclick="viewBookDetails('Clean Code', 'Robert C. Martin', '$45.99', 'John Smith', 'Like New', 'Programming', '978-0132350884')"
+                                                >
+                                                    <i class="fas fa-eye"></i>
+                                                    Details
+                                                </button>
+                                                <div
+                                                    style="
+                                                        display: flex;
+                                                        gap: 0.5rem;
+                                                    "
+                                                >
+                                                    <button
+                                                        class="btn btn-success btn-sm"
+                                                        onclick="approveBook(this, 'Clean Code')"
+                                                    >
+                                                        <i
+                                                            class="fas fa-check"
+                                                        ></i>
+                                                        Approve
+                                                    </button>
+                                                    <button
+                                                        class="btn btn-outline btn-sm"
+                                                        style="
+                                                            color: var(--error);
+                                                            border-color: var(
+                                                                --error
+                                                            );
+                                                        "
+                                                        onclick="declineBook(this, 'Clean Code')"
+                                                    >
+                                                        <i
+                                                            class="fas fa-times"
+                                                        ></i>
+                                                        Decline
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div
+                                        class="pending-item"
+                                        style="
+                                            padding: 1rem;
+                                            border: 1px solid var(--border-gray);
+                                            border-radius: var(--border-radius);
+                                            margin-bottom: 1rem;
+                                        "
+                                    >
+                                        <div
+                                            style="
+                                                display: grid;
+                                                grid-template-columns: auto 1fr auto;
+                                                gap: 1rem;
+                                                align-items: center;
+                                            "
+                                        >
+                                            <img
+                                                src="https://via.placeholder.com/60x75/d4af37/ffffff?text=Book"
+                                                alt="Book"
+                                                style="
+                                                    width: 50px;
+                                                    height: 65px;
+                                                    object-fit: cover;
+                                                    border-radius: 4px;
+                                                "
+                                            />
+                                            <div>
+                                                <strong
+                                                    style="
+                                                        color: var(
+                                                            --primary-navy
+                                                        );
+                                                    "
+                                                    >The Great Gatsby</strong
+                                                >
+                                                <p
+                                                    style="
+                                                        margin: 0;
+                                                        color: var(
+                                                            --text-light
+                                                        );
+                                                        font-size: 0.9rem;
+                                                    "
+                                                >
+                                                    by F. Scott Fitzgerald
+                                                </p>
+                                                <p
+                                                    style="
+                                                        margin: 0;
+                                                        color: var(
+                                                            --secondary-gold
+                                                        );
+                                                        font-weight: bold;
+                                                    "
+                                                >
+                                                    $15.99
+                                                </p>
+                                                <small
+                                                    style="
+                                                        color: var(
+                                                            --text-light
+                                                        );
+                                                    "
+                                                    >Seller: Sarah
+                                                    Johnson</small
+                                                >
+                                            </div>
+                                            <div
+                                                style="
+                                                    display: flex;
+                                                    flex-direction: column;
+                                                    gap: 0.5rem;
+                                                "
+                                            >
+                                                <button
+                                                    class="btn btn-primary btn-sm"
+                                                    onclick="viewBookDetails('The Great Gatsby', 'F. Scott Fitzgerald', '$15.99', 'Sarah Johnson', 'Good', 'Fiction', '978-0743273565')"
+                                                >
+                                                    <i class="fas fa-eye"></i>
+                                                    Details
+                                                </button>
+                                                <div
+                                                    style="
+                                                        display: flex;
+                                                        gap: 0.5rem;
+                                                    "
+                                                >
+                                                    <button
+                                                        class="btn btn-success btn-sm"
+                                                        onclick="approveBook(this, 'The Great Gatsby')"
+                                                    >
+                                                        <i
+                                                            class="fas fa-check"
+                                                        ></i>
+                                                        Approve
+                                                    </button>
+                                                    <button
+                                                        class="btn btn-outline btn-sm"
+                                                        style="
+                                                            color: var(--error);
+                                                            border-color: var(
+                                                                --error
+                                                            );
+                                                        "
+                                                        onclick="declineBook(this, 'The Great Gatsby')"
+                                                    >
+                                                        <i
+                                                            class="fas fa-times"
+                                                        ></i>
+                                                        Decline
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column -->
+                    <div>
+                        <!-- Analytics Charts -->
+                        <div class="card mb-3">
+                            <div class="card-content">
+                                <h3
+                                    style="
+                                        margin-bottom: 1.5rem;
+                                        color: var(--primary-navy);
+                                    "
+                                >
+                                    <i class="fas fa-chart-pie"></i>
+                                    Books by Category
+                                </h3>
+                                <canvas
+                                    id="categoryChart"
+                                    width="400"
+                                    height="200"
+                                ></canvas>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-content">
+                                <h3
+                                    style="
+                                        margin-bottom: 1.5rem;
+                                        color: var(--primary-navy);
+                                    "
+                                >
+                                    <i class="fas fa-chart-bar"></i>
+                                    Monthly Sales Overview
+                                </h3>
+                                <canvas
+                                    id="salesChart"
+                                    width="400"
+                                    height="200"
+                                ></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <div id="footer-container"></div>
+
+        <!-- JavaScript -->
+        <script src="../js/main.js"></script>
+        <script>
+            // Load navigation and footer with proper auth state
+            loadNavbarAndInitialize();
+
+            fetch("../components/footer.html")
+                .then((response) => response.text())
+                .then((data) => {
+                    document.getElementById("footer-container").innerHTML =
+                        data;
+                });
+
+            // Admin functionality
+            function approveSeller(button, sellerName) {
+                const item = button.closest(".pending-item");
+                item.style.background = "rgba(16, 185, 129, 0.1)";
+                item.innerHTML = `
+                <div class="d-flex align-center gap-2">
+                    <i class="fas fa-check-circle" style="color: var(--success);"></i>
+                    <span style="color: var(--success); font-weight: 500;">${sellerName} has been approved as a seller</span>
+                </div>
+            `;
+                showAlert(`${sellerName} approved successfully!`, "success");
+            }
+
+            function declineSeller(button, sellerName) {
+                const item = button.closest(".pending-item");
+                item.style.background = "rgba(239, 68, 68, 0.1)";
+                item.innerHTML = `
+                <div class="d-flex align-center gap-2">
+                    <i class="fas fa-times-circle" style="color: var(--error);"></i>
+                    <span style="color: var(--error); font-weight: 500;">${sellerName}'s application has been declined</span>
+                </div>
+            `;
+                showAlert(`${sellerName} application declined`, "warning");
+            }
+
+            function approveBook(button, bookTitle) {
+                const item = button.closest(".pending-item");
+                item.style.background = "rgba(16, 185, 129, 0.1)";
+                const actionsDiv = item.querySelector("div:last-child");
+                actionsDiv.innerHTML = `
+                <span style="color: var(--success); font-weight: 500; font-size: 0.9rem;">
+                    <i class="fas fa-check-circle"></i>
+                    Approved
+                </span>
+            `;
+                showAlert(`"${bookTitle}" approved successfully!`, "success");
+            }
+
+            function declineBook(button, bookTitle) {
+                const item = button.closest(".pending-item");
+                item.style.background = "rgba(239, 68, 68, 0.1)";
+                const actionsDiv = item.querySelector("div:last-child");
+                actionsDiv.innerHTML = `
+                <span style="color: var(--error); font-weight: 500; font-size: 0.9rem;">
+                    <i class="fas fa-times-circle"></i>
+                    Declined
+                </span>
+            `;
+                showAlert(`"${bookTitle}" listing declined`, "warning");
+            }
+
+            // View seller details function
+            function viewSellerDetails(name, email, applicationDate) {
+                const modal = document.createElement("div");
+                modal.style.cssText = `
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0,0,0,0.5);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    z-index: 9999;
+                `;
+
+                modal.innerHTML = `
+                    <div style="background: white; padding: 0; border-radius: 15px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+                        <!-- Header -->
+                        <div style="background: linear-gradient(135deg, var(--primary-navy) 0%, #2c3e50 100%); color: white; padding: 2rem; border-radius: 15px 15px 0 0;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div>
+                                    <h3 style="margin: 0; font-size: 1.5rem;"><i class="fas fa-user-circle"></i> Seller Application Details</h3>
+                                    <p style="margin: 0.5rem 0 0; opacity: 0.9;">Review application before approval</p>
+                                </div>
+                                <button onclick="this.closest('div').remove()" style="background: rgba(255,255,255,0.2); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; font-size: 1.2rem;">×</button>
+                            </div>
+                        </div>
+
+                        <!-- Content -->
+                        <div style="padding: 2rem;">
+                            <!-- Personal Information -->
+                            <div style="margin-bottom: 2rem;">
+                                <h4 style="color: var(--primary-navy); margin-bottom: 1rem; border-bottom: 2px solid var(--secondary-gold); padding-bottom: 0.5rem;">
+                                    <i class="fas fa-user"></i> Personal Information
+                                </h4>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                                    <div>
+                                        <label style="font-weight: 600; color: var(--text-dark); display: block; margin-bottom: 0.25rem;">Full Name:</label>
+                                        <p style="margin: 0; padding: 0.75rem; background: var(--light-gray); border-radius: 8px;">${name}</p>
+                                    </div>
+                                    <div>
+                                        <label style="font-weight: 600; color: var(--text-dark); display: block; margin-bottom: 0.25rem;">Email Address:</label>
+                                        <p style="margin: 0; padding: 0.75rem; background: var(--light-gray); border-radius: 8px;">${email}</p>
+                                    </div>
+                                </div>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                    <div>
+                                        <label style="font-weight: 600; color: var(--text-dark); display: block; margin-bottom: 0.25rem;">Phone Number:</label>
+                                        <p style="margin: 0; padding: 0.75rem; background: var(--light-gray); border-radius: 8px;">+1 (555) 123-4567</p>
+                                    </div>
+                                    <div>
+                                        <label style="font-weight: 600; color: var(--text-dark); display: block; margin-bottom: 0.25rem;">Application Date:</label>
+                                        <p style="margin: 0; padding: 0.75rem; background: var(--light-gray); border-radius: 8px;">${applicationDate}</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Address Information -->
+                            <div style="margin-bottom: 2rem;">
+                                <h4 style="color: var(--primary-navy); margin-bottom: 1rem; border-bottom: 2px solid var(--secondary-gold); padding-bottom: 0.5rem;">
+                                    <i class="fas fa-map-marker-alt"></i> Address Information
+                                </h4>
+                                <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 1rem;">
+                                    <div>
+                                        <label style="font-weight: 600; color: var(--text-dark); display: block; margin-bottom: 0.25rem;">Street Address:</label>
+                                        <p style="margin: 0; padding: 0.75rem; background: var(--light-gray); border-radius: 8px;">123 Main Street, Apt 4B</p>
+                                    </div>
+                                    <div>
+                                        <label style="font-weight: 600; color: var(--text-dark); display: block; margin-bottom: 0.25rem;">City:</label>
+                                        <p style="margin: 0; padding: 0.75rem; background: var(--light-gray); border-radius: 8px;">New York</p>
+                                    </div>
+                                    <div>
+                                        <label style="font-weight: 600; color: var(--text-dark); display: block; margin-bottom: 0.25rem;">ZIP Code:</label>
+                                        <p style="margin: 0; padding: 0.75rem; background: var(--light-gray); border-radius: 8px;">10001</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Selling Experience -->
+                            <div style="margin-bottom: 2rem;">
+                                <h4 style="color: var(--primary-navy); margin-bottom: 1rem; border-bottom: 2px solid var(--secondary-gold); padding-bottom: 0.5rem;">
+                                    <i class="fas fa-star"></i> Selling Experience
+                                </h4>
+                                <div>
+                                    <label style="font-weight: 600; color: var(--text-dark); display: block; margin-bottom: 0.25rem;">Previous Experience:</label>
+                                    <p style="margin: 0; padding: 0.75rem; background: var(--light-gray); border-radius: 8px; line-height: 1.6;">3 years of experience selling textbooks on various platforms. Maintained 98% positive feedback rating on previous platforms. Specializes in academic and programming books.</p>
+                                </div>
+                            </div>
+
+                            <!-- Verification Status -->
+                            <div style="margin-bottom: 2rem;">
+                                <h4 style="color: var(--primary-navy); margin-bottom: 1rem; border-bottom: 2px solid var(--secondary-gold); padding-bottom: 0.5rem;">
+                                    <i class="fas fa-shield-alt"></i> Verification Status
+                                </h4>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                        <i class="fas fa-check-circle" style="color: var(--success);"></i>
+                                        <span>Email Verified</span>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                        <i class="fas fa-check-circle" style="color: var(--success);"></i>
+                                        <span>Phone Verified</span>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                        <i class="fas fa-check-circle" style="color: var(--success);"></i>
+                                        <span>ID Document Submitted</span>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                        <i class="fas fa-clock" style="color: var(--warning);"></i>
+                                        <span>Background Check Pending</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Actions -->
+                            <div style="display: flex; gap: 1rem; justify-content: center; border-top: 1px solid var(--border-gray); padding-top: 1.5rem;">
+                                <button onclick="this.closest('div').remove(); showAlert('${name} approved successfully!', 'success');" class="btn btn-success">
+                                    <i class="fas fa-check"></i> Approve Seller
+                                </button>
+                                <button onclick="this.closest('div').remove(); showAlert('${name} application declined', 'warning');" class="btn btn-outline" style="color: var(--error); border-color: var(--error);">
+                                    <i class="fas fa-times"></i> Decline Application
+                                </button>
+                                <button onclick="this.closest('div').remove()" class="btn btn-outline">
+                                    <i class="fas fa-arrow-left"></i> Back to Dashboard
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                document.body.appendChild(modal);
+
+                // Close on backdrop click
+                modal.addEventListener("click", function (e) {
+                    if (e.target === modal) {
+                        modal.remove();
+                    }
+                });
+            }
+
+            // View book details function
+            function viewBookDetails(
+                title,
+                author,
+                price,
+                seller,
+                condition,
+                category,
+                isbn
+            ) {
+                const modal = document.createElement("div");
+                modal.style.cssText = `
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0,0,0,0.5);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    z-index: 9999;
+                `;
+
+                modal.innerHTML = `
+                    <div style="background: white; padding: 0; border-radius: 15px; max-width: 700px; width: 90%; max-height: 85vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+                        <!-- Header -->
+                        <div style="background: linear-gradient(135deg, var(--primary-navy) 0%, #2c3e50 100%); color: white; padding: 2rem; border-radius: 15px 15px 0 0;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div>
+                                    <h3 style="margin: 0; font-size: 1.5rem;"><i class="fas fa-book"></i> Book Listing Details</h3>
+                                    <p style="margin: 0.5rem 0 0; opacity: 0.9;">Review book information before approval</p>
+                                </div>
+                                <button onclick="this.closest('div').remove()" style="background: rgba(255,255,255,0.2); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; font-size: 1.2rem;">×</button>
+                            </div>
+                        </div>
+
+                        <!-- Content -->
+                        <div style="padding: 2rem;">
+                            <!-- Book Preview -->
+                            <div style="display: grid; grid-template-columns: 200px 1fr; gap: 2rem; margin-bottom: 2rem; align-items: start;">
+                                <div style="text-align: center;">
+                                    <img src="https://via.placeholder.com/200x280/1e2a5a/ffffff?text=${encodeURIComponent(
+                                        title
+                                    )}" 
+                                         style="width: 100%; max-width: 200px; border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);" />
+                                    <div style="margin-top: 1rem; padding: 0.75rem; background: var(--secondary-gold); color: white; border-radius: 8px; font-weight: bold; font-size: 1.2rem;">
+                                        ${price}
+                                    </div>
+                                </div>
+                                <div>
+                                    <h3 style="color: var(--primary-navy); margin: 0 0 1rem;">${title}</h3>
+                                    <p style="color: var(--text-light); margin: 0 0 1rem; font-size: 1.1rem;">by ${author}</p>
+                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                        <div>
+                                            <span style="font-weight: 600; color: var(--text-dark);">Category:</span>
+                                            <span style="margin-left: 0.5rem; padding: 0.25rem 0.75rem; background: var(--accent-beige); border-radius: 20px; font-size: 0.9rem;">${category}</span>
+                                        </div>
+                                        <div>
+                                            <span style="font-weight: 600; color: var(--text-dark);">Condition:</span>
+                                            <span style="margin-left: 0.5rem; padding: 0.25rem 0.75rem; background: var(--success); color: white; border-radius: 20px; font-size: 0.9rem;">${condition}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Book Information -->
+                            <div style="margin-bottom: 2rem;">
+                                <h4 style="color: var(--primary-navy); margin-bottom: 1rem; border-bottom: 2px solid var(--secondary-gold); padding-bottom: 0.5rem;">
+                                    <i class="fas fa-info-circle"></i> Book Information
+                                </h4>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                    <div>
+                                        <label style="font-weight: 600; color: var(--text-dark); display: block; margin-bottom: 0.25rem;">ISBN:</label>
+                                        <p style="margin: 0; padding: 0.75rem; background: var(--light-gray); border-radius: 8px;">${isbn}</p>
+                                    </div>
+                                    <div>
+                                        <label style="font-weight: 600; color: var(--text-dark); display: block; margin-bottom: 0.25rem;">Publisher:</label>
+                                        <p style="margin: 0; padding: 0.75rem; background: var(--light-gray); border-radius: 8px;">Prentice Hall</p>
+                                    </div>
+                                    <div>
+                                        <label style="font-weight: 600; color: var(--text-dark); display: block; margin-bottom: 0.25rem;">Publication Year:</label>
+                                        <p style="margin: 0; padding: 0.75rem; background: var(--light-gray); border-radius: 8px;">2008</p>
+                                    </div>
+                                    <div>
+                                        <label style="font-weight: 600; color: var(--text-dark); display: block; margin-bottom: 0.25rem;">Language:</label>
+                                        <p style="margin: 0; padding: 0.75rem; background: var(--light-gray); border-radius: 8px;">English</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Description -->
+                            <div style="margin-bottom: 2rem;">
+                                <h4 style="color: var(--primary-navy); margin-bottom: 1rem; border-bottom: 2px solid var(--secondary-gold); padding-bottom: 0.5rem;">
+                                    <i class="fas fa-align-left"></i> Description
+                                </h4>
+                                <div style="padding: 1rem; background: var(--light-gray); border-radius: 8px; line-height: 1.6;">
+                                    A comprehensive guide to writing clean, maintainable code. This book covers best practices, design patterns, and coding principles that every developer should know. The book is in excellent condition with minimal wear and all pages intact. No highlighting or margin notes.
+                                </div>
+                            </div>
+
+                            <!-- Seller Information -->
+                            <div style="margin-bottom: 2rem;">
+                                <h4 style="color: var(--primary-navy); margin-bottom: 1rem; border-bottom: 2px solid var(--secondary-gold); padding-bottom: 0.5rem;">
+                                    <i class="fas fa-user-tag"></i> Seller Information
+                                </h4>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;">
+                                    <div>
+                                        <label style="font-weight: 600; color: var(--text-dark); display: block; margin-bottom: 0.25rem;">Seller Name:</label>
+                                        <p style="margin: 0; padding: 0.75rem; background: var(--light-gray); border-radius: 8px;">${seller}</p>
+                                    </div>
+                                    <div>
+                                        <label style="font-weight: 600; color: var(--text-dark); display: block; margin-bottom: 0.25rem;">Seller Rating:</label>
+                                        <p style="margin: 0; padding: 0.75rem; background: var(--light-gray); border-radius: 8px;">⭐ 4.8/5 (127 reviews)</p>
+                                    </div>
+                                    <div>
+                                        <label style="font-weight: 600; color: var(--text-dark); display: block; margin-bottom: 0.25rem;">Listed Date:</label>
+                                        <p style="margin: 0; padding: 0.75rem; background: var(--light-gray); border-radius: 8px;">March 15, 2024</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Actions -->
+                            <div style="display: flex; gap: 1rem; justify-content: center; border-top: 1px solid var(--border-gray); padding-top: 1.5rem;">
+                                <button onclick="this.closest('div').remove(); showAlert('${title} approved successfully!', 'success');" class="btn btn-success">
+                                    <i class="fas fa-check"></i> Approve Listing
+                                </button>
+                                <button onclick="this.closest('div').remove(); showAlert('${title} listing declined', 'warning');" class="btn btn-outline" style="color: var(--error); border-color: var(--error);">
+                                    <i class="fas fa-times"></i> Decline Listing
+                                </button>
+                                <button onclick="this.closest('div').remove()" class="btn btn-outline">
+                                    <i class="fas fa-arrow-left"></i> Back to Dashboard
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                document.body.appendChild(modal);
+
+                // Close on backdrop click
+                modal.addEventListener("click", function (e) {
+                    if (e.target === modal) {
+                        modal.remove();
+                    }
+                });
+            }
+
+            function logout() {
+                if (true) {
+                    showAlert("Logging out...", "info");
+                    setTimeout(() => {
+                        window.location.href = "login.html";
+                    }, 1500);
+                }
+            }
+
+            // Load orders for admin management
+            function loadOrdersForAdmin() {
+                const orders = getAllOrders();
+                const ordersList = document.getElementById("ordersList");
+
+                if (!ordersList) return;
+
+                if (orders.length === 0) {
+                    ordersList.innerHTML =
+                        '<p style="color: var(--text-light); text-align: center;">No orders found</p>';
+                    return;
+                }
+
+                ordersList.innerHTML = orders
+                    .map(
+                        (order) => `
+                    <div style="border: 1px solid var(--border-gray); border-radius: 8px; padding: 1.5rem; margin-bottom: 1rem; background: white;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                            <div>
+                                <h4 style="margin: 0; color: var(--primary-navy);">Order ${
+                                    order.id
+                                }</h4>
+                                <p style="margin: 0.25rem 0; color: var(--text-light);">Customer: ${
+                                    order.customerName
+                                }</p>
+                                <p style="margin: 0.25rem 0; color: var(--text-light);">Date: ${new Date(
+                                    order.orderDate
+                                ).toLocaleDateString()}</p>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="padding: 0.25rem 0.75rem; border-radius: 20px; background: ${getStatusColor(
+                                    order.status
+                                )}; color: white; font-size: 0.9rem; margin-bottom: 0.5rem;">
+                                    ${ORDER_STATUSES[order.status]}
+                                </div>
+                                <div style="font-weight: bold; color: var(--secondary-gold);">$${order.total.toFixed(
+                                    2
+                                )}</div>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-bottom: 1rem;">
+                            <strong>Items:</strong>
+                            ${order.items
+                                .map(
+                                    (item) =>
+                                        `${item.title} (${item.quantity}x)`
+                                )
+                                .join(", ")}
+                        </div>
+                        
+                        <div style="display: flex; gap: 0.5rem; align-items: center;">
+                            <label style="margin-right: 0.5rem;">Update Status:</label>
+                            <select onchange="updateOrderFromAdmin('${
+                                order.id
+                            }', this.value)" style="padding: 0.5rem; border: 1px solid var(--border-gray); border-radius: 4px;">
+                                <option value="">Select Status</option>
+                                <option value="CONFIRMED" ${
+                                    order.status === "CONFIRMED"
+                                        ? "selected"
+                                        : ""
+                                }>Order Confirmed</option>
+                                <option value="PROCESSING" ${
+                                    order.status === "PROCESSING"
+                                        ? "selected"
+                                        : ""
+                                }>Processing</option>
+                                <option value="SHIPPED" ${
+                                    order.status === "SHIPPED" ? "selected" : ""
+                                }>Shipped</option>
+                                <option value="DELIVERED" ${
+                                    order.status === "DELIVERED"
+                                        ? "selected"
+                                        : ""
+                                }>Delivered</option>
+                            </select>
+                            <button onclick="trackOrder('${
+                                order.id
+                            }')" class="btn btn-outline btn-sm">
+                                <i class="fas fa-truck"></i>
+                                View Tracking
+                            </button>
+                        </div>
+                    </div>
+                `
+                    )
+                    .join("");
+            }
+
+            function getStatusColor(status) {
+                switch (status) {
+                    case "CONFIRMED":
+                        return "#007bff";
+                    case "PROCESSING":
+                        return "#ffc107";
+                    case "SHIPPED":
+                        return "#17a2b8";
+                    case "DELIVERED":
+                        return "#28a745";
+                    default:
+                        return "#6c757d";
+                }
+            }
+
+            function updateOrderFromAdmin(orderId, newStatus) {
+                if (!newStatus) return;
+
+                const notes = {
+                    CONFIRMED: "Order confirmed by admin",
+                    PROCESSING: "Order is being processed",
+                    SHIPPED: "Order has been shipped",
+                    DELIVERED: "Order has been delivered",
+                };
+
+                if (updateOrderStatus(orderId, newStatus, notes[newStatus])) {
+                    loadOrdersForAdmin(); // Reload the orders list
+                }
+            }
+
+            // Load orders when page loads
+            document.addEventListener("DOMContentLoaded", function () {
+                setTimeout(() => {
+                    loadOrdersForAdmin();
+                }, 500);
+            });
+
+            // Initialize Charts
+            document.addEventListener("DOMContentLoaded", function () {
+                // Category Pie Chart
+                const categoryCtx = document
+                    .getElementById("categoryChart")
+                    .getContext("2d");
+                new Chart(categoryCtx, {
+                    type: "pie",
+                    data: {
+                        labels: [
+                            "Fiction",
+                            "Academic",
+                            "Business",
+                            "Science",
+                            "Children",
+                            "History",
+                        ],
+                        datasets: [
+                            {
+                                data: [35, 25, 15, 12, 8, 5],
+                                backgroundColor: [
+                                    "#1e2a5a",
+                                    "#d4af37",
+                                    "#10b981",
+                                    "#f59e0b",
+                                    "#ef4444",
+                                    "#6b7280",
+                                ],
+                                borderWidth: 2,
+                                borderColor: "#ffffff",
+                            },
+                        ],
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: "bottom",
+                            },
+                        },
+                    },
+                });
+
+                // Sales Bar Chart
+                const salesCtx = document
+                    .getElementById("salesChart")
+                    .getContext("2d");
+                new Chart(salesCtx, {
+                    type: "bar",
+                    data: {
+                        labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+                        datasets: [
+                            {
+                                label: "Books Sold",
+                                data: [450, 520, 680, 590, 720, 890],
+                                backgroundColor: "#1e2a5a",
+                                borderColor: "#d4af37",
+                                borderWidth: 2,
+                                borderRadius: 4,
+                            },
+                        ],
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                            },
+                        },
+                        plugins: {
+                            legend: {
+                                display: false,
+                            },
+                        },
+                    },
+                });
+            });
+
+            // Responsive styles
+            const style = document.createElement("style");
+            style.textContent = `
+            @media (max-width: 768px) {
+                .admin-header .d-flex {
+                    flex-direction: column !important;
+                    gap: 1rem;
+                    text-align: center;
+                }
+                main > .container > div:last-child {
+                    grid-template-columns: 1fr !important;
+                }
+                .pending-item > div:first-child {
+                    grid-template-columns: 1fr !important;
+                    text-align: center;
+                    gap: 1rem !important;
+                }
+                .pending-item .d-flex {
+                    flex-direction: column !important;
+                    gap: 1rem;
+                    text-align: center;
+                }
+            }
+        `;
+            document.head.appendChild(style);
+        </script>
+    </body>
+</html>

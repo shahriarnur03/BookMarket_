@@ -3,463 +3,599 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>BookMarket - Your Premium Online Book Marketplace</title>
+        <title>BookMarket - Your Premium Online Bookstore</title>
         <meta
             name="description"
-            content="Buy and sell books online at BookMarket. Find rare books, textbooks, fiction, and more at great prices."
+            content="Buy and sell books online at BookMarket. Find fiction, academic, business books and more. Premium online bookstore experience."
         />
-        <meta
-            name="keywords"
-            content="books, marketplace, buy books, sell books, online bookstore"
+
+        <!-- CSS -->
+        <link rel="stylesheet" href="css/styles.css" />
+
+        <!-- FontAwesome -->
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
         />
-        <link rel="stylesheet" href="styles/main.css" />
-        <link rel="icon" type="image/x-icon" href="images/favicon.ico" />
+
+        <!-- Favicon -->
+        <link rel="icon" type="image/x-icon" href="assets/img/favicon.ico" />
     </head>
     <body>
-        <!-- Header -->
-        <header class="header">
-            <div class="container">
-                <nav class="navbar">
-                    <a href="index.html" class="logo">BookMarket</a>
+        <!-- Navigation -->
+        <div id="navbar-container"></div>
 
-                    <ul class="nav-menu">
-                        <li><a href="index.html" class="nav-link">Home</a></li>
-                        <li>
-                            <a href="search.html" class="nav-link"
-                                >Browse Books</a
+        <!-- Main Content -->
+        <main>
+            <!-- Hero Section -->
+            <section class="hero">
+                <div class="container">
+                    <div class="hero-content fade-in-up">
+                        <h1>Discover Your Next Great Read</h1>
+                        <p>
+                            Welcome to BookMarket - the premier destination for
+                            book lovers. Buy, sell, and discover books across
+                            all genres. From bestselling novels to academic
+                            textbooks, find exactly what you're looking for.
+                        </p>
+                        <div class="hero-actions">
+                            <a
+                                href="#"
+                                onclick="navigateBrowse()"
+                                class="btn btn-primary btn-lg"
                             >
-                        </li>
-                        <li>
-                            <a href="add-book.html" class="nav-link"
-                                >Sell Books</a
+                                <i class="fas fa-search"></i>
+                                Browse Books
+                            </a>
+                            <a
+                                href="#"
+                                onclick="navigateSell()"
+                                class="btn btn-secondary btn-lg"
                             >
-                        </li>
-                        <li>
-                            <a href="cart.html" class="nav-link"
-                                >Cart <span class="cart-count">0</span></a
-                            >
-                        </li>
-                    </ul>
-
-                    <div class="nav-actions">
-                        <a href="login.html" class="btn btn-outline">Login</a>
-                        <a href="signup.html" class="btn btn-primary"
-                            >Sign Up</a
-                        >
-                    </div>
-                </nav>
-            </div>
-        </header>
-
-        <!-- Hero Section -->
-        <section class="hero">
-            <div class="container">
-                <div class="hero-content">
-                    <h1>Discover Your Next Great Read</h1>
-                    <p class="hero-subtitle">
-                        Buy and sell books in our premium online marketplace.
-                        From rare collectibles to everyday reads, find exactly
-                        what you're looking for.
-                    </p>
-
-                    <div class="hero-search">
-                        <form class="search-form">
-                            <input
-                                type="text"
-                                class="search-input"
-                                placeholder="Search for books, authors, or genres..."
-                            />
-                            <button type="submit" class="search-btn">
-                                Search
-                            </button>
-                        </form>
-                    </div>
-
-                    <div class="hero-actions">
-                        <a href="search.html" class="btn btn-lg btn-primary"
-                            >Browse Books</a
-                        >
-                        <a href="add-book.html" class="btn btn-lg btn-secondary"
-                            >Sell Your Books</a
-                        >
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Featured Books Section -->
-        <section class="section">
-            <div class="container">
-                <div class="section-header">
-                    <h2 class="section-title">Featured Books</h2>
-                    <p class="section-subtitle">
-                        Discover popular and new releases handpicked by our
-                        community
-                    </p>
-                </div>
-
-                <div class="row" id="featured-books">
-                    <!-- Books will be loaded dynamically -->
-                    <div class="col-4">
-                        <div class="card">
-                            <img
-                                src="images/book1.jpg"
-                                alt="The Great Gatsby"
-                                class="card-img"
-                                onerror="this.src='images/placeholder-book.jpg'"
-                            />
-                            <div class="card-body">
-                                <h3 class="card-title">The Great Gatsby</h3>
-                                <p class="card-text">by F. Scott Fitzgerald</p>
-                                <p class="card-text">Fiction • Like New</p>
-                                <div class="card-price">$15.99</div>
-                                <div class="mt-3">
-                                    <button
-                                        class="btn btn-primary add-to-cart"
-                                        data-book-id="1"
-                                    >
-                                        Add to Cart
-                                    </button>
-                                    <a
-                                        href="book-detail.html?id=1"
-                                        class="btn btn-outline"
-                                        >View Details</a
-                                    >
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-4">
-                        <div class="card">
-                            <img
-                                src="images/book2.jpg"
-                                alt="To Kill a Mockingbird"
-                                class="card-img"
-                                onerror="this.src='images/placeholder-book.jpg'"
-                            />
-                            <div class="card-body">
-                                <h3 class="card-title">
-                                    To Kill a Mockingbird
-                                </h3>
-                                <p class="card-text">by Harper Lee</p>
-                                <p class="card-text">Fiction • Good</p>
-                                <div class="card-price">$12.99</div>
-                                <div class="mt-3">
-                                    <button
-                                        class="btn btn-primary add-to-cart"
-                                        data-book-id="2"
-                                    >
-                                        Add to Cart
-                                    </button>
-                                    <a
-                                        href="book-detail.html?id=2"
-                                        class="btn btn-outline"
-                                        >View Details</a
-                                    >
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-4">
-                        <div class="card">
-                            <img
-                                src="images/book3.jpg"
-                                alt="1984"
-                                class="card-img"
-                                onerror="this.src='images/placeholder-book.jpg'"
-                            />
-                            <div class="card-body">
-                                <h3 class="card-title">1984</h3>
-                                <p class="card-text">by George Orwell</p>
-                                <p class="card-text">Dystopian • New</p>
-                                <div class="card-price">$14.99</div>
-                                <div class="mt-3">
-                                    <button
-                                        class="btn btn-primary add-to-cart"
-                                        data-book-id="3"
-                                    >
-                                        Add to Cart
-                                    </button>
-                                    <a
-                                        href="book-detail.html?id=3"
-                                        class="btn btn-outline"
-                                        >View Details</a
-                                    >
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-4">
-                        <div class="card">
-                            <img
-                                src="images/book4.jpg"
-                                alt="Pride and Prejudice"
-                                class="card-img"
-                                onerror="this.src='images/placeholder-book.jpg'"
-                            />
-                            <div class="card-body">
-                                <h3 class="card-title">Pride and Prejudice</h3>
-                                <p class="card-text">by Jane Austen</p>
-                                <p class="card-text">Romance • Used</p>
-                                <div class="card-price">$11.99</div>
-                                <div class="mt-3">
-                                    <button
-                                        class="btn btn-primary add-to-cart"
-                                        data-book-id="4"
-                                    >
-                                        Add to Cart
-                                    </button>
-                                    <a
-                                        href="book-detail.html?id=4"
-                                        class="btn btn-outline"
-                                        >View Details</a
-                                    >
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-4">
-                        <div class="card">
-                            <img
-                                src="images/book5.jpg"
-                                alt="The Catcher in the Rye"
-                                class="card-img"
-                                onerror="this.src='images/placeholder-book.jpg'"
-                            />
-                            <div class="card-body">
-                                <h3 class="card-title">
-                                    The Catcher in the Rye
-                                </h3>
-                                <p class="card-text">by J.D. Salinger</p>
-                                <p class="card-text">Fiction • Good</p>
-                                <div class="card-price">$13.99</div>
-                                <div class="mt-3">
-                                    <button
-                                        class="btn btn-primary add-to-cart"
-                                        data-book-id="5"
-                                    >
-                                        Add to Cart
-                                    </button>
-                                    <a
-                                        href="book-detail.html?id=5"
-                                        class="btn btn-outline"
-                                        >View Details</a
-                                    >
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-4">
-                        <div class="card">
-                            <img
-                                src="images/book6.jpg"
-                                alt="Dune"
-                                class="card-img"
-                                onerror="this.src='images/placeholder-book.jpg'"
-                            />
-                            <div class="card-body">
-                                <h3 class="card-title">Dune</h3>
-                                <p class="card-text">by Frank Herbert</p>
-                                <p class="card-text">Science Fiction • New</p>
-                                <div class="card-price">$18.99</div>
-                                <div class="mt-3">
-                                    <button
-                                        class="btn btn-primary add-to-cart"
-                                        data-book-id="6"
-                                    >
-                                        Add to Cart
-                                    </button>
-                                    <a
-                                        href="book-detail.html?id=6"
-                                        class="btn btn-outline"
-                                        >View Details</a
-                                    >
-                                </div>
-                            </div>
+                                <i class="fas fa-plus-circle"></i>
+                                Sell Your Books
+                            </a>
                         </div>
                     </div>
                 </div>
+            </section>
 
-                <div class="text-center mt-5">
-                    <a href="search.html" class="btn btn-lg btn-outline"
-                        >View All Books</a
+            <!-- Featured Books Section -->
+            <section class="section" style="background: var(--light-gray)">
+                <div class="container">
+                    <div class="text-center mb-4">
+                        <h2>Featured Books</h2>
+                        <p>
+                            Discover our handpicked selection of trending and
+                            popular books
+                        </p>
+                    </div>
+
+                    <div
+                        class="featured-books-grid grid grid-4"
+                        id="featured-books"
                     >
-                </div>
-            </div>
-        </section>
+                        <!-- Featured books will be loaded via JavaScript -->
+                    </div>
 
-        <!-- Categories Section -->
-        <section class="section" style="background-color: var(--white)">
-            <div class="container">
-                <div class="section-header">
-                    <h2 class="section-title">Browse by Category</h2>
-                    <p class="section-subtitle">
-                        Find books in your favorite genres
+                    <div class="text-center mt-4">
+                        <a
+                            href="#"
+                            onclick="navigateBrowse()"
+                            class="btn btn-outline"
+                        >
+                            View All Books
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Categories Section -->
+            <section class="section">
+                <div class="container">
+                    <div class="text-center mb-4">
+                        <h2>Browse by Category</h2>
+                        <p>Find books in your favorite genres and subjects</p>
+                    </div>
+
+                    <div class="categories-grid grid grid-3">
+                        <div class="card">
+                            <div class="card-content text-center">
+                                <div
+                                    style="
+                                        font-size: 3rem;
+                                        color: var(--secondary-gold);
+                                        margin-bottom: 1rem;
+                                    "
+                                >
+                                    <i class="fas fa-book"></i>
+                                </div>
+                                <h3 class="card-title">Fiction</h3>
+                                <p class="card-text">
+                                    Novels, romance, mystery, sci-fi and fantasy
+                                    books to transport you to new worlds.
+                                </p>
+                                <a
+                                    href="browse.html?category=fiction"
+                                    class="btn btn-primary"
+                                >
+                                    Explore Fiction
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-content text-center">
+                                <div
+                                    style="
+                                        font-size: 3rem;
+                                        color: var(--secondary-gold);
+                                        margin-bottom: 1rem;
+                                    "
+                                >
+                                    <i class="fas fa-graduation-cap"></i>
+                                </div>
+                                <h3 class="card-title">Academic</h3>
+                                <p class="card-text">
+                                    Textbooks, reference materials, and
+                                    educational resources for students and
+                                    professionals.
+                                </p>
+                                <a
+                                    href="browse.html?category=academic"
+                                    class="btn btn-primary"
+                                >
+                                    Browse Academic
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-content text-center">
+                                <div
+                                    style="
+                                        font-size: 3rem;
+                                        color: var(--secondary-gold);
+                                        margin-bottom: 1rem;
+                                    "
+                                >
+                                    <i class="fas fa-briefcase"></i>
+                                </div>
+                                <h3 class="card-title">Business</h3>
+                                <p class="card-text">
+                                    Leadership, entrepreneurship, finance, and
+                                    professional development books.
+                                </p>
+                                <a
+                                    href="browse.html?category=business"
+                                    class="btn btn-primary"
+                                >
+                                    View Business
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-content text-center">
+                                <div
+                                    style="
+                                        font-size: 3rem;
+                                        color: var(--secondary-gold);
+                                        margin-bottom: 1rem;
+                                    "
+                                >
+                                    <i class="fas fa-microscope"></i>
+                                </div>
+                                <h3 class="card-title">Science & Tech</h3>
+                                <p class="card-text">
+                                    Scientific research, technology guides,
+                                    programming, and STEM education.
+                                </p>
+                                <a
+                                    href="browse.html?category=science"
+                                    class="btn btn-primary"
+                                >
+                                    Discover Science
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-content text-center">
+                                <div
+                                    style="
+                                        font-size: 3rem;
+                                        color: var(--secondary-gold);
+                                        margin-bottom: 1rem;
+                                    "
+                                >
+                                    <i class="fas fa-child"></i>
+                                </div>
+                                <h3 class="card-title">Children's</h3>
+                                <p class="card-text">
+                                    Picture books, early readers, young adult
+                                    novels, and educational children's content.
+                                </p>
+                                <a
+                                    href="browse.html?category=children"
+                                    class="btn btn-primary"
+                                >
+                                    Kids' Books
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-content text-center">
+                                <div
+                                    style="
+                                        font-size: 3rem;
+                                        color: var(--secondary-gold);
+                                        margin-bottom: 1rem;
+                                    "
+                                >
+                                    <i class="fas fa-history"></i>
+                                </div>
+                                <h3 class="card-title">History</h3>
+                                <p class="card-text">
+                                    Historical accounts, biographies, memoirs,
+                                    and cultural studies.
+                                </p>
+                                <a
+                                    href="browse.html?category=history"
+                                    class="btn btn-primary"
+                                >
+                                    Explore History
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Why Choose BookMarket Section -->
+            <section class="section" style="background: var(--accent-beige)">
+                <div class="container">
+                    <div class="text-center mb-4">
+                        <h2>Why Choose BookMarket?</h2>
+                        <p>Your trusted partner in the world of books</p>
+                    </div>
+
+                    <div class="features-grid grid grid-3">
+                        <div class="text-center">
+                            <div
+                                style="
+                                    font-size: 3rem;
+                                    color: var(--primary-navy);
+                                    margin-bottom: 1rem;
+                                "
+                            >
+                                <i class="fas fa-shield-alt"></i>
+                            </div>
+                            <h3>Secure & Trusted</h3>
+                            <p>
+                                Safe transactions with buyer and seller
+                                protection. Your personal information is always
+                                secure.
+                            </p>
+                        </div>
+
+                        <div class="text-center">
+                            <div
+                                style="
+                                    font-size: 3rem;
+                                    color: var(--primary-navy);
+                                    margin-bottom: 1rem;
+                                "
+                            >
+                                <i class="fas fa-shipping-fast"></i>
+                            </div>
+                            <h3>Fast Shipping</h3>
+                            <p>
+                                Quick and reliable delivery options. Get your
+                                books delivered right to your doorstep.
+                            </p>
+                        </div>
+
+                        <div class="text-center">
+                            <div
+                                style="
+                                    font-size: 3rem;
+                                    color: var(--primary-navy);
+                                    margin-bottom: 1rem;
+                                "
+                            >
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <h3>Community Driven</h3>
+                            <p>
+                                Connect with fellow book lovers, share reviews,
+                                and discover recommendations from our community.
+                            </p>
+                        </div>
+
+                        <div class="text-center">
+                            <div
+                                style="
+                                    font-size: 3rem;
+                                    color: var(--primary-navy);
+                                    margin-bottom: 1rem;
+                                "
+                            >
+                                <i class="fas fa-dollar-sign"></i>
+                            </div>
+                            <h3>Best Prices</h3>
+                            <p>
+                                Competitive pricing with options for both new
+                                and used books. Save money while expanding your
+                                library.
+                            </p>
+                        </div>
+
+                        <div class="text-center">
+                            <div
+                                style="
+                                    font-size: 3rem;
+                                    color: var(--primary-navy);
+                                    margin-bottom: 1rem;
+                                "
+                            >
+                                <i class="fas fa-search"></i>
+                            </div>
+                            <h3>Easy Search</h3>
+                            <p>
+                                Advanced search and filtering options to help
+                                you find exactly what you're looking for
+                                quickly.
+                            </p>
+                        </div>
+
+                        <div class="text-center">
+                            <div
+                                style="
+                                    font-size: 3rem;
+                                    color: var(--primary-navy);
+                                    margin-bottom: 1rem;
+                                "
+                            >
+                                <i class="fas fa-headset"></i>
+                            </div>
+                            <h3>24/7 Support</h3>
+                            <p>
+                                Our dedicated customer support team is here to
+                                help you with any questions or concerns.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Testimonials Section -->
+            <section class="section">
+                <div class="container">
+                    <div class="text-center mb-4">
+                        <h2>What Our Customers Say</h2>
+                        <p>Join thousands of satisfied book lovers</p>
+                    </div>
+
+                    <div class="testimonials-grid grid grid-3">
+                        <div class="card">
+                            <div class="card-content">
+                                <div class="book-rating mb-2">
+                                    <span class="stars">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                    </span>
+                                </div>
+                                <p class="card-text">
+                                    "BookMarket has been a game-changer for me.
+                                    I've found rare academic books at great
+                                    prices, and selling my old textbooks was so
+                                    easy!"
+                                </p>
+                                <div class="d-flex align-center gap-2">
+                                    <div
+                                        style="
+                                            width: 50px;
+                                            height: 50px;
+                                            background: var(--secondary-gold);
+                                            border-radius: 50%;
+                                            display: flex;
+                                            align-items: center;
+                                            justify-content: center;
+                                            color: white;
+                                            font-weight: bold;
+                                        "
+                                    >
+                                        SJ
+                                    </div>
+                                    <div>
+                                        <strong>Sarah Johnson</strong>
+                                        <br />
+                                        <small class="text-light"
+                                            >Graduate Student</small
+                                        >
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-content">
+                                <div class="book-rating mb-2">
+                                    <span class="stars">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                    </span>
+                                </div>
+                                <p class="card-text">
+                                    "The quality of books is exactly as
+                                    described, and the shipping is super fast.
+                                    I've recommended BookMarket to all my book
+                                    club friends."
+                                </p>
+                                <div class="d-flex align-center gap-2">
+                                    <div
+                                        style="
+                                            width: 50px;
+                                            height: 50px;
+                                            background: var(--primary-navy);
+                                            border-radius: 50%;
+                                            display: flex;
+                                            align-items: center;
+                                            justify-content: center;
+                                            color: white;
+                                            font-weight: bold;
+                                        "
+                                    >
+                                        MT
+                                    </div>
+                                    <div>
+                                        <strong>Michael Thompson</strong>
+                                        <br />
+                                        <small class="text-light"
+                                            >Book Enthusiast</small
+                                        >
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-content">
+                                <div class="book-rating mb-2">
+                                    <span class="stars">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                    </span>
+                                </div>
+                                <p class="card-text">
+                                    "As a teacher, I love how easy it is to find
+                                    educational materials. The platform is
+                                    user-friendly and the community is amazing."
+                                </p>
+                                <div class="d-flex align-center gap-2">
+                                    <div
+                                        style="
+                                            width: 50px;
+                                            height: 50px;
+                                            background: var(--secondary-gold);
+                                            border-radius: 50%;
+                                            display: flex;
+                                            align-items: center;
+                                            justify-content: center;
+                                            color: white;
+                                            font-weight: bold;
+                                        "
+                                    >
+                                        ER
+                                    </div>
+                                    <div>
+                                        <strong>Emily Rodriguez</strong>
+                                        <br />
+                                        <small class="text-light"
+                                            >Elementary Teacher</small
+                                        >
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Newsletter Section -->
+            <section
+                class="section"
+                style="background: var(--primary-navy); color: white"
+            >
+                <div class="container text-center">
+                    <h2 style="color: white">Stay Updated</h2>
+                    <p
+                        style="
+                            color: rgba(255, 255, 255, 0.8);
+                            margin-bottom: 2rem;
+                        "
+                    >
+                        Subscribe to our newsletter for the latest book
+                        arrivals, exclusive deals, and reading recommendations.
                     </p>
+
+                    <form
+                        class="newsletter-form"
+                        style="max-width: 500px; margin: 0 auto"
+                    >
+                        <div style="display: flex; gap: 1rem; flex-wrap: wrap">
+                            <input
+                                type="email"
+                                placeholder="Enter your email address"
+                                required
+                                style="
+                                    flex: 1;
+                                    min-width: 250px;
+                                    padding: 1rem;
+                                    border: none;
+                                    border-radius: var(--border-radius);
+                                    font-size: 1rem;
+                                "
+                            />
+                            <button type="submit" class="btn btn-secondary">
+                                <i class="fas fa-paper-plane"></i>
+                                Subscribe
+                            </button>
+                        </div>
+                        <p
+                            style="
+                                font-size: 0.9rem;
+                                color: rgba(255, 255, 255, 0.6);
+                                margin-top: 1rem;
+                            "
+                        >
+                            We respect your privacy. Unsubscribe at any time.
+                        </p>
+                    </form>
                 </div>
-
-                <div class="row">
-                    <div class="col-3">
-                        <div class="category-card">
-                            <h4>Fiction</h4>
-                            <p>Novels, short stories, and literary works</p>
-                            <a
-                                href="search.html?category=fiction"
-                                class="btn btn-primary"
-                                >Browse Fiction</a
-                            >
-                        </div>
-                    </div>
-
-                    <div class="col-3">
-                        <div class="category-card">
-                            <h4>Non-Fiction</h4>
-                            <p>Biographies, memoirs, and factual books</p>
-                            <a
-                                href="search.html?category=non-fiction"
-                                class="btn btn-primary"
-                                >Browse Non-Fiction</a
-                            >
-                        </div>
-                    </div>
-
-                    <div class="col-3">
-                        <div class="category-card">
-                            <h4>Educational</h4>
-                            <p>Textbooks and educational materials</p>
-                            <a
-                                href="search.html?category=educational"
-                                class="btn btn-primary"
-                                >Browse Educational</a
-                            >
-                        </div>
-                    </div>
-
-                    <div class="col-3">
-                        <div class="category-card">
-                            <h4>Children's Books</h4>
-                            <p>Books for young readers of all ages</p>
-                            <a
-                                href="search.html?category=children"
-                                class="btn btn-primary"
-                                >Browse Children's</a
-                            >
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- How It Works Section -->
-        <section class="section">
-            <div class="container">
-                <div class="section-header">
-                    <h2 class="section-title">How BookMarket Works</h2>
-                    <p class="section-subtitle">
-                        Simple steps to buy and sell books
-                    </p>
-                </div>
-
-                <div class="row">
-                    <div class="col-4">
-                        <div class="step-card text-center">
-                            <div class="step-number">1</div>
-                            <h4>Browse & Search</h4>
-                            <p>
-                                Find books by title, author, genre, or use our
-                                advanced search filters
-                            </p>
-                        </div>
-                    </div>
-
-                    <div class="col-4">
-                        <div class="step-card text-center">
-                            <div class="step-number">2</div>
-                            <h4>Add to Cart</h4>
-                            <p>
-                                Select the books you want and add them to your
-                                shopping cart
-                            </p>
-                        </div>
-                    </div>
-
-                    <div class="col-4">
-                        <div class="step-card text-center">
-                            <div class="step-number">3</div>
-                            <h4>Secure Checkout</h4>
-                            <p>
-                                Complete your purchase with our secure payment
-                                system
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
+            </section>
+        </main>
 
         <!-- Footer -->
-        <footer class="footer">
-            <div class="container">
-                <div class="footer-content">
-                    <div class="footer-section">
-                        <h4>BookMarket</h4>
-                        <p>
-                            Your premium online marketplace for buying and
-                            selling books. Discover, connect, and trade with
-                            book lovers worldwide.
-                        </p>
-                        <div class="social-links">
-                            <a href="#" aria-label="Facebook">📘</a>
-                            <a href="#" aria-label="Twitter">🐦</a>
-                            <a href="#" aria-label="Instagram">📷</a>
-                        </div>
-                    </div>
+        <div id="footer-container"></div>
 
-                    <div class="footer-section">
-                        <h4>Quick Links</h4>
-                        <ul class="footer-links">
-                            <li><a href="search.html">Browse Books</a></li>
-                            <li><a href="add-book.html">Sell Books</a></li>
-                            <li><a href="cart.html">Shopping Cart</a></li>
-                            <li><a href="profile.html">My Account</a></li>
-                        </ul>
-                    </div>
+        <!-- JavaScript -->
+        <script src="js/main.js"></script>
+        <script>
+            // Load navigation and footer with proper auth state
+            loadNavbarAndInitialize();
 
-                    <div class="footer-section">
-                        <h4>Support</h4>
-                        <ul class="footer-links">
-                            <li><a href="#">Help Center</a></li>
-                            <li><a href="#">Contact Us</a></li>
-                            <li><a href="#">Shipping Info</a></li>
-                            <li><a href="#">Returns</a></li>
-                        </ul>
-                    </div>
+            fetch("common/components/footer-root.html")
+                .then((response) => response.text())
+                .then((data) => {
+                    document.getElementById("footer-container").innerHTML =
+                        data;
+                });
 
-                    <div class="footer-section">
-                        <h4>Legal</h4>
-                        <ul class="footer-links">
-                            <li><a href="#">Terms & Conditions</a></li>
-                            <li><a href="#">Privacy Policy</a></li>
-                            <li><a href="#">Cookie Policy</a></li>
-                            <li><a href="#">GDPR</a></li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="footer-bottom">
-                    <p>
-                        &copy; 2024 BookMarket. All rights reserved. | Built
-                        with ❤️ for book lovers
-                    </p>
-                </div>
-            </div>
-        </footer>
-
-        <script src="scripts/main.js"></script>
+            // Load featured books
+            document.addEventListener("DOMContentLoaded", function () {
+                const featuredContainer =
+                    document.getElementById("featured-books");
+                if (featuredContainer && window.sampleBooks) {
+                    // Show first 4 books as featured
+                    const featuredBooks = window.sampleBooks.slice(0, 4);
+                    featuredContainer.innerHTML = featuredBooks
+                        .map((book) => generateBookCard(book))
+                        .join("");
+                }
+            });
+        </script>
     </body>
 </html>

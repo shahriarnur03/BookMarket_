@@ -1,0 +1,1301 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Add Book Listing - BookMarket</title>
+        <meta
+            name="description"
+            content="List your book for sale on BookMarket. Add details, photos, and pricing to reach thousands of potential buyers."
+        />
+
+        <!-- CSS -->
+        <link rel="stylesheet" href="../css/styles.css" />
+
+        <!-- FontAwesome -->
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        />
+
+        <!-- Favicon -->
+        <link rel="icon" type="image/x-icon" href="../assets/img/favicon.ico" />
+    </head>
+    <body>
+        <!-- Navigation -->
+        <div id="navbar-container"></div>
+
+        <!-- Main Content -->
+        <main
+            style="
+                padding-top: 100px;
+                min-height: 100vh;
+                background: var(--light-gray);
+            "
+        >
+            <div class="container">
+                <!-- Page Header -->
+                <div class="text-center mb-4" style="padding: 2rem 0">
+                    <h1>List Your Book for Sale</h1>
+                    <p
+                        style="
+                            font-size: 1.1rem;
+                            color: var(--text-light);
+                            max-width: 600px;
+                            margin: 0 auto;
+                        "
+                    >
+                        Fill out the form below to create your book listing.
+                        Good photos and detailed descriptions help your book
+                        sell faster!
+                    </p>
+                </div>
+
+                <div style="max-width: 800px; margin: 0 auto">
+                    <!-- Progress Indicator -->
+                    <div
+                        class="progress-indicator mb-4"
+                        style="
+                            background: white;
+                            padding: 1.5rem;
+                            border-radius: var(--border-radius);
+                            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+                        "
+                    >
+                        <div
+                            style="
+                                display: flex;
+                                justify-content: space-between;
+                                align-items: center;
+                            "
+                        >
+                            <div
+                                class="progress-step active"
+                                style="
+                                    display: flex;
+                                    align-items: center;
+                                    gap: 0.5rem;
+                                "
+                            >
+                                <div
+                                    style="
+                                        width: 30px;
+                                        height: 30px;
+                                        background: var(--secondary-gold);
+                                        border-radius: 50%;
+                                        display: flex;
+                                        align-items: center;
+                                        justify-content: center;
+                                        color: white;
+                                        font-weight: bold;
+                                    "
+                                >
+                                    1
+                                </div>
+                                <span style="font-weight: 500"
+                                    >Book Details</span
+                                >
+                            </div>
+                            <div
+                                style="
+                                    flex: 1;
+                                    height: 2px;
+                                    background: var(--border-gray);
+                                    margin: 0 1rem;
+                                "
+                            ></div>
+                            <div
+                                class="progress-step"
+                                style="
+                                    display: flex;
+                                    align-items: center;
+                                    gap: 0.5rem;
+                                    color: var(--text-light);
+                                "
+                            >
+                                <div
+                                    style="
+                                        width: 30px;
+                                        height: 30px;
+                                        background: var(--border-gray);
+                                        border-radius: 50%;
+                                        display: flex;
+                                        align-items: center;
+                                        justify-content: center;
+                                        color: white;
+                                        font-weight: bold;
+                                    "
+                                >
+                                    2
+                                </div>
+                                <span>Preview & Publish</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Main Form -->
+                    <div class="card">
+                        <div class="card-content" style="padding: 3rem">
+                            <form id="addBookForm" class="fade-in-up">
+                                <!-- Book Information Section -->
+                                <div class="form-section mb-4">
+                                    <h3
+                                        style="
+                                            color: var(--primary-navy);
+                                            margin-bottom: 1.5rem;
+                                            display: flex;
+                                            align-items: center;
+                                            gap: 0.5rem;
+                                        "
+                                    >
+                                        <i class="fas fa-book"></i>
+                                        Book Information
+                                    </h3>
+
+                                    <div
+                                        class="form-row"
+                                        style="
+                                            display: grid;
+                                            grid-template-columns: 1fr 1fr;
+                                            gap: 1rem;
+                                        "
+                                    >
+                                        <div class="form-group">
+                                            <label
+                                                for="title"
+                                                class="form-label"
+                                            >
+                                                Book Title *
+                                            </label>
+                                            <input
+                                                type="text"
+                                                id="title"
+                                                name="title"
+                                                class="form-input"
+                                                placeholder="Enter the full book title"
+                                                required
+                                            />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label
+                                                for="author"
+                                                class="form-label"
+                                            >
+                                                Author *
+                                            </label>
+                                            <input
+                                                type="text"
+                                                id="author"
+                                                name="author"
+                                                class="form-input"
+                                                placeholder="Author's name"
+                                                required
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div
+                                        class="form-row"
+                                        style="
+                                            display: grid;
+                                            grid-template-columns: 1fr 1fr 1fr;
+                                            gap: 1rem;
+                                        "
+                                    >
+                                        <div class="form-group">
+                                            <label
+                                                for="isbn"
+                                                class="form-label"
+                                            >
+                                                ISBN (Optional)
+                                            </label>
+                                            <input
+                                                type="text"
+                                                id="isbn"
+                                                name="isbn"
+                                                class="form-input"
+                                                placeholder="ISBN-10 or ISBN-13"
+                                            />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label
+                                                for="publisher"
+                                                class="form-label"
+                                            >
+                                                Publisher
+                                            </label>
+                                            <input
+                                                type="text"
+                                                id="publisher"
+                                                name="publisher"
+                                                class="form-input"
+                                                placeholder="Publisher name"
+                                            />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label
+                                                for="edition"
+                                                class="form-label"
+                                            >
+                                                Edition
+                                            </label>
+                                            <input
+                                                type="text"
+                                                id="edition"
+                                                name="edition"
+                                                class="form-input"
+                                                placeholder="e.g., 5th Edition"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label
+                                            for="description"
+                                            class="form-label"
+                                        >
+                                            Description *
+                                        </label>
+                                        <textarea
+                                            id="description"
+                                            name="description"
+                                            class="form-textarea"
+                                            placeholder="Describe the book's content, condition, and any additional details that would help buyers..."
+                                            required
+                                            rows="4"
+                                        ></textarea>
+                                        <small
+                                            style="
+                                                color: var(--text-light);
+                                                font-size: 0.9rem;
+                                            "
+                                        >
+                                            <i class="fas fa-lightbulb"></i>
+                                            Tip: Mention if it's a rental book,
+                                            has highlighting, or includes access
+                                            codes
+                                        </small>
+                                    </div>
+                                </div>
+
+                                <!-- Category and Condition Section -->
+                                <div class="form-section mb-4">
+                                    <h3
+                                        style="
+                                            color: var(--primary-navy);
+                                            margin-bottom: 1.5rem;
+                                            display: flex;
+                                            align-items: center;
+                                            gap: 0.5rem;
+                                        "
+                                    >
+                                        <i class="fas fa-tags"></i>
+                                        Category & Condition
+                                    </h3>
+
+                                    <div
+                                        class="form-row"
+                                        style="
+                                            display: grid;
+                                            grid-template-columns: 1fr 1fr;
+                                            gap: 1rem;
+                                        "
+                                    >
+                                        <div class="form-group">
+                                            <label
+                                                for="category"
+                                                class="form-label"
+                                            >
+                                                Category *
+                                            </label>
+                                            <select
+                                                id="category"
+                                                name="category"
+                                                class="form-select"
+                                                required
+                                            >
+                                                <option value="">
+                                                    Select a category
+                                                </option>
+                                                <option value="fiction">
+                                                    Fiction
+                                                </option>
+                                                <option value="academic">
+                                                    Academic & Textbooks
+                                                </option>
+                                                <option value="business">
+                                                    Business
+                                                </option>
+                                                <option value="science">
+                                                    Science & Technology
+                                                </option>
+                                                <option value="children">
+                                                    Children's Books
+                                                </option>
+                                                <option value="history">
+                                                    History
+                                                </option>
+                                                <option value="self-help">
+                                                    Self Help
+                                                </option>
+                                                <option value="biography">
+                                                    Biography
+                                                </option>
+                                                <option value="health">
+                                                    Health & Fitness
+                                                </option>
+                                                <option value="art">
+                                                    Art & Design
+                                                </option>
+                                                <option value="cooking">
+                                                    Cooking
+                                                </option>
+                                                <option value="travel">
+                                                    Travel
+                                                </option>
+                                                <option value="other">
+                                                    Other
+                                                </option>
+                                            </select>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label
+                                                for="condition"
+                                                class="form-label"
+                                            >
+                                                Condition *
+                                            </label>
+                                            <select
+                                                id="condition"
+                                                name="condition"
+                                                class="form-select"
+                                                required
+                                            >
+                                                <option value="">
+                                                    Select condition
+                                                </option>
+                                                <option value="new">
+                                                    New - Never used
+                                                </option>
+                                                <option value="excellent">
+                                                    Excellent - Like new,
+                                                    minimal wear
+                                                </option>
+                                                <option value="good">
+                                                    Good - Normal wear, fully
+                                                    readable
+                                                </option>
+                                                <option value="fair">
+                                                    Fair - Heavy wear but usable
+                                                </option>
+                                                <option value="poor">
+                                                    Poor - Significant damage
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div
+                                        class="condition-details"
+                                        style="
+                                            background: var(--light-gray);
+                                            padding: 1.5rem;
+                                            border-radius: var(--border-radius);
+                                            margin-top: 1rem;
+                                        "
+                                    >
+                                        <h4
+                                            style="
+                                                margin-bottom: 1rem;
+                                                color: var(--primary-navy);
+                                            "
+                                        >
+                                            Condition Guidelines
+                                        </h4>
+                                        <div
+                                            style="
+                                                display: grid;
+                                                grid-template-columns: repeat(
+                                                    auto-fit,
+                                                    minmax(200px, 1fr)
+                                                );
+                                                gap: 1rem;
+                                                font-size: 0.9rem;
+                                            "
+                                        >
+                                            <div>
+                                                <strong
+                                                    style="
+                                                        color: var(--success);
+                                                    "
+                                                    >New:</strong
+                                                >
+                                                Unopened, no markings
+                                            </div>
+                                            <div>
+                                                <strong
+                                                    style="
+                                                        color: var(--success);
+                                                    "
+                                                    >Excellent:</strong
+                                                >
+                                                Minimal shelf wear
+                                            </div>
+                                            <div>
+                                                <strong
+                                                    style="
+                                                        color: var(--warning);
+                                                    "
+                                                    >Good:</strong
+                                                >
+                                                Some highlighting OK
+                                            </div>
+                                            <div>
+                                                <strong
+                                                    style="
+                                                        color: var(--warning);
+                                                    "
+                                                    >Fair:</strong
+                                                >
+                                                Heavy wear, readable
+                                            </div>
+                                            <div>
+                                                <strong
+                                                    style="color: var(--error)"
+                                                    >Poor:</strong
+                                                >
+                                                Missing pages, damaged
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Images Section -->
+                                <div class="form-section mb-4">
+                                    <h3
+                                        style="
+                                            color: var(--primary-navy);
+                                            margin-bottom: 1.5rem;
+                                            display: flex;
+                                            align-items: center;
+                                            gap: 0.5rem;
+                                        "
+                                    >
+                                        <i class="fas fa-camera"></i>
+                                        Book Images
+                                    </h3>
+
+                                    <div class="image-upload-section">
+                                        <div
+                                            class="image-upload-grid"
+                                            style="
+                                                display: grid;
+                                                grid-template-columns: repeat(
+                                                    auto-fit,
+                                                    minmax(150px, 1fr)
+                                                );
+                                                gap: 1rem;
+                                                margin-bottom: 1rem;
+                                            "
+                                        >
+                                            <div class="image-upload-item">
+                                                <label
+                                                    for="mainImage"
+                                                    class="image-upload-label"
+                                                    style="
+                                                        display: block;
+                                                        border: 2px dashed
+                                                            var(--border-gray);
+                                                        border-radius: var(
+                                                            --border-radius
+                                                        );
+                                                        padding: 2rem 1rem;
+                                                        text-align: center;
+                                                        cursor: pointer;
+                                                        transition: var(
+                                                            --transition
+                                                        );
+                                                    "
+                                                >
+                                                    <i
+                                                        class="fas fa-plus"
+                                                        style="
+                                                            font-size: 2rem;
+                                                            color: var(
+                                                                --text-light
+                                                            );
+                                                            margin-bottom: 0.5rem;
+                                                            display: block;
+                                                        "
+                                                    ></i>
+                                                    <span
+                                                        style="
+                                                            color: var(
+                                                                --text-light
+                                                            );
+                                                            font-size: 0.9rem;
+                                                        "
+                                                        >Main Image *</span
+                                                    >
+                                                    <input
+                                                        type="file"
+                                                        id="mainImage"
+                                                        name="mainImage"
+                                                        accept="image/*"
+                                                        style="display: none"
+                                                        required
+                                                    />
+                                                </label>
+                                                <div
+                                                    class="image-preview"
+                                                    id="mainImagePreview"
+                                                ></div>
+                                            </div>
+
+                                            <div class="image-upload-item">
+                                                <label
+                                                    for="image2"
+                                                    class="image-upload-label"
+                                                    style="
+                                                        display: block;
+                                                        border: 2px dashed
+                                                            var(--border-gray);
+                                                        border-radius: var(
+                                                            --border-radius
+                                                        );
+                                                        padding: 2rem 1rem;
+                                                        text-align: center;
+                                                        cursor: pointer;
+                                                        transition: var(
+                                                            --transition
+                                                        );
+                                                    "
+                                                >
+                                                    <i
+                                                        class="fas fa-plus"
+                                                        style="
+                                                            font-size: 2rem;
+                                                            color: var(
+                                                                --text-light
+                                                            );
+                                                            margin-bottom: 0.5rem;
+                                                            display: block;
+                                                        "
+                                                    ></i>
+                                                    <span
+                                                        style="
+                                                            color: var(
+                                                                --text-light
+                                                            );
+                                                            font-size: 0.9rem;
+                                                        "
+                                                        >Back Cover</span
+                                                    >
+                                                    <input
+                                                        type="file"
+                                                        id="image2"
+                                                        name="image2"
+                                                        accept="image/*"
+                                                        style="display: none"
+                                                    />
+                                                </label>
+                                                <div
+                                                    class="image-preview"
+                                                    id="image2Preview"
+                                                ></div>
+                                            </div>
+
+                                            <div class="image-upload-item">
+                                                <label
+                                                    for="image3"
+                                                    class="image-upload-label"
+                                                    style="
+                                                        display: block;
+                                                        border: 2px dashed
+                                                            var(--border-gray);
+                                                        border-radius: var(
+                                                            --border-radius
+                                                        );
+                                                        padding: 2rem 1rem;
+                                                        text-align: center;
+                                                        cursor: pointer;
+                                                        transition: var(
+                                                            --transition
+                                                        );
+                                                    "
+                                                >
+                                                    <i
+                                                        class="fas fa-plus"
+                                                        style="
+                                                            font-size: 2rem;
+                                                            color: var(
+                                                                --text-light
+                                                            );
+                                                            margin-bottom: 0.5rem;
+                                                            display: block;
+                                                        "
+                                                    ></i>
+                                                    <span
+                                                        style="
+                                                            color: var(
+                                                                --text-light
+                                                            );
+                                                            font-size: 0.9rem;
+                                                        "
+                                                        >Inside Pages</span
+                                                    >
+                                                    <input
+                                                        type="file"
+                                                        id="image3"
+                                                        name="image3"
+                                                        accept="image/*"
+                                                        style="display: none"
+                                                    />
+                                                </label>
+                                                <div
+                                                    class="image-preview"
+                                                    id="image3Preview"
+                                                ></div>
+                                            </div>
+                                        </div>
+
+                                        <div
+                                            style="
+                                                background: var(--accent-beige);
+                                                padding: 1rem;
+                                                border-radius: var(
+                                                    --border-radius
+                                                );
+                                                font-size: 0.9rem;
+                                            "
+                                        >
+                                            <strong
+                                                style="
+                                                    color: var(--primary-navy);
+                                                "
+                                                >Photo Tips:</strong
+                                            >
+                                            <ul
+                                                style="
+                                                    margin: 0.5rem 0 0 1rem;
+                                                    color: var(--text-dark);
+                                                "
+                                            >
+                                                <li>
+                                                    Use good lighting and clear
+                                                    focus
+                                                </li>
+                                                <li>
+                                                    Show any damage or wear
+                                                    honestly
+                                                </li>
+                                                <li>
+                                                    Include spine and back cover
+                                                    if available
+                                                </li>
+                                                <li>
+                                                    Maximum file size: 5MB per
+                                                    image
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Pricing Section -->
+                                <div class="form-section mb-4">
+                                    <h3
+                                        style="
+                                            color: var(--primary-navy);
+                                            margin-bottom: 1.5rem;
+                                            display: flex;
+                                            align-items: center;
+                                            gap: 0.5rem;
+                                        "
+                                    >
+                                        <i class="fas fa-dollar-sign"></i>
+                                        Pricing & Shipping
+                                    </h3>
+
+                                    <div
+                                        class="form-row"
+                                        style="
+                                            display: grid;
+                                            grid-template-columns: 1fr 1fr;
+                                            gap: 1rem;
+                                        "
+                                    >
+                                        <div class="form-group">
+                                            <label
+                                                for="price"
+                                                class="form-label"
+                                            >
+                                                Your Price *
+                                            </label>
+                                            <div style="position: relative">
+                                                <span
+                                                    style="
+                                                        position: absolute;
+                                                        left: 1rem;
+                                                        top: 50%;
+                                                        transform: translateY(
+                                                            -50%
+                                                        );
+                                                        color: var(
+                                                            --text-light
+                                                        );
+                                                    "
+                                                    >$</span
+                                                >
+                                                <input
+                                                    type="number"
+                                                    id="price"
+                                                    name="price"
+                                                    class="form-input"
+                                                    style="padding-left: 2rem"
+                                                    placeholder="0.00"
+                                                    step="0.01"
+                                                    min="0.01"
+                                                    required
+                                                />
+                                            </div>
+                                            <small
+                                                style="
+                                                    color: var(--text-light);
+                                                    font-size: 0.8rem;
+                                                "
+                                            >
+                                                You'll receive ~$<span
+                                                    id="estimatedEarning"
+                                                    >0.00</span
+                                                >
+                                                after fees (5%)
+                                            </small>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label
+                                                for="shipping"
+                                                class="form-label"
+                                            >
+                                                Shipping
+                                            </label>
+                                            <select
+                                                id="shipping"
+                                                name="shipping"
+                                                class="form-select"
+                                            >
+                                                <option value="free">
+                                                    Free Shipping (I'll cover
+                                                    it)
+                                                </option>
+                                                <option value="buyer">
+                                                    Buyer Pays Shipping
+                                                </option>
+                                                <option value="calculated">
+                                                    Calculate Based on Location
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div
+                                        class="pricing-suggestions"
+                                        style="
+                                            background: var(--light-gray);
+                                            padding: 1.5rem;
+                                            border-radius: var(--border-radius);
+                                            margin-top: 1rem;
+                                        "
+                                    >
+                                        <h4
+                                            style="
+                                                margin-bottom: 1rem;
+                                                color: var(--primary-navy);
+                                            "
+                                        >
+                                            Pricing Suggestions
+                                        </h4>
+                                        <div
+                                            style="
+                                                display: grid;
+                                                grid-template-columns: repeat(
+                                                    auto-fit,
+                                                    minmax(150px, 1fr)
+                                                );
+                                                gap: 1rem;
+                                                font-size: 0.9rem;
+                                            "
+                                        >
+                                            <div class="text-center">
+                                                <strong
+                                                    style="
+                                                        color: var(--success);
+                                                    "
+                                                    >New Books</strong
+                                                >
+                                                <p
+                                                    style="
+                                                        margin: 0;
+                                                        color: var(
+                                                            --text-light
+                                                        );
+                                                    "
+                                                >
+                                                    70-90% of retail
+                                                </p>
+                                            </div>
+                                            <div class="text-center">
+                                                <strong
+                                                    style="
+                                                        color: var(--warning);
+                                                    "
+                                                    >Excellent</strong
+                                                >
+                                                <p
+                                                    style="
+                                                        margin: 0;
+                                                        color: var(
+                                                            --text-light
+                                                        );
+                                                    "
+                                                >
+                                                    50-70% of retail
+                                                </p>
+                                            </div>
+                                            <div class="text-center">
+                                                <strong
+                                                    style="
+                                                        color: var(--warning);
+                                                    "
+                                                    >Good</strong
+                                                >
+                                                <p
+                                                    style="
+                                                        margin: 0;
+                                                        color: var(
+                                                            --text-light
+                                                        );
+                                                    "
+                                                >
+                                                    30-50% of retail
+                                                </p>
+                                            </div>
+                                            <div class="text-center">
+                                                <strong
+                                                    style="color: var(--error)"
+                                                    >Fair/Poor</strong
+                                                >
+                                                <p
+                                                    style="
+                                                        margin: 0;
+                                                        color: var(
+                                                            --text-light
+                                                        );
+                                                    "
+                                                >
+                                                    10-30% of retail
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Additional Information -->
+                                <div class="form-section mb-4">
+                                    <h3
+                                        style="
+                                            color: var(--primary-navy);
+                                            margin-bottom: 1.5rem;
+                                            display: flex;
+                                            align-items: center;
+                                            gap: 0.5rem;
+                                        "
+                                    >
+                                        <i class="fas fa-info-circle"></i>
+                                        Additional Information
+                                    </h3>
+
+                                    <div class="form-group">
+                                        <div
+                                            style="
+                                                display: grid;
+                                                grid-template-columns: repeat(
+                                                    auto-fit,
+                                                    minmax(250px, 1fr)
+                                                );
+                                                gap: 1rem;
+                                            "
+                                        >
+                                            <label class="form-checkbox">
+                                                <input
+                                                    type="checkbox"
+                                                    name="features"
+                                                    value="access-codes"
+                                                />
+                                                <span
+                                                    >Includes online access
+                                                    codes</span
+                                                >
+                                            </label>
+                                            <label class="form-checkbox">
+                                                <input
+                                                    type="checkbox"
+                                                    name="features"
+                                                    value="cd-dvd"
+                                                />
+                                                <span>Includes CD/DVD</span>
+                                            </label>
+                                            <label class="form-checkbox">
+                                                <input
+                                                    type="checkbox"
+                                                    name="features"
+                                                    value="highlighting"
+                                                />
+                                                <span
+                                                    >Contains
+                                                    highlighting/notes</span
+                                                >
+                                            </label>
+                                            <label class="form-checkbox">
+                                                <input
+                                                    type="checkbox"
+                                                    name="features"
+                                                    value="rental"
+                                                />
+                                                <span>Former rental book</span>
+                                            </label>
+                                            <label class="form-checkbox">
+                                                <input
+                                                    type="checkbox"
+                                                    name="features"
+                                                    value="international"
+                                                />
+                                                <span
+                                                    >International edition</span
+                                                >
+                                            </label>
+                                            <label class="form-checkbox">
+                                                <input
+                                                    type="checkbox"
+                                                    name="features"
+                                                    value="instructor"
+                                                />
+                                                <span
+                                                    >Instructor's edition</span
+                                                >
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Terms and Submit -->
+                                <div class="form-section">
+                                    <div class="form-group">
+                                        <label class="form-checkbox">
+                                            <input
+                                                type="checkbox"
+                                                id="terms"
+                                                name="terms"
+                                                required
+                                            />
+                                            <span
+                                                >I agree to BookMarket's
+                                                <a
+                                                    href="#"
+                                                    style="
+                                                        color: var(
+                                                            --secondary-gold
+                                                        );
+                                                    "
+                                                    >Seller Terms</a
+                                                >
+                                                and confirm that I own this book
+                                                and have the right to sell it.
+                                            </span>
+                                        </label>
+                                    </div>
+
+                                    <div
+                                        class="form-actions"
+                                        style="
+                                            display: flex;
+                                            gap: 1rem;
+                                            justify-content: space-between;
+                                            margin-top: 2rem;
+                                        "
+                                    >
+                                        <a
+                                            href="sell-book.html"
+                                            class="btn btn-outline"
+                                        >
+                                            <i class="fas fa-arrow-left"></i>
+                                            Back
+                                        </a>
+                                        <div style="display: flex; gap: 1rem">
+                                            <button
+                                                type="button"
+                                                class="btn btn-outline"
+                                                id="saveDraftBtn"
+                                            >
+                                                <i class="fas fa-save"></i>
+                                                Save Draft
+                                            </button>
+                                            <button
+                                                type="submit"
+                                                class="btn btn-primary"
+                                            >
+                                                <i class="fas fa-eye"></i>
+                                                Preview & Publish
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Help Section -->
+                    <div
+                        class="help-section mt-4"
+                        style="
+                            background: white;
+                            padding: 2rem;
+                            border-radius: var(--border-radius);
+                            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+                        "
+                    >
+                        <h3
+                            style="
+                                color: var(--primary-navy);
+                                margin-bottom: 1rem;
+                            "
+                        >
+                            <i class="fas fa-question-circle"></i>
+                            Need Help?
+                        </h3>
+                        <div
+                            style="
+                                display: grid;
+                                grid-template-columns: repeat(
+                                    auto-fit,
+                                    minmax(250px, 1fr)
+                                );
+                                gap: 1.5rem;
+                            "
+                        >
+                            <div>
+                                <h4
+                                    style="
+                                        color: var(--secondary-gold);
+                                        margin-bottom: 0.5rem;
+                                    "
+                                >
+                                    Pricing Guide
+                                </h4>
+                                <p
+                                    style="
+                                        color: var(--text-light);
+                                        font-size: 0.9rem;
+                                    "
+                                >
+                                    Check current market prices for similar
+                                    books to set competitive pricing.
+                                </p>
+                            </div>
+                            <div>
+                                <h4
+                                    style="
+                                        color: var(--secondary-gold);
+                                        margin-bottom: 0.5rem;
+                                    "
+                                >
+                                    Photo Tips
+                                </h4>
+                                <p
+                                    style="
+                                        color: var(--text-light);
+                                        font-size: 0.9rem;
+                                    "
+                                >
+                                    Good photos increase your chances of selling
+                                    by up to 3x.
+                                </p>
+                            </div>
+                            <div>
+                                <h4
+                                    style="
+                                        color: var(--secondary-gold);
+                                        margin-bottom: 0.5rem;
+                                    "
+                                >
+                                    Contact Support
+                                </h4>
+                                <p
+                                    style="
+                                        color: var(--text-light);
+                                        font-size: 0.9rem;
+                                    "
+                                >
+                                    Our seller support team is available 24/7 to
+                                    help you succeed.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <div id="footer-container"></div>
+
+        <!-- JavaScript -->
+        <script src="../js/main.js"></script>
+        <script>
+            // Load navigation and footer with proper auth state
+            loadNavbarAndInitialize();
+
+            fetch("../components/footer.html")
+                .then((response) => response.text())
+                .then((data) => {
+                    document.getElementById("footer-container").innerHTML =
+                        data;
+                });
+
+            // Calculate estimated earnings
+            document.addEventListener("DOMContentLoaded", function () {
+                const priceInput = document.getElementById("price");
+                const estimatedEarning =
+                    document.getElementById("estimatedEarning");
+
+                priceInput.addEventListener("input", function () {
+                    const price = parseFloat(this.value) || 0;
+                    const earning = (price * 0.95).toFixed(2); // 5% fee
+                    estimatedEarning.textContent = earning;
+                });
+
+                // Save draft functionality
+                const saveDraftBtn = document.getElementById("saveDraftBtn");
+                saveDraftBtn.addEventListener("click", function () {
+                    const formData = new FormData(
+                        document.getElementById("addBookForm")
+                    );
+                    const draftData = {};
+
+                    for (let [key, value] of formData.entries()) {
+                        draftData[key] = value;
+                    }
+
+                    localStorage.setItem(
+                        "bookDraft",
+                        JSON.stringify(draftData)
+                    );
+                    showAlert("Draft saved successfully!", "success");
+                });
+
+                // Load draft if exists
+                const savedDraft = localStorage.getItem("bookDraft");
+                if (savedDraft) {
+                    const draftData = JSON.parse(savedDraft);
+                    for (let key in draftData) {
+                        const input = document.querySelector(`[name="${key}"]`);
+                        if (input && input.type !== "file") {
+                            input.value = draftData[key];
+                        }
+                    }
+                }
+            });
+
+            // Enhanced image upload preview
+            document.addEventListener("DOMContentLoaded", function () {
+                const imageInputs = ["mainImage", "image2", "image3"];
+
+                imageInputs.forEach((inputId) => {
+                    const input = document.getElementById(inputId);
+                    const preview = document.getElementById(
+                        inputId + "Preview"
+                    );
+                    const label = input.parentNode;
+
+                    input.addEventListener("change", function (e) {
+                        const file = e.target.files[0];
+
+                        if (file) {
+                            // Validate file size (5MB limit)
+                            if (file.size > 5 * 1024 * 1024) {
+                                showAlert(
+                                    "Image size must be less than 5MB",
+                                    "error"
+                                );
+                                this.value = "";
+                                return;
+                            }
+
+                            const reader = new FileReader();
+                            reader.onload = function (e) {
+                                preview.innerHTML = `
+                                <div style="position: relative; margin-top: 0.5rem;">
+                                    <img src="${e.target.result}" alt="Preview" 
+                                         style="width: 100%; height: 150px; object-fit: cover; border-radius: 8px;">
+                                    <button type="button" class="remove-image" 
+                                            style="position: absolute; top: 5px; right: 5px; width: 25px; height: 25px; 
+                                                   background: var(--error); color: white; border: none; border-radius: 50%; 
+                                                   cursor: pointer; display: flex; align-items: center; justify-content: center;">
+                                        <i class="fas fa-times" style="font-size: 0.8rem;"></i>
+                                    </button>
+                                    <p style="margin: 0.5rem 0 0; font-size: 0.8rem; color: var(--text-light); text-align: center;">
+                                        ${file.name}
+                                    </p>
+                                </div>
+                            `;
+
+                                // Add remove functionality
+                                preview
+                                    .querySelector(".remove-image")
+                                    .addEventListener("click", function () {
+                                        input.value = "";
+                                        preview.innerHTML = "";
+                                        label.style.display = "block";
+                                    });
+
+                                label.style.display = "none";
+                            };
+                            reader.readAsDataURL(file);
+                        }
+                    });
+                });
+            });
+
+            // Add hover effects for image upload labels
+            const style = document.createElement("style");
+            style.textContent = `
+            .image-upload-label:hover {
+                border-color: var(--secondary-gold) !important;
+                background: rgba(212, 175, 55, 0.05);
+            }
+            .form-checkbox input[type="checkbox"] {
+                margin-right: 0.5rem;
+            }
+            @media (max-width: 768px) {
+                .form-row {
+                    grid-template-columns: 1fr !important;
+                }
+                .form-actions {
+                    flex-direction: column;
+                }
+                .form-actions > div {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 1rem;
+                }
+            }
+        `;
+            document.head.appendChild(style);
+        </script>
+    </body>
+</html>

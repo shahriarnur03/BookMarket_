@@ -1,0 +1,1145 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Order Confirmed - BookMarket</title>
+        <meta
+            name="description"
+            content="Your order has been confirmed. Thank you for shopping with BookMarket!"
+        />
+
+        <!-- CSS -->
+        <link rel="stylesheet" href="../css/styles.css" />
+
+        <!-- FontAwesome -->
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        />
+
+        <!-- Favicon -->
+        <link rel="icon" type="image/x-icon" href="../assets/img/favicon.ico" />
+    </head>
+    <body>
+        <!-- Navigation -->
+        <div id="navbar-container"></div>
+
+        <!-- Main Content -->
+        <main
+            style="
+                padding-top: 100px;
+                min-height: 100vh;
+                background: var(--light-gray);
+            "
+        >
+            <div class="container">
+                <!-- Success Header -->
+                <div
+                    class="success-header"
+                    style="text-align: center; margin-bottom: 3rem"
+                >
+                    <div
+                        style="
+                            width: 120px;
+                            height: 120px;
+                            background: var(--success);
+                            border-radius: 50%;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            margin: 0 auto 2rem;
+                            animation: pulse 2s infinite;
+                        "
+                    >
+                        <i
+                            class="fas fa-check"
+                            style="font-size: 3rem; color: white"
+                        ></i>
+                    </div>
+                    <h1
+                        style="
+                            margin: 0 0 1rem;
+                            color: var(--primary-navy);
+                            font-size: 2.5rem;
+                        "
+                    >
+                        Order Confirmed!
+                    </h1>
+                    <p
+                        style="
+                            margin: 0;
+                            color: var(--text-light);
+                            font-size: 1.2rem;
+                        "
+                    >
+                        Thank you for your purchase. Your order has been
+                        successfully placed.
+                    </p>
+                </div>
+
+                <!-- Order Details -->
+                <div
+                    style="
+                        display: grid;
+                        grid-template-columns: 2fr 1fr;
+                        gap: 2rem;
+                        max-width: 1000px;
+                        margin: 0 auto;
+                    "
+                >
+                    <!-- Left Column - Order Information -->
+                    <div>
+                        <!-- Order Summary -->
+                        <div class="card mb-3">
+                            <div class="card-content">
+                                <div
+                                    class="d-flex justify-between align-center mb-3"
+                                >
+                                    <h2
+                                        style="
+                                            margin: 0;
+                                            color: var(--primary-navy);
+                                        "
+                                    >
+                                        <i class="fas fa-receipt"></i>
+                                        Order Details
+                                    </h2>
+                                    <span
+                                        style="
+                                            background: var(--success);
+                                            color: white;
+                                            padding: 0.5rem 1rem;
+                                            border-radius: 20px;
+                                            font-weight: 500;
+                                        "
+                                    >
+                                        <i class="fas fa-check-circle"></i>
+                                        Confirmed
+                                    </span>
+                                </div>
+
+                                <div
+                                    class="order-info mb-3"
+                                    style="
+                                        background: var(--light-gray);
+                                        padding: 1.5rem;
+                                        border-radius: var(--border-radius);
+                                    "
+                                >
+                                    <div
+                                        style="
+                                            display: grid;
+                                            grid-template-columns: 1fr 1fr;
+                                            gap: 2rem;
+                                        "
+                                    >
+                                        <div>
+                                            <h4
+                                                style="
+                                                    margin: 0 0 0.5rem;
+                                                    color: var(--primary-navy);
+                                                "
+                                            >
+                                                Order Number
+                                            </h4>
+                                            <p
+                                                style="
+                                                    margin: 0;
+                                                    font-family: monospace;
+                                                    font-size: 1.1rem;
+                                                    font-weight: bold;
+                                                "
+                                                id="order-number"
+                                            >
+                                                BM-2024-0457
+                                            </p>
+                                        </div>
+                                        <div>
+                                            <h4
+                                                style="
+                                                    margin: 0 0 0.5rem;
+                                                    color: var(--primary-navy);
+                                                "
+                                            >
+                                                Order Date
+                                            </h4>
+                                            <p
+                                                style="margin: 0"
+                                                id="order-date"
+                                            >
+                                                March 16, 2024
+                                            </p>
+                                        </div>
+                                        <div>
+                                            <h4
+                                                style="
+                                                    margin: 0 0 0.5rem;
+                                                    color: var(--primary-navy);
+                                                "
+                                            >
+                                                Estimated Delivery
+                                            </h4>
+                                            <p
+                                                style="
+                                                    margin: 0;
+                                                    color: var(--success);
+                                                    font-weight: 500;
+                                                "
+                                                id="delivery-date"
+                                            >
+                                                March 20-22, 2024
+                                            </p>
+                                        </div>
+                                        <div>
+                                            <h4
+                                                style="
+                                                    margin: 0 0 0.5rem;
+                                                    color: var(--primary-navy);
+                                                "
+                                            >
+                                                Total Amount
+                                            </h4>
+                                            <p
+                                                style="
+                                                    margin: 0;
+                                                    font-size: 1.2rem;
+                                                    font-weight: bold;
+                                                    color: var(
+                                                        --secondary-gold
+                                                    );
+                                                "
+                                            >
+                                                $111.20
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Ordered Items -->
+                                <div class="ordered-items">
+                                    <h3
+                                        style="
+                                            margin-bottom: 1rem;
+                                            color: var(--primary-navy);
+                                        "
+                                    >
+                                        Items Ordered
+                                    </h3>
+
+                                    <div
+                                        class="order-item"
+                                        style="
+                                            display: flex;
+                                            gap: 1rem;
+                                            padding: 1rem;
+                                            border: 1px solid var(--border-gray);
+                                            border-radius: var(--border-radius);
+                                            margin-bottom: 1rem;
+                                            background: white;
+                                        "
+                                    >
+                                        <img
+                                            src="https://via.placeholder.com/60x75/1e2a5a/ffffff?text=Clean"
+                                            alt="Clean Code"
+                                            style="
+                                                width: 50px;
+                                                height: 65px;
+                                                object-fit: cover;
+                                                border-radius: 4px;
+                                            "
+                                        />
+                                        <div style="flex: 1">
+                                            <h4
+                                                style="
+                                                    margin: 0 0 0.5rem;
+                                                    color: var(--primary-navy);
+                                                "
+                                            >
+                                                Clean Code
+                                            </h4>
+                                            <p
+                                                style="
+                                                    margin: 0 0 0.25rem;
+                                                    color: var(--text-light);
+                                                    font-size: 0.9rem;
+                                                "
+                                            >
+                                                by Robert C. Martin
+                                            </p>
+                                            <p
+                                                style="
+                                                    margin: 0;
+                                                    color: var(--text-light);
+                                                    font-size: 0.9rem;
+                                                "
+                                            >
+                                                Seller: BookStore Pro
+                                            </p>
+                                        </div>
+                                        <div style="text-align: right">
+                                            <p
+                                                style="
+                                                    margin: 0;
+                                                    color: var(--text-light);
+                                                    font-size: 0.9rem;
+                                                "
+                                            >
+                                                Qty: 1
+                                            </p>
+                                            <p
+                                                style="
+                                                    margin: 0;
+                                                    font-weight: bold;
+                                                    color: var(
+                                                        --secondary-gold
+                                                    );
+                                                "
+                                            >
+                                                $45.99
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div
+                                        class="order-item"
+                                        style="
+                                            display: flex;
+                                            gap: 1rem;
+                                            padding: 1rem;
+                                            border: 1px solid var(--border-gray);
+                                            border-radius: var(--border-radius);
+                                            margin-bottom: 1rem;
+                                            background: white;
+                                        "
+                                    >
+                                        <img
+                                            src="https://via.placeholder.com/60x75/d4af37/ffffff?text=Atomic"
+                                            alt="Atomic Habits"
+                                            style="
+                                                width: 50px;
+                                                height: 65px;
+                                                object-fit: cover;
+                                                border-radius: 4px;
+                                            "
+                                        />
+                                        <div style="flex: 1">
+                                            <h4
+                                                style="
+                                                    margin: 0 0 0.5rem;
+                                                    color: var(--primary-navy);
+                                                "
+                                            >
+                                                Atomic Habits
+                                            </h4>
+                                            <p
+                                                style="
+                                                    margin: 0 0 0.25rem;
+                                                    color: var(--text-light);
+                                                    font-size: 0.9rem;
+                                                "
+                                            >
+                                                by James Clear
+                                            </p>
+                                            <p
+                                                style="
+                                                    margin: 0;
+                                                    color: var(--text-light);
+                                                    font-size: 0.9rem;
+                                                "
+                                            >
+                                                Seller: Study Central
+                                            </p>
+                                        </div>
+                                        <div style="text-align: right">
+                                            <p
+                                                style="
+                                                    margin: 0;
+                                                    color: var(--text-light);
+                                                    font-size: 0.9rem;
+                                                "
+                                            >
+                                                Qty: 2
+                                            </p>
+                                            <p
+                                                style="
+                                                    margin: 0;
+                                                    font-weight: bold;
+                                                    color: var(
+                                                        --secondary-gold
+                                                    );
+                                                "
+                                            >
+                                                $33.98
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div
+                                        class="order-item"
+                                        style="
+                                            display: flex;
+                                            gap: 1rem;
+                                            padding: 1rem;
+                                            border: 1px solid var(--border-gray);
+                                            border-radius: var(--border-radius);
+                                            margin-bottom: 1rem;
+                                            background: white;
+                                        "
+                                    >
+                                        <img
+                                            src="https://via.placeholder.com/60x75/10b981/ffffff?text=Psychology"
+                                            alt="The Psychology of Money"
+                                            style="
+                                                width: 50px;
+                                                height: 65px;
+                                                object-fit: cover;
+                                                border-radius: 4px;
+                                            "
+                                        />
+                                        <div style="flex: 1">
+                                            <h4
+                                                style="
+                                                    margin: 0 0 0.5rem;
+                                                    color: var(--primary-navy);
+                                                "
+                                            >
+                                                The Psychology of Money
+                                            </h4>
+                                            <p
+                                                style="
+                                                    margin: 0 0 0.25rem;
+                                                    color: var(--text-light);
+                                                    font-size: 0.9rem;
+                                                "
+                                            >
+                                                by Morgan Housel
+                                            </p>
+                                            <p
+                                                style="
+                                                    margin: 0;
+                                                    color: var(--text-light);
+                                                    font-size: 0.9rem;
+                                                "
+                                            >
+                                                Seller: Finance Books Hub
+                                            </p>
+                                        </div>
+                                        <div style="text-align: right">
+                                            <p
+                                                style="
+                                                    margin: 0;
+                                                    color: var(--text-light);
+                                                    font-size: 0.9rem;
+                                                "
+                                            >
+                                                Qty: 1
+                                            </p>
+                                            <p
+                                                style="
+                                                    margin: 0;
+                                                    font-weight: bold;
+                                                    color: var(
+                                                        --secondary-gold
+                                                    );
+                                                "
+                                            >
+                                                $22.99
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Shipping Information -->
+                        <div class="card">
+                            <div class="card-content">
+                                <h3
+                                    style="
+                                        margin-bottom: 1.5rem;
+                                        color: var(--primary-navy);
+                                    "
+                                >
+                                    <i class="fas fa-shipping-fast"></i>
+                                    Shipping Information
+                                </h3>
+
+                                <div
+                                    style="
+                                        display: grid;
+                                        grid-template-columns: 1fr 1fr;
+                                        gap: 2rem;
+                                    "
+                                >
+                                    <div>
+                                        <h4
+                                            style="
+                                                margin: 0 0 1rem;
+                                                color: var(--primary-navy);
+                                            "
+                                        >
+                                            Shipping Address
+                                        </h4>
+                                        <div
+                                            style="
+                                                color: var(--text-light);
+                                                line-height: 1.6;
+                                            "
+                                        >
+                                            <p style="margin: 0">John Doe</p>
+                                            <p style="margin: 0">
+                                                123 Main Street
+                                            </p>
+                                            <p style="margin: 0">
+                                                New York, NY 10001
+                                            </p>
+                                            <p style="margin: 0">
+                                                United States
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <h4
+                                            style="
+                                                margin: 0 0 1rem;
+                                                color: var(--primary-navy);
+                                            "
+                                        >
+                                            Shipping Method
+                                        </h4>
+                                        <div
+                                            style="
+                                                color: var(--text-light);
+                                                line-height: 1.6;
+                                            "
+                                        >
+                                            <p
+                                                style="
+                                                    margin: 0;
+                                                    font-weight: 500;
+                                                "
+                                            >
+                                                Standard Shipping
+                                            </p>
+                                            <p style="margin: 0">
+                                                3-5 Business Days
+                                            </p>
+                                            <p
+                                                style="
+                                                    margin: 0;
+                                                    color: var(--success);
+                                                    font-weight: 500;
+                                                "
+                                            >
+                                                FREE
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column - Actions & Information -->
+                    <div>
+                        <!-- Quick Actions -->
+                        <div class="card mb-3">
+                            <div class="card-content">
+                                <h3
+                                    style="
+                                        margin-bottom: 1.5rem;
+                                        color: var(--primary-navy);
+                                    "
+                                >
+                                    <i class="fas fa-bolt"></i>
+                                    What's Next?
+                                </h3>
+
+                                <div style="display: grid; gap: 1rem">
+                                    <a
+                                        href="buyer-dashboard.html"
+                                        class="btn btn-primary"
+                                        style="
+                                            width: 100%;
+                                            text-decoration: none;
+                                        "
+                                    >
+                                        <i class="fas fa-tachometer-alt"></i>
+                                        Go to Dashboard
+                                    </a>
+                                    <button
+                                        class="btn btn-outline"
+                                        style="width: 100%"
+                                        onclick="printOrder()"
+                                    >
+                                        <i class="fas fa-print"></i>
+                                        Print Receipt
+                                    </button>
+                                    <button
+                                        class="btn btn-outline"
+                                        style="width: 100%"
+                                        onclick="downloadInvoice()"
+                                    >
+                                        <i class="fas fa-download"></i>
+                                        Download Invoice
+                                    </button>
+                                    <a
+                                        href="browse.html"
+                                        class="btn btn-outline"
+                                        style="
+                                            width: 100%;
+                                            text-decoration: none;
+                                        "
+                                    >
+                                        <i class="fas fa-search"></i>
+                                        Continue Shopping
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Order Tracking -->
+                        <div class="card mb-3">
+                            <div class="card-content">
+                                <h3
+                                    style="
+                                        margin-bottom: 1.5rem;
+                                        color: var(--primary-navy);
+                                    "
+                                >
+                                    <i class="fas fa-truck"></i>
+                                    Order Tracking
+                                </h3>
+
+                                <div class="tracking-steps">
+                                    <div
+                                        class="tracking-step"
+                                        style="
+                                            display: flex;
+                                            align-items: center;
+                                            gap: 1rem;
+                                            margin-bottom: 1rem;
+                                        "
+                                    >
+                                        <div
+                                            style="
+                                                width: 30px;
+                                                height: 30px;
+                                                border-radius: 50%;
+                                                background: var(--success);
+                                                color: white;
+                                                display: flex;
+                                                align-items: center;
+                                                justify-content: center;
+                                                flex-shrink: 0;
+                                            "
+                                        >
+                                            <i
+                                                class="fas fa-check"
+                                                style="font-size: 0.8rem"
+                                            ></i>
+                                        </div>
+                                        <div>
+                                            <strong>Order Confirmed</strong>
+                                            <p
+                                                style="
+                                                    margin: 0;
+                                                    color: var(--text-light);
+                                                    font-size: 0.9rem;
+                                                "
+                                            >
+                                                Your order has been received
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div
+                                        class="tracking-step"
+                                        style="
+                                            display: flex;
+                                            align-items: center;
+                                            gap: 1rem;
+                                            margin-bottom: 1rem;
+                                        "
+                                    >
+                                        <div
+                                            style="
+                                                width: 30px;
+                                                height: 30px;
+                                                border-radius: 50%;
+                                                background: var(--warning);
+                                                color: white;
+                                                display: flex;
+                                                align-items: center;
+                                                justify-content: center;
+                                                flex-shrink: 0;
+                                            "
+                                        >
+                                            <i
+                                                class="fas fa-clock"
+                                                style="font-size: 0.8rem"
+                                            ></i>
+                                        </div>
+                                        <div>
+                                            <strong>Processing</strong>
+                                            <p
+                                                style="
+                                                    margin: 0;
+                                                    color: var(--text-light);
+                                                    font-size: 0.9rem;
+                                                "
+                                            >
+                                                We're preparing your order
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div
+                                        class="tracking-step"
+                                        style="
+                                            display: flex;
+                                            align-items: center;
+                                            gap: 1rem;
+                                            margin-bottom: 1rem;
+                                        "
+                                    >
+                                        <div
+                                            style="
+                                                width: 30px;
+                                                height: 30px;
+                                                border-radius: 50%;
+                                                background: var(--border-gray);
+                                                color: var(--text-light);
+                                                display: flex;
+                                                align-items: center;
+                                                justify-content: center;
+                                                flex-shrink: 0;
+                                            "
+                                        >
+                                            <span style="font-size: 0.8rem"
+                                                >3</span
+                                            >
+                                        </div>
+                                        <div>
+                                            <strong
+                                                style="color: var(--text-light)"
+                                                >Shipped</strong
+                                            >
+                                            <p
+                                                style="
+                                                    margin: 0;
+                                                    color: var(--text-light);
+                                                    font-size: 0.9rem;
+                                                "
+                                            >
+                                                Your order is on the way
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div
+                                        class="tracking-step"
+                                        style="
+                                            display: flex;
+                                            align-items: center;
+                                            gap: 1rem;
+                                        "
+                                    >
+                                        <div
+                                            style="
+                                                width: 30px;
+                                                height: 30px;
+                                                border-radius: 50%;
+                                                background: var(--border-gray);
+                                                color: var(--text-light);
+                                                display: flex;
+                                                align-items: center;
+                                                justify-content: center;
+                                                flex-shrink: 0;
+                                            "
+                                        >
+                                            <span style="font-size: 0.8rem"
+                                                >4</span
+                                            >
+                                        </div>
+                                        <div>
+                                            <strong
+                                                style="color: var(--text-light)"
+                                                >Delivered</strong
+                                            >
+                                            <p
+                                                style="
+                                                    margin: 0;
+                                                    color: var(--text-light);
+                                                    font-size: 0.9rem;
+                                                "
+                                            >
+                                                Package delivered
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Contact Support -->
+                        <div class="card">
+                            <div class="card-content">
+                                <h3
+                                    style="
+                                        margin-bottom: 1.5rem;
+                                        color: var(--primary-navy);
+                                    "
+                                >
+                                    <i class="fas fa-headset"></i>
+                                    Need Help?
+                                </h3>
+
+                                <div style="display: grid; gap: 1rem">
+                                    <div
+                                        style="
+                                            text-align: center;
+                                            padding: 1rem;
+                                            background: var(--light-gray);
+                                            border-radius: var(--border-radius);
+                                        "
+                                    >
+                                        <p
+                                            style="
+                                                margin: 0 0 0.5rem;
+                                                color: var(--text-light);
+                                            "
+                                        >
+                                            Questions about your order?
+                                        </p>
+                                        <a
+                                            href="contact.html"
+                                            class="btn btn-outline btn-sm"
+                                        >
+                                            <i class="fas fa-envelope"></i>
+                                            Contact Support
+                                        </a>
+                                    </div>
+
+                                    <div
+                                        style="
+                                            text-align: center;
+                                            color: var(--text-light);
+                                            font-size: 0.9rem;
+                                        "
+                                    >
+                                        <p style="margin: 0">
+                                            Order confirmation sent to:
+                                        </p>
+                                        <strong
+                                            style="color: var(--primary-navy)"
+                                            >john.doe@example.com</strong
+                                        >
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recommendations -->
+                <div
+                    class="recommendations-section mt-5"
+                    style="max-width: 1000px; margin: 3rem auto 0"
+                >
+                    <div class="card">
+                        <div class="card-content">
+                            <h3
+                                style="
+                                    margin-bottom: 2rem;
+                                    color: var(--primary-navy);
+                                    text-align: center;
+                                "
+                            >
+                                <i class="fas fa-magic"></i>
+                                You Might Also Like
+                            </h3>
+
+                            <div
+                                style="
+                                    display: grid;
+                                    grid-template-columns: repeat(
+                                        auto-fit,
+                                        minmax(200px, 1fr)
+                                    );
+                                    gap: 1.5rem;
+                                "
+                            >
+                                <div
+                                    class="recommendation-card"
+                                    style="
+                                        text-align: center;
+                                        padding: 1rem;
+                                        border: 1px solid var(--border-gray);
+                                        border-radius: var(--border-radius);
+                                        background: white;
+                                    "
+                                >
+                                    <img
+                                        src="https://via.placeholder.com/120x150/1e2a5a/ffffff?text=Think"
+                                        alt="Thinking Fast and Slow"
+                                        style="
+                                            width: 100px;
+                                            height: 125px;
+                                            object-fit: cover;
+                                            border-radius: 4px;
+                                            margin-bottom: 1rem;
+                                        "
+                                    />
+                                    <h4
+                                        style="
+                                            margin: 0 0 0.5rem;
+                                            color: var(--primary-navy);
+                                            font-size: 1rem;
+                                        "
+                                    >
+                                        Thinking, Fast and Slow
+                                    </h4>
+                                    <p
+                                        style="
+                                            margin: 0 0 0.5rem;
+                                            color: var(--text-light);
+                                            font-size: 0.9rem;
+                                        "
+                                    >
+                                        Daniel Kahneman
+                                    </p>
+                                    <p
+                                        style="
+                                            margin: 0 0 1rem;
+                                            color: var(--secondary-gold);
+                                            font-weight: bold;
+                                        "
+                                    >
+                                        $19.99
+                                    </p>
+                                    <button class="btn btn-primary btn-sm">
+                                        <i class="fas fa-cart-plus"></i>
+                                        Add to Cart
+                                    </button>
+                                </div>
+
+                                <div
+                                    class="recommendation-card"
+                                    style="
+                                        text-align: center;
+                                        padding: 1rem;
+                                        border: 1px solid var(--border-gray);
+                                        border-radius: var(--border-radius);
+                                        background: white;
+                                    "
+                                >
+                                    <img
+                                        src="https://via.placeholder.com/120x150/d4af37/ffffff?text=Lean"
+                                        alt="The Lean Startup"
+                                        style="
+                                            width: 100px;
+                                            height: 125px;
+                                            object-fit: cover;
+                                            border-radius: 4px;
+                                            margin-bottom: 1rem;
+                                        "
+                                    />
+                                    <h4
+                                        style="
+                                            margin: 0 0 0.5rem;
+                                            color: var(--primary-navy);
+                                            font-size: 1rem;
+                                        "
+                                    >
+                                        The Lean Startup
+                                    </h4>
+                                    <p
+                                        style="
+                                            margin: 0 0 0.5rem;
+                                            color: var(--text-light);
+                                            font-size: 0.9rem;
+                                        "
+                                    >
+                                        Eric Ries
+                                    </p>
+                                    <p
+                                        style="
+                                            margin: 0 0 1rem;
+                                            color: var(--secondary-gold);
+                                            font-weight: bold;
+                                        "
+                                    >
+                                        $18.99
+                                    </p>
+                                    <button class="btn btn-primary btn-sm">
+                                        <i class="fas fa-cart-plus"></i>
+                                        Add to Cart
+                                    </button>
+                                </div>
+
+                                <div
+                                    class="recommendation-card"
+                                    style="
+                                        text-align: center;
+                                        padding: 1rem;
+                                        border: 1px solid var(--border-gray);
+                                        border-radius: var(--border-radius);
+                                        background: white;
+                                    "
+                                >
+                                    <img
+                                        src="https://via.placeholder.com/120x150/10b981/ffffff?text=Sapiens"
+                                        alt="Sapiens"
+                                        style="
+                                            width: 100px;
+                                            height: 125px;
+                                            object-fit: cover;
+                                            border-radius: 4px;
+                                            margin-bottom: 1rem;
+                                        "
+                                    />
+                                    <h4
+                                        style="
+                                            margin: 0 0 0.5rem;
+                                            color: var(--primary-navy);
+                                            font-size: 1rem;
+                                        "
+                                    >
+                                        Sapiens
+                                    </h4>
+                                    <p
+                                        style="
+                                            margin: 0 0 0.5rem;
+                                            color: var(--text-light);
+                                            font-size: 0.9rem;
+                                        "
+                                    >
+                                        Yuval Noah Harari
+                                    </p>
+                                    <p
+                                        style="
+                                            margin: 0 0 1rem;
+                                            color: var(--secondary-gold);
+                                            font-weight: bold;
+                                        "
+                                    >
+                                        $16.99
+                                    </p>
+                                    <button class="btn btn-primary btn-sm">
+                                        <i class="fas fa-cart-plus"></i>
+                                        Add to Cart
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <div id="footer-container"></div>
+
+        <!-- JavaScript -->
+        <script src="../js/main.js"></script>
+        <script>
+            // Load navigation and footer with proper auth state
+            loadNavbarAndInitialize();
+
+            fetch("../components/footer.html")
+                .then((response) => response.text())
+                .then((data) => {
+                    document.getElementById("footer-container").innerHTML =
+                        data;
+                });
+
+            // Generate random order number
+            function generateOrderNumber() {
+                const date = new Date();
+                const year = date.getFullYear();
+                const randomNum = Math.floor(Math.random() * 9000) + 1000;
+                return `BM-${year}-${randomNum}`;
+            }
+
+            // Set current date
+            function setOrderDate() {
+                const date = new Date();
+                const options = {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                };
+                return date.toLocaleDateString("en-US", options);
+            }
+
+            // Set delivery date (3-5 days from now)
+            function setDeliveryDate() {
+                const start = new Date();
+                const end = new Date();
+                start.setDate(start.getDate() + 3);
+                end.setDate(end.getDate() + 5);
+
+                const options = { month: "long", day: "numeric" };
+                return `${start.toLocaleDateString(
+                    "en-US",
+                    options
+                )}-${end.toLocaleDateString("en-US", {
+                    day: "numeric",
+                })}, ${start.getFullYear()}`;
+            }
+
+            // Initialize page with dynamic data
+            document.addEventListener("DOMContentLoaded", function () {
+                document.getElementById("order-number").textContent =
+                    generateOrderNumber();
+                document.getElementById("order-date").textContent =
+                    setOrderDate();
+                document.getElementById("delivery-date").textContent =
+                    setDeliveryDate();
+            });
+
+            // Action functions
+            function printOrder() {
+                window.print();
+            }
+
+            function downloadInvoice() {
+                showAlert("Invoice download started", "info");
+                // In a real application, this would trigger a PDF download
+            }
+
+            // Pulse animation CSS
+            const style = document.createElement("style");
+            style.textContent = `
+            @keyframes pulse {
+                0% { transform: scale(1); }
+                50% { transform: scale(1.05); }
+                100% { transform: scale(1); }
+            }
+            
+            @media (max-width: 768px) {
+                main > .container > div:nth-child(2) {
+                    grid-template-columns: 1fr !important;
+                }
+                .order-info > div {
+                    grid-template-columns: 1fr !important;
+                    gap: 1rem !important;
+                }
+                .order-item {
+                    flex-direction: column !important;
+                    text-align: center !important;
+                }
+                .recommendations-section > .card > .card-content > div {
+                    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)) !important;
+                }
+                .success-header h1 {
+                    font-size: 2rem !important;
+                }
+            }
+        `;
+            document.head.appendChild(style);
+        </script>
+    </body>
+</html>
