@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Contact Us - BookMarket</title>
+        <link rel="stylesheet" href="../css/styles.css" />
+        <!-- Additional CSS for Contact page -->
+        <style>
+            /* Contact Page Specific Styles */
+            .contact-container {
+                max-width: var(--container-width);
+                margin: 0 auto;
+                padding: 2rem 1rem;
+            }
+
+            .contact-intro {
+                text-align: center;
+                margin-bottom: 3rem;
+            }
+
+            .contact-intro p {
+                max-width: 800px;
+                margin: 0 auto 1rem;
+                color: #555;
+                font-size: 1.1rem;
+            }
+
+            .contact-grid {
+                display: grid;
+                grid-template-columns: 1fr 2fr;
+                gap: 2rem;
+                margin-bottom: 4rem;
+            }
+
+            .contact-info {
+                background-color: white;
+                border-radius: 8px;
+                padding: 2rem;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            }
+
+            .info-item {
+                margin-bottom: 1.5rem;
+                display: flex;
+                align-items: flex-start;
+            }
+
+            .info-icon {
+                width: 50px;
+                height: 50px;
+                background-color: var(--primary-color);
+                color: white;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin-right: 1rem;
+                font-size: 1.2rem;
+                flex-shrink: 0;
+            }
+
+            .info-text h4 {
+                color: var(--dark-color);
+                margin-bottom: 0.5rem;
+            }
+
+            .info-text p,
+            .info-text a {
+                color: #555;
+                text-decoration: none;
+                transition: color 0.3s ease;
+            }
+
+            .info-text a:hover {
+                color: var(--primary-color);
+            }
+
+            .social-links-contact {
+                display: flex;
+                gap: 1rem;
+                margin-top: 2rem;
+            }
+
+            .social-links-contact a {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                background-color: #f0f0f0;
+                color: #555;
+                transition: all 0.3s ease;
+            }
+
+            .social-links-contact a:hover {
+                background-color: var(--primary-color);
+                color: white;
+            }
+
+            .contact-form {
+                background-color: white;
+                border-radius: 8px;
+                padding: 2rem;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            }
+
+            .contact-form h3 {
+                margin-bottom: 1.5rem;
+                color: var(--dark-color);
+                text-align: center;
+            }
+
+            .form-group {
+                margin-bottom: 1.5rem;
+            }
+
+            .form-group label {
+                display: block;
+                margin-bottom: 0.5rem;
+                font-weight: 600;
+            }
+
+            .form-group input,
+            .form-group textarea,
+            .form-group select {
+                width: 100%;
+                padding: 0.8rem;
+                border: 1px solid var(--border-color);
+                border-radius: 4px;
+                font-size: 1rem;
+            }
+
+            .form-group textarea {
+                height: 150px;
+                resize: vertical;
+            }
+
+            .form-row {
+                display: flex;
+                gap: 1.5rem;
+            }
+
+            .form-row .form-group {
+                flex: 1;
+            }
+
+            .form-button {
+                text-align: right;
+            }
+
+            .map-section {
+                margin-bottom: 4rem;
+            }
+
+            .map-container {
+                height: 400px;
+                border-radius: 8px;
+                overflow: hidden;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            }
+
+            .map-placeholder {
+                background-color: #f0f0f0;
+                width: 100%;
+                height: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: #777;
+                font-weight: bold;
+            }
+
+            .faq-section {
+                margin-bottom: 4rem;
+            }
+
+            .faq-container {
+                max-width: 800px;
+                margin: 0 auto;
+            }
+
+            .faq-item {
+                margin-bottom: 1rem;
+                background-color: white;
+                border-radius: 8px;
+                overflow: hidden;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            }
+
+            .faq-question {
+                padding: 1.2rem;
+                cursor: pointer;
+                font-weight: 600;
+                color: var(--dark-color);
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .faq-question::after {
+                content: "\f107";
+                font-family: "Font Awesome 5 Free";
+                transition: transform 0.3s ease;
+            }
+
+            .faq-question.active::after {
+                transform: rotate(180deg);
+            }
+
+            .faq-answer {
+                padding: 0 1.2rem;
+                max-height: 0;
+                overflow: hidden;
+                transition: max-height 0.3s ease;
+            }
+
+            .faq-answer p {
+                padding-bottom: 1.2rem;
+                color: #555;
+            }
+
+            .faq-item.active .faq-answer {
+                max-height: 300px;
+            }
+
+            .support-section {
+                background-color: #f9f9f9;
+                padding: 4rem 0;
+                margin-bottom: 4rem;
+            }
+
+            .support-container {
+                max-width: var(--container-width);
+                margin: 0 auto;
+                padding: 0 1rem;
+            }
+
+            .support-boxes {
+                display: flex;
+                gap: 2rem;
+                flex-wrap: wrap;
+            }
+
+            .support-box {
+                flex: 1;
+                min-width: 250px;
+                background-color: white;
+                border-radius: 8px;
+                padding: 1.5rem;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+                text-align: center;
+            }
+
+            .support-box h3 {
+                margin-bottom: 1rem;
+                color: var(--dark-color);
+            }
+
+            .support-box p {
+                color: #555;
+                margin-bottom: 1.5rem;
+            }
+
+            /* Responsive styles */
+            @media screen and (max-width: 768px) {
+                .contact-grid {
+                    grid-template-columns: 1fr;
+                }
+
+                .form-row {
+                    flex-direction: column;
+                    gap: 0;
+                }
+
+                .support-box {
+                    flex: 100%;
+                }
+            }
+        </style>
+        <!-- Font Awesome for icons -->
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        />
+    </head>
+    <body>
+        <!-- Navbar (Common Customer Navbar) -->
+        <nav class="navbar">
+            <!-- Navbar will be generated by customer-navbar.js -->
+        </nav>
+
+        <!-- Contact Page Content -->
+        <div class="contact-container">
+            <div class="contact-intro">
+                <h1 class="section-title">Contact Us</h1>
+                <p>
+                    Have questions, suggestions, or need assistance? We're here
+                    to help! Get in touch with our team using any of the methods
+                    below, and we'll get back to you as soon as possible.
+                </p>
+            </div>
+
+            <!-- Contact Information and Form -->
+            <div class="contact-grid">
+                <div class="contact-info">
+                    <div class="info-item">
+                        <div class="info-icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <div class="info-text">
+                            <h4>Our Location</h4>
+                            <p>123 Book Street, Banani</p>
+                            <p>Dhaka, Bangladesh</p>
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="info-icon">
+                            <i class="fas fa-phone-alt"></i>
+                        </div>
+                        <div class="info-text">
+                            <h4>Call Us</h4>
+                            <p>+880 123 456789</p>
+                            <p>+880 987 654321</p>
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="info-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div class="info-text">
+                            <h4>Email Us</h4>
+                            <p>
+                                <a href="mailto:support@bookmarket.com"
+                                    >support@bookmarket.com</a
+                                >
+                            </p>
+                            <p>
+                                <a href="mailto:info@bookmarket.com"
+                                    >info@bookmarket.com</a
+                                >
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="info-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="info-text">
+                            <h4>Office Hours</h4>
+                            <p>Monday - Friday: 9:00 AM - 6:00 PM</p>
+                            <p>Saturday: 10:00 AM - 4:00 PM</p>
+                            <p>Sunday: Closed</p>
+                        </div>
+                    </div>
+
+                    <div class="social-links-contact">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+
+                <div class="contact-form">
+                    <h3>Send us a Message</h3>
+
+                    <form id="contact-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="name">Your Name*</label>
+                                <input
+                                    type="text"
+                                    id="name"
+                                    required
+                                    placeholder="Enter your name"
+                                />
+                            </div>
+
+                            <div class="form-group">
+                                <label for="email">Your Email*</label>
+                                <input
+                                    type="email"
+                                    id="email"
+                                    required
+                                    placeholder="Enter your email"
+                                />
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="subject">Subject*</label>
+                            <input
+                                type="text"
+                                id="subject"
+                                required
+                                placeholder="Enter message subject"
+                            />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="inquiry-type">Type of Inquiry*</label>
+                            <select id="inquiry-type" required>
+                                <option value="">Select inquiry type</option>
+                                <option value="general">
+                                    General Question
+                                </option>
+                                <option value="support">
+                                    Technical Support
+                                </option>
+                                <option value="feedback">Feedback</option>
+                                <option value="partnership">
+                                    Partnership Opportunity
+                                </option>
+                                <option value="order">Order Issue</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="message">Your Message*</label>
+                            <textarea
+                                id="message"
+                                required
+                                placeholder="Type your message here..."
+                            ></textarea>
+                        </div>
+
+                        <div class="form-button">
+                            <button type="submit" class="btn btn-primary">
+                                Send Message
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Google Map Integration -->
+            <div class="map-section">
+                <h2 class="section-title">Find Us</h2>
+
+                <div class="map-container">
+                    <!-- Google Maps will be integrated here with backend -->
+                    <div class="map-placeholder">
+                        Google Map will be integrated here
+                    </div>
+                    <!-- For real implementation: <iframe src="https://www.google.com/maps/embed?pb=..." width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe> -->
+                </div>
+            </div>
+
+            <!-- Support Options -->
+            <div class="support-section">
+                <div class="support-container">
+                    <h2 class="section-title">Customer Support</h2>
+
+                    <div class="support-boxes">
+                        <div class="support-box">
+                            <i
+                                class="fas fa-question-circle"
+                                style="
+                                    font-size: 2rem;
+                                    color: var(--primary-color);
+                                    margin-bottom: 1rem;
+                                "
+                            ></i>
+                            <h3>FAQs</h3>
+                            <p>
+                                Find answers to commonly asked questions about
+                                our services, shipping, returns, and more.
+                            </p>
+                            <a href="#" class="btn btn-secondary">Visit FAQs</a>
+                        </div>
+
+                        <div class="support-box">
+                            <i
+                                class="fas fa-headset"
+                                style="
+                                    font-size: 2rem;
+                                    color: var(--primary-color);
+                                    margin-bottom: 1rem;
+                                "
+                            ></i>
+                            <h3>Live Chat</h3>
+                            <p>
+                                Connect with our support team in real-time for
+                                immediate assistance with your queries.
+                            </p>
+                            <a href="#" class="btn btn-secondary">Start Chat</a>
+                        </div>
+
+                        <div class="support-box">
+                            <i
+                                class="fas fa-book"
+                                style="
+                                    font-size: 2rem;
+                                    color: var(--primary-color);
+                                    margin-bottom: 1rem;
+                                "
+                            ></i>
+                            <h3>Knowledge Base</h3>
+                            <p>
+                                Access detailed guides and tutorials on how to
+                                use our platform effectively.
+                            </p>
+                            <a href="#" class="btn btn-secondary">Learn More</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FAQs Section -->
+            <div class="faq-section">
+                <h2 class="section-title">Frequently Asked Questions</h2>
+
+                <div class="faq-container">
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            How long does shipping take?
+                        </div>
+                        <div class="faq-answer">
+                            <p>
+                                Shipping typically takes 3-5 business days
+                                within Dhaka and 5-7 business days for other
+                                locations in Bangladesh. International shipping
+                                is currently not available.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            What happens if I receive a damaged book?
+                        </div>
+                        <div class="faq-answer">
+                            <p>
+                                If you receive a book that is damaged or doesn't
+                                match the described condition, please contact
+                                our support team within 48 hours of delivery.
+                                We'll help you resolve the issue, either with a
+                                refund or replacement.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            How long does the book approval process take?
+                        </div>
+                        <div class="faq-answer">
+                            <p>
+                                Our admin team typically reviews book listings
+                                within 24 hours during business days. You'll
+                                receive an email notification once your book is
+                                approved or if additional information is needed.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            When do I get paid for my sold books?
+                        </div>
+                        <div class="faq-answer">
+                            <p>
+                                Payment is processed within 3 business days
+                                after the buyer confirms receipt of the book.
+                                The amount will be transferred to your account
+                                balance, which you can withdraw to your bank
+                                account.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <div class="faq-question">Can I cancel an order?</div>
+                        <div class="faq-answer">
+                            <p>
+                                Orders can be canceled within 12 hours of
+                                placing them, provided the seller hasn't already
+                                shipped the book. To cancel an order, go to your
+                                Orders page and click on the Cancel button.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer (Same as index.html) -->
+        <footer class="footer">
+            <div class="footer-container">
+                <div class="footer-top">
+                    <div class="footer-column">
+                        <h3>BookMarket</h3>
+                        <p>
+                            Your one-stop destination for buying and selling
+                            books online. Find your next favorite book or give
+                            your old books a new home.
+                        </p>
+                        <div class="social-links">
+                            <a href="#"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#"><i class="fab fa-twitter"></i></a>
+                            <a href="#"><i class="fab fa-instagram"></i></a>
+                            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        </div>
+                    </div>
+                    <div class="footer-column">
+                        <h3>Quick Links</h3>
+                        <ul class="footer-links">
+                            <li><a href="../index.html">Home</a></li>
+                            <li><a href="browse.html">Browse Books</a></li>
+                            <li><a href="sell.html">Sell Books</a></li>
+                            <li><a href="about.html">About Us</a></li>
+                            <li><a href="contact.html">Contact Us</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h3>Support</h3>
+                        <ul class="footer-links">
+                            <li><a href="#">Help Center</a></li>
+                            <li><a href="#">FAQs</a></li>
+                            <li><a href="#">Shipping Policy</a></li>
+                            <li><a href="#">Return Policy</a></li>
+                            <li><a href="#">Privacy Policy</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h3>Contact</h3>
+                        <ul class="contact-info">
+                            <li>
+                                <i class="fas fa-map-marker-alt"></i> 123 Book
+                                Street, Dhaka, Bangladesh
+                            </li>
+                            <li>
+                                <i class="fas fa-phone"></i> +880 123 456789
+                            </li>
+                            <li>
+                                <i class="fas fa-envelope"></i>
+                                support@bookmarket.com
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p>&copy; 2023 BookMarket. All Rights Reserved.</p>
+                </div>
+            </div>
+        </footer>
+
+        <!-- Notification Container -->
+        <div id="notification-container" class="notification-container"></div>
+
+        <!-- JavaScript -->
+        <script src="../js/main.js"></script>
+        <script src="../js/auth.js"></script>
+        <script src="../js/customer-navbar.js"></script>
+        <!-- Contact page specific JavaScript -->
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                // FAQ Toggle
+                const faqQuestions = document.querySelectorAll(".faq-question");
+
+                faqQuestions.forEach((question) => {
+                    question.addEventListener("click", function () {
+                        // Toggle active class on the question
+                        this.classList.toggle("active");
+
+                        // Toggle active class on parent item
+                        const faqItem = this.parentElement;
+                        faqItem.classList.toggle("active");
+                    });
+                });
+
+                // Contact Form Submission
+                const contactForm = document.getElementById("contact-form");
+
+                if (contactForm) {
+                    contactForm.addEventListener("submit", function (e) {
+                        e.preventDefault();
+
+                        // Get form values
+                        const name = document
+                            .getElementById("name")
+                            .value.trim();
+                        const email = document
+                            .getElementById("email")
+                            .value.trim();
+                        const subject = document
+                            .getElementById("subject")
+                            .value.trim();
+                        const inquiryType =
+                            document.getElementById("inquiry-type").value;
+                        const message = document
+                            .getElementById("message")
+                            .value.trim();
+
+                        // Basic validation
+                        if (
+                            !name ||
+                            !email ||
+                            !subject ||
+                            !inquiryType ||
+                            !message
+                        ) {
+                            showNotification(
+                                "Please fill in all required fields.",
+                                "warning"
+                            );
+                            return;
+                        }
+
+                        // Email validation
+                        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                        if (!emailRegex.test(email)) {
+                            showNotification(
+                                "Please enter a valid email address.",
+                                "warning"
+                            );
+                            return;
+                        }
+
+                        // This will be connected to backend later
+                        showNotification(
+                            "Thank you for your message! We will get back to you soon.",
+                            "success"
+                        );
+
+                        // Reset form
+                        contactForm.reset();
+                    });
+                }
+            });
+        </script>
+    </body>
+</html>

@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Sign Up - BookMarket</title>
+        <link rel="stylesheet" href="../css/styles.css" />
+        <!-- Font Awesome for icons -->
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        />
+        <style>
+            /* Sign Up Page Specific Styles */
+            .auth-container {
+                max-width: 500px;
+                margin: 3rem auto;
+                padding: 2rem;
+                background-color: white;
+                border-radius: 8px;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            }
+
+            .auth-header {
+                text-align: center;
+                margin-bottom: 2rem;
+            }
+
+            .auth-title {
+                font-size: 2rem;
+                color: var(--dark-color);
+                margin-bottom: 0.5rem;
+            }
+
+            .auth-subtitle {
+                color: #666;
+            }
+
+            .auth-form {
+                margin-bottom: 1.5rem;
+            }
+
+            .form-group {
+                margin-bottom: 1.5rem;
+            }
+
+            .form-label {
+                display: block;
+                margin-bottom: 0.5rem;
+                font-weight: 600;
+                color: var(--dark-color);
+            }
+
+            .form-input {
+                width: 100%;
+                padding: 0.8rem;
+                border: 1px solid var(--border-color);
+                border-radius: 4px;
+                font-size: 1rem;
+            }
+
+            .form-input:focus {
+                outline: none;
+                border-color: var(--primary-color);
+                box-shadow: 0 0 0 2px rgba(74, 111, 165, 0.2);
+            }
+
+            .form-row {
+                display: flex;
+                gap: 1rem;
+            }
+
+            .form-row .form-group {
+                flex: 1;
+            }
+
+            .user-type-selector {
+                display: flex;
+                border: 1px solid var(--border-color);
+                border-radius: 4px;
+                overflow: hidden;
+                margin-bottom: 1.5rem;
+            }
+
+            .user-type-option {
+                flex: 1;
+                text-align: center;
+                padding: 1rem;
+                cursor: pointer;
+                font-weight: 600;
+                transition: all 0.3s ease;
+            }
+
+            .user-type-option.active {
+                background-color: var(--primary-color);
+                color: white;
+            }
+
+            .user-type-option:not(.active) {
+                background-color: #f5f5f5;
+                color: var(--dark-color);
+            }
+
+            .user-type-option:not(.active):hover {
+                background-color: #e9e9e9;
+            }
+
+            .form-checkbox {
+                display: flex;
+                align-items: flex-start;
+                margin-bottom: 1.5rem;
+            }
+
+            .form-checkbox input {
+                margin-right: 0.5rem;
+                margin-top: 0.3rem;
+            }
+
+            .form-checkbox label {
+                color: #666;
+                font-size: 0.9rem;
+                line-height: 1.4;
+            }
+
+            .form-checkbox a {
+                color: var(--primary-color);
+                text-decoration: none;
+            }
+
+            .form-checkbox a:hover {
+                text-decoration: underline;
+            }
+
+            .auth-btn {
+                width: 100%;
+                padding: 1rem;
+                background-color: var(--primary-color);
+                color: white;
+                border: none;
+                border-radius: 4px;
+                font-size: 1rem;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            }
+
+            .auth-btn:hover {
+                background-color: #3a5a97;
+            }
+
+            .auth-divider {
+                display: flex;
+                align-items: center;
+                margin: 2rem 0;
+            }
+
+            .auth-divider-line {
+                flex: 1;
+                height: 1px;
+                background-color: var(--border-color);
+            }
+
+            .auth-divider-text {
+                padding: 0 1rem;
+                color: #666;
+                font-size: 0.9rem;
+            }
+
+            .social-login {
+                display: flex;
+                gap: 1rem;
+            }
+
+            .social-btn {
+                flex: 1;
+                padding: 0.8rem;
+                border: 1px solid var(--border-color);
+                border-radius: 4px;
+                background-color: white;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .social-btn:hover {
+                background-color: #f5f5f5;
+            }
+
+            .social-btn i {
+                margin-right: 0.5rem;
+            }
+
+            .google-btn i {
+                color: #db4437;
+            }
+
+            .facebook-btn i {
+                color: #4267b2;
+            }
+
+            .auth-footer {
+                text-align: center;
+                margin-top: 2rem;
+                color: #666;
+                font-size: 0.9rem;
+            }
+
+            .auth-footer a {
+                color: var(--primary-color);
+                text-decoration: none;
+            }
+
+            .auth-footer a:hover {
+                text-decoration: underline;
+            }
+
+            .error-message {
+                color: var(--danger-color);
+                font-size: 0.9rem;
+                margin-top: 0.5rem;
+                display: none;
+            }
+
+            .error-message.show {
+                display: block;
+            }
+        </style>
+    </head>
+    <body>
+        <!-- Navbar (Common Customer Navbar) -->
+        <nav class="navbar">
+            <!-- Navbar will be generated by customer-navbar.js -->
+        </nav>
+
+        <!-- Sign Up Content -->
+        <div class="auth-container">
+            <div class="auth-header">
+                <h1 class="auth-title">Create an Account</h1>
+                <p class="auth-subtitle">
+                    Join BookMarket to buy and sell books online.
+                </p>
+            </div>
+
+            <div class="user-type-selector">
+                <div class="user-type-option active" data-type="customer">
+                    Customer
+                </div>
+                <div class="user-type-option" data-type="admin">Admin</div>
+            </div>
+
+            <form class="auth-form" id="signup-form">
+                <input type="hidden" id="user-type" value="customer" />
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="first-name" class="form-label"
+                            >First Name</label
+                        >
+                        <input
+                            type="text"
+                            id="first-name"
+                            class="form-input"
+                            placeholder="Enter your first name"
+                            required
+                        />
+                        <div class="error-message" id="first-name-error">
+                            Please enter your first name.
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="last-name" class="form-label"
+                            >Last Name</label
+                        >
+                        <input
+                            type="text"
+                            id="last-name"
+                            class="form-input"
+                            placeholder="Enter your last name"
+                            required
+                        />
+                        <div class="error-message" id="last-name-error">
+                            Please enter your last name.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="email" class="form-label">Email Address</label>
+                    <input
+                        type="email"
+                        id="email"
+                        class="form-input"
+                        placeholder="Enter your email"
+                        required
+                    />
+                    <div class="error-message" id="email-error">
+                        Please enter a valid email address.
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="phone" class="form-label">Phone Number</label>
+                    <input
+                        type="tel"
+                        id="phone"
+                        class="form-input"
+                        placeholder="Enter your phone number"
+                        required
+                    />
+                    <div class="error-message" id="phone-error">
+                        Please enter a valid phone number.
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password" class="form-label">Password</label>
+                    <input
+                        type="password"
+                        id="password"
+                        class="form-input"
+                        placeholder="Create a password"
+                        required
+                    />
+                    <div class="error-message" id="password-error">
+                        Password must be at least 6 characters with at least one
+                        number.
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirm-password" class="form-label"
+                        >Confirm Password</label
+                    >
+                    <input
+                        type="password"
+                        id="confirm-password"
+                        class="form-input"
+                        placeholder="Confirm your password"
+                        required
+                    />
+                    <div class="error-message" id="confirm-password-error">
+                        Passwords do not match.
+                    </div>
+                </div>
+
+                <div class="form-checkbox">
+                    <input type="checkbox" id="terms" required />
+                    <label for="terms"
+                        >I agree to the <a href="#">Terms of Service</a> and
+                        <a href="#">Privacy Policy</a>.</label
+                    >
+                </div>
+
+                <button type="submit" class="auth-btn">Create Account</button>
+            </form>
+
+            <div class="auth-divider">
+                <div class="auth-divider-line"></div>
+                <div class="auth-divider-text">Or sign up with</div>
+                <div class="auth-divider-line"></div>
+            </div>
+
+            <div class="social-login">
+                <button class="social-btn google-btn">
+                    <i class="fab fa-google"></i> Google
+                </button>
+                <button class="social-btn facebook-btn">
+                    <i class="fab fa-facebook-f"></i> Facebook
+                </button>
+            </div>
+
+            <div class="auth-footer">
+                <p>Already have an account? <a href="login.html">Login</a></p>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-container">
+                <div class="footer-top">
+                    <div class="footer-column">
+                        <h3>BookMarket</h3>
+                        <p>
+                            Your one-stop destination for buying and selling
+                            books online. Find your next favorite book or give
+                            your old books a new home.
+                        </p>
+                        <div class="social-links">
+                            <a href="#"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#"><i class="fab fa-twitter"></i></a>
+                            <a href="#"><i class="fab fa-instagram"></i></a>
+                            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        </div>
+                    </div>
+                    <div class="footer-column">
+                        <h3>Quick Links</h3>
+                        <ul class="footer-links">
+                            <li><a href="../index.html">Home</a></li>
+                            <li><a href="browse.html">Browse Books</a></li>
+                            <li><a href="sell.html">Sell Books</a></li>
+                            <li><a href="about.html">About Us</a></li>
+                            <li><a href="contact.html">Contact Us</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h3>Support</h3>
+                        <ul class="footer-links">
+                            <li><a href="#">Help Center</a></li>
+                            <li><a href="#">FAQs</a></li>
+                            <li><a href="#">Shipping Policy</a></li>
+                            <li><a href="#">Return Policy</a></li>
+                            <li><a href="#">Privacy Policy</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h3>Contact</h3>
+                        <ul class="contact-info">
+                            <li>
+                                <i class="fas fa-map-marker-alt"></i> 123 Book
+                                Street, Dhaka, Bangladesh
+                            </li>
+                            <li>
+                                <i class="fas fa-phone"></i> +880 123 456789
+                            </li>
+                            <li>
+                                <i class="fas fa-envelope"></i>
+                                support@bookmarket.com
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p>&copy; 2023 BookMarket. All Rights Reserved.</p>
+                </div>
+            </div>
+        </footer>
+
+        <!-- JavaScript -->
+        <script src="../js/main.js"></script>
+        <script src="../js/auth.js"></script>
+        <script src="../js/customer-navbar.js"></script>
+        <!-- Sign Up Specific JavaScript -->
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                // User type selector
+                const userTypeOptions =
+                    document.querySelectorAll(".user-type-option");
+                const userTypeInput = document.getElementById("user-type");
+
+                userTypeOptions.forEach((option) => {
+                    option.addEventListener("click", function () {
+                        // Remove active class from all options
+                        userTypeOptions.forEach((opt) =>
+                            opt.classList.remove("active")
+                        );
+
+                        // Add active class to clicked option
+                        this.classList.add("active");
+
+                        // Update hidden input value
+                        userTypeInput.value = this.getAttribute("data-type");
+                    });
+                });
+
+                // Form validation
+                const signupForm = document.getElementById("signup-form");
+                const firstNameInput = document.getElementById("first-name");
+                const lastNameInput = document.getElementById("last-name");
+                const emailInput = document.getElementById("email");
+                const phoneInput = document.getElementById("phone");
+                const passwordInput = document.getElementById("password");
+                const confirmPasswordInput =
+                    document.getElementById("confirm-password");
+                const termsCheckbox = document.getElementById("terms");
+
+                const firstNameError =
+                    document.getElementById("first-name-error");
+                const lastNameError =
+                    document.getElementById("last-name-error");
+                const emailError = document.getElementById("email-error");
+                const phoneError = document.getElementById("phone-error");
+                const passwordError = document.getElementById("password-error");
+                const confirmPasswordError = document.getElementById(
+                    "confirm-password-error"
+                );
+
+                function validateEmail(email) {
+                    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    return re.test(email);
+                }
+
+                function validatePassword(password) {
+                    // At least 6 characters with at least one number
+                    const re = /^(?=.*\d).{6,}$/;
+                    return re.test(password);
+                }
+
+                function validatePhone(phone) {
+                    // Simple validation for demonstration
+                    const re = /^\d{10,}$/;
+                    return re.test(phone.replace(/\D/g, ""));
+                }
+
+                signupForm.addEventListener("submit", function (e) {
+                    e.preventDefault();
+
+                    let isValid = true;
+
+                    // Validate first name
+                    if (firstNameInput.value.trim() === "") {
+                        firstNameError.classList.add("show");
+                        isValid = false;
+                    } else {
+                        firstNameError.classList.remove("show");
+                    }
+
+                    // Validate last name
+                    if (lastNameInput.value.trim() === "") {
+                        lastNameError.classList.add("show");
+                        isValid = false;
+                    } else {
+                        lastNameError.classList.remove("show");
+                    }
+
+                    // Validate email
+                    if (!validateEmail(emailInput.value)) {
+                        emailError.classList.add("show");
+                        isValid = false;
+                    } else {
+                        emailError.classList.remove("show");
+                    }
+
+                    // Validate phone
+                    if (!validatePhone(phoneInput.value)) {
+                        phoneError.classList.add("show");
+                        isValid = false;
+                    } else {
+                        phoneError.classList.remove("show");
+                    }
+
+                    // Validate password
+                    if (!validatePassword(passwordInput.value)) {
+                        passwordError.classList.add("show");
+                        isValid = false;
+                    } else {
+                        passwordError.classList.remove("show");
+                    }
+
+                    // Validate confirm password
+                    if (passwordInput.value !== confirmPasswordInput.value) {
+                        confirmPasswordError.classList.add("show");
+                        isValid = false;
+                    } else {
+                        confirmPasswordError.classList.remove("show");
+                    }
+
+                    // Validate terms checkbox
+                    if (!termsCheckbox.checked) {
+                        showNotification(
+                            "Please agree to the Terms of Service and Privacy Policy.",
+                            "warning"
+                        );
+                        isValid = false;
+                    }
+
+                    if (isValid) {
+                        const formData = new FormData();
+                        formData.append("action", "register");
+                        formData.append("first_name", firstNameInput.value);
+                        formData.append("last_name", lastNameInput.value);
+                        formData.append("email", emailInput.value);
+                        formData.append("phone", phoneInput.value);
+                        formData.append("password", passwordInput.value);
+                        formData.append("user_type", userTypeInput.value);
+                        formData.append("username", emailInput.value.split("@")[0]);
+
+                        fetch("../backend/auth/user_auth.php", {
+                            method: "POST",
+                            body: formData,
+                        })
+                            .then((response) => response.json())
+                            .then((data) => {
+                                if (data.success) {
+                                    showNotification(data.message, "success");
+                                    setTimeout(() => {
+                                        window.location.href = "login.html";
+                                    }, 1500);
+                                } else {
+                                    showNotification(data.message, "danger");
+                                }
+                            })
+                            .catch((error) => {
+                                console.error("Error:", error);
+                                showNotification(
+                                    "An error occurred. Please try again.",
+                                    "danger"
+                                );
+                            });
+                    }
+                });
+
+                // Social signup buttons
+                const googleBtn = document.querySelector(".google-btn");
+                const facebookBtn = document.querySelector(".facebook-btn");
+
+                if (googleBtn) {
+                    googleBtn.addEventListener("click", function () {
+                        showNotification("Google signup coming soon", "info");
+                    });
+                }
+
+                if (facebookBtn) {
+                    facebookBtn.addEventListener("click", function () {
+                        showNotification("Facebook signup coming soon", "info");
+                    });
+                }
+            });
+        </script>
+    </body>
+</html>

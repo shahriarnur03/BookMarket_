@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Book Details - Admin Dashboard - BookMarket</title>
+        <link rel="stylesheet" href="../../css/styles.css" />
+        <!-- Additional CSS for Book View page -->
+        <style>
+            /* Book View Page Specific Styles */
+            .book-view-container {
+                max-width: var(--container-width);
+                margin: 2rem auto;
+                padding: 0 1rem;
+            }
+
+            .book-view-header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin-bottom: 2rem;
+                flex-wrap: wrap;
+                gap: 1rem;
+            }
+
+            .back-button {
+                display: inline-flex;
+                align-items: center;
+                gap: 0.5rem;
+                padding: 0.5rem 1rem;
+                background-color: var(--secondary-color);
+                color: white;
+                text-decoration: none;
+                border-radius: 4px;
+                transition: background-color 0.3s ease;
+            }
+
+            .back-button:hover {
+                background-color: #d35400;
+            }
+
+            .book-details-card {
+                background-color: white;
+                border-radius: 8px;
+                overflow: hidden;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+                margin-bottom: 2rem;
+            }
+
+            .book-header {
+                background-color: var(--primary-color);
+                color: white;
+                padding: 2rem;
+                text-align: center;
+            }
+
+            .book-title {
+                font-size: 2rem;
+                margin-bottom: 0.5rem;
+            }
+
+            .book-author {
+                font-size: 1.2rem;
+                opacity: 0.9;
+            }
+
+            .book-content {
+                padding: 2rem;
+            }
+
+            .book-info-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                gap: 2rem;
+                margin-bottom: 2rem;
+            }
+
+            .info-section h3 {
+                color: var(--dark-color);
+                margin-bottom: 1rem;
+                border-bottom: 2px solid var(--primary-color);
+                padding-bottom: 0.5rem;
+            }
+
+            .info-item {
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 1rem;
+                padding: 0.5rem 0;
+                border-bottom: 1px solid #eee;
+            }
+
+            .info-label {
+                font-weight: 600;
+                color: var(--dark-color);
+            }
+
+            .info-value {
+                color: #666;
+            }
+
+            .book-images {
+                margin: 2rem 0;
+            }
+
+            .image-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 1rem;
+                margin-top: 1rem;
+            }
+
+            .book-image {
+                width: 100%;
+                height: 200px;
+                background-color: #f0f0f0;
+                border-radius: 8px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: #666;
+                font-weight: bold;
+                border: 2px dashed #ddd;
+            }
+
+            .book-description {
+                margin: 2rem 0;
+            }
+
+            .description-text {
+                background-color: #f9f9f9;
+                padding: 1.5rem;
+                border-radius: 8px;
+                line-height: 1.6;
+                color: #555;
+            }
+
+            .action-buttons {
+                display: flex;
+                gap: 1rem;
+                justify-content: center;
+                margin-top: 2rem;
+                padding-top: 2rem;
+                border-top: 1px solid #eee;
+            }
+
+            .btn-delete {
+                background-color: #e74c3c;
+                color: white;
+                border: none;
+                padding: 0.8rem 2rem;
+                border-radius: 4px;
+                cursor: pointer;
+                font-size: 1rem;
+                transition: background-color 0.3s ease;
+            }
+
+            .btn-delete:hover {
+                background-color: #c0392b;
+            }
+
+            .status-badge {
+                display: inline-block;
+                padding: 0.5rem 1rem;
+                border-radius: 20px;
+                font-size: 0.9rem;
+                font-weight: 600;
+                text-transform: uppercase;
+            }
+
+            .status-approved {
+                background-color: #27ae60;
+                color: white;
+            }
+
+            .price-display {
+                font-size: 1.5rem;
+                font-weight: bold;
+                color: var(--primary-color);
+                text-align: center;
+                margin: 1rem 0;
+            }
+
+            @media screen and (max-width: 768px) {
+                .book-info-grid {
+                    grid-template-columns: 1fr;
+                }
+
+                .action-buttons {
+                    flex-direction: column;
+                    align-items: center;
+                }
+            }
+        </style>
+        <!-- Font Awesome for icons -->
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        />
+    </head>
+    <body>
+        <!-- Navbar (Common Admin Navbar) -->
+        <nav class="navbar">
+            <!-- Navbar will be generated by admin-navbar.js -->
+        </nav>
+
+        <!-- Book View Content -->
+        <div class="book-view-container">
+            <div class="book-view-header">
+                <div>
+                    <h1>Book Details</h1>
+                    <p>View and manage book information</p>
+                </div>
+                <a href="book-management.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Book Management
+                </a>
+            </div>
+
+            <div class="book-details-card">
+                <div class="book-header">
+                    <h2 class="book-title">The Great Gatsby</h2>
+                    <p class="book-author">by F. Scott Fitzgerald</p>
+                </div>
+
+                <div class="book-content">
+                    <div class="price-display">৳350</div>
+
+                    <div class="book-info-grid">
+                        <div class="info-section">
+                            <h3>Basic Information</h3>
+                            <div class="info-item">
+                                <span class="info-label">Book ID:</span>
+                                <span class="info-value">#B001</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">ISBN:</span>
+                                <span class="info-value">978-0743273565</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Category:</span>
+                                <span class="info-value">Fiction</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Condition:</span>
+                                <span class="info-value">Excellent</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Status:</span>
+                                <span class="status-badge status-approved"
+                                    >Approved</span
+                                >
+                            </div>
+                        </div>
+
+                        <div class="info-section">
+                            <h3>Seller Information</h3>
+                            <div class="info-item">
+                                <span class="info-label">Seller Name:</span>
+                                <span class="info-value">John Doe</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Seller ID:</span>
+                                <span class="info-value">#U001</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Listed Date:</span>
+                                <span class="info-value">July 15, 2023</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Approval Date:</span>
+                                <span class="info-value">July 16, 2023</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="book-description">
+                        <h3>Description</h3>
+                        <div class="description-text">
+                            <p>
+                                This is a classic American novel that explores
+                                themes of decadence, idealism, resistance to
+                                change, social upheaval, and excess. The book is
+                                in excellent condition with minimal wear, clean
+                                pages, and a well-preserved cover. No markings
+                                or highlights inside.
+                            </p>
+                            <p>
+                                The book has been carefully maintained and shows
+                                only slight signs of previous ownership. Perfect
+                                for collectors or readers who appreciate
+                                pristine copies of classic literature.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="book-images">
+                        <h3>Book Images</h3>
+                        <div class="image-grid">
+                            <div class="book-image">Front Cover</div>
+                            <div class="book-image">Back Cover</div>
+                            <div class="book-image">Spine</div>
+                            <div class="book-image">Sample Pages</div>
+                        </div>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button class="btn btn-delete" id="delete-book">
+                            <i class="fas fa-trash"></i> Delete Book
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-container">
+                <div class="footer-top">
+                    <div class="footer-column">
+                        <h3>BookMarket</h3>
+                        <p>
+                            Your one-stop destination for buying and selling
+                            books online. Find your next favorite book or give
+                            your old books a new home.
+                        </p>
+                        <div class="social-links">
+                            <a href="#"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#"><i class="fab fa-twitter"></i></a>
+                            <a href="#"><i class="fab fa-instagram"></i></a>
+                            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        </div>
+                    </div>
+                    <div class="footer-column">
+                        <h3>Quick Links</h3>
+                        <ul class="footer-links">
+                            <li><a href="../../index.html">Home</a></li>
+                            <li>
+                                <a href="order-management.html"
+                                    >Order Management</a
+                                >
+                            </li>
+                            <li><a href="../sell.html">Sell Books</a></li>
+                            <li><a href="../about.html">About Us</a></li>
+                            <li><a href="../contact.html">Contact Us</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h3>Support</h3>
+                        <ul class="footer-links">
+                            <li><a href="#">Help Center</a></li>
+                            <li><a href="#">FAQs</a></li>
+                            <li><a href="#">Shipping Policy</a></li>
+                            <li><a href="#">Return Policy</a></li>
+                            <li><a href="#">Privacy Policy</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h3>Contact</h3>
+                        <ul class="contact-info">
+                            <li>
+                                <i class="fas fa-map-marker-alt"></i> 123 Book
+                                Street, Dhaka, Bangladesh
+                            </li>
+                            <li>
+                                <i class="fas fa-phone"></i> +880 123 456789
+                            </li>
+                            <li>
+                                <i class="fas fa-envelope"></i>
+                                support@bookmarket.com
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p>&copy; 2023 BookMarket. All Rights Reserved.</p>
+                </div>
+            </div>
+        </footer>
+
+        <!-- Notification Container -->
+        <div id="notification-container" class="notification-container"></div>
+
+        <!-- JavaScript -->
+        <script src="../../js/main.js"></script>
+        <script src="../../js/auth.js"></script>
+        <script src="../../js/admin-navbar.js"></script>
+        <!-- Book View specific JavaScript -->
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                // Delete book functionality
+                const deleteBtn = document.getElementById("delete-book");
+
+                if (deleteBtn) {
+                    deleteBtn.addEventListener("click", function () {
+                        if (
+                            confirm(
+                                "Are you sure you want to delete this book? This action cannot be undone."
+                            )
+                        ) {
+                            // This will be connected to backend later
+                            showNotification(
+                                "Book deleted successfully!",
+                                "success"
+                            );
+
+                            // Redirect back to book management after a short delay
+                            setTimeout(() => {
+                                window.location.href = "book-management.html";
+                            }, 1500);
+                        }
+                    });
+                }
+            });
+        </script>
+    </body>
+</html>

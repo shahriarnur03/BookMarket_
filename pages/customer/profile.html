@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - Customer Dashboard - BookMarket</title>
+    <link rel="stylesheet" href="../../css/styles.css">
+    <!-- Additional CSS for Dashboard page -->
+    <style>
+        /* Dashboard Page Specific Styles */
+        .dashboard-container {
+            max-width: var(--container-width);
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .dashboard-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .welcome-message h1 {
+            margin-bottom: 0.5rem;
+            color: var(--dark-color);
+        }
+
+        .welcome-message p {
+            color: #666;
+        }
+
+        .dashboard-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .dashboard-layout {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .dashboard-sidebar {
+            width: 250px;
+            flex-shrink: 0;
+        }
+
+        .dashboard-content {
+            flex: 1;
+        }
+
+        .sidebar-menu {
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar-menu-item {
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--dark-color);
+            text-decoration: none;
+        }
+
+        .sidebar-menu-item:last-child {
+            border-bottom: none;
+        }
+
+        .sidebar-menu-item.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .sidebar-menu-item:hover:not(.active) {
+            background-color: #f5f5f5;
+        }
+
+        .sidebar-menu-item i {
+            margin-right: 0.8rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        .section-card {
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .section-header {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .section-title {
+            margin: 0;
+            font-size: 1.2rem;
+            color: var(--dark-color);
+        }
+
+        .section-content {
+            padding: 1.5rem;
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background-color: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            color: #aaa;
+            margin-right: 1.5rem;
+            overflow: hidden;
+        }
+
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-info h2 {
+            margin-bottom: 0.5rem;
+            color: var(--dark-color);
+        }
+
+        .profile-info p {
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-info .member-since {
+            font-size: 0.9rem;
+            color: #888;
+        }
+
+        .profile-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 1.5rem;
+        }
+
+        .profile-tab {
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--dark-color);
+            position: relative;
+        }
+
+        .profile-tab.active {
+            color: var(--primary-color);
+        }
+
+        .profile-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--primary-color);
+        }
+
+        .profile-content {
+            display: none;
+        }
+
+        .profile-content.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        .form-group textarea {
+            height: 120px;
+            resize: vertical;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+            margin-bottom: 0;
+        }
+
+        .form-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .danger-zone {
+            margin-top: 3rem;
+            padding: 1.5rem;
+            border: 1px solid var(--danger-color);
+            border-radius: 8px;
+            background-color: rgba(231, 76, 60, 0.05);
+        }
+
+        .danger-zone h3 {
+            color: var(--danger-color);
+            margin-bottom: 1rem;
+        }
+
+        .danger-zone p {
+            margin-bottom: 1.5rem;
+            color: #666;
+        }
+
+        /* Responsive styles */
+        @media screen and (max-width: 992px) {
+            .dashboard-layout {
+                flex-direction: column;
+            }
+            
+            .dashboard-sidebar {
+                width: 100%;
+            }
+        }
+
+        @media screen and (max-width: 768px) {
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .profile-avatar {
+                margin-right: 0;
+                margin-bottom: 1rem;
+            }
+            
+            .form-row {
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+        }
+    </style>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navbar (Common Customer Navbar) -->
+    <nav class="navbar">
+        <!-- Navbar will be generated by customer-navbar.js -->
+    </nav>
+
+    <!-- Dashboard Content -->
+    <div class="dashboard-container">
+        <div class="dashboard-header">
+            <div class="welcome-message">
+                <h1>My Profile</h1>
+                <p>Manage your account settings and preferences</p>
+            </div>
+        </div>
+
+        <div class="dashboard-layout">
+            <!-- Dashboard Sidebar -->
+            <div class="dashboard-sidebar">
+                <div class="sidebar-menu">
+                    <a href="dashboard.html" class="sidebar-menu-item">
+                        <i class="fas fa-chart-line"></i> Dashboard
+                    </a>
+                    <a href="my-orders.html" class="sidebar-menu-item">
+                        <i class="fas fa-shopping-bag"></i> My Orders
+                    </a>
+                    <a href="my-books.html" class="sidebar-menu-item">
+                        <i class="fas fa-book"></i> My Books
+                    </a>
+                    <a href="pending-approvals.html" class="sidebar-menu-item">
+                        <i class="fas fa-clock"></i> Pending Approvals
+                    </a>
+                    <a href="sales-reports.html" class="sidebar-menu-item">
+                        <i class="fas fa-dollar-sign"></i> Sales Reports
+                    </a>
+                    <a href="profile.html" class="sidebar-menu-item active">
+                        <i class="fas fa-user"></i> My Profile
+                    </a>
+                    <a href="#" class="sidebar-menu-item" id="sidebar-logout">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </a>
+                </div>
+            </div>
+
+            <!-- Dashboard Main Content -->
+            <div class="dashboard-content">
+                <div class="section-card">
+                    <div class="section-header">
+                        <h3 class="section-title">Profile Information</h3>
+                    </div>
+                    
+                    <div class="section-content">
+                        <!-- Profile Header -->
+                        <div class="profile-header">
+                            <div class="profile-avatar">
+                                <i class="fas fa-user"></i>
+                                <!-- If user has uploaded an avatar: -->
+                                <!-- <img src="path/to/avatar.jpg" alt="User Avatar"> -->
+                            </div>
+                            <div class="profile-info">
+                                <h2>John Doe</h2>
+                                <p>john.doe@example.com</p>
+                                <p>+880 123 456789</p>
+                                <p class="member-since">Member since: June 10, 2023</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Profile Tabs -->
+                        <div class="profile-tabs">
+                            <div class="profile-tab active" data-tab="personal-info">Personal Information</div>
+                            <div class="profile-tab" data-tab="change-password">Change Password</div>
+                            <div class="profile-tab" data-tab="address">Address</div>
+                            <div class="profile-tab" data-tab="preferences">Preferences</div>
+                        </div>
+                        
+                        <!-- Personal Information Tab -->
+                        <div class="profile-content active" id="personal-info-content">
+                            <form id="personal-info-form">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="first-name">First Name</label>
+                                        <input type="text" id="first-name" value="John">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="last-name">Last Name</label>
+                                        <input type="text" id="last-name" value="Doe">
+                                    </div>
+                                </div>
+                                
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="email">Email</label>
+                                        <input type="email" id="email" value="john.doe@example.com">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="phone">Phone Number</label>
+                                        <input type="tel" id="phone" value="+880 123 456789">
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="bio">Bio</label>
+                                    <textarea id="bio" placeholder="Tell us a bit about yourself...">Book enthusiast and collector. I love reading fiction and history books.</textarea>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="avatar">Profile Picture</label>
+                                    <input type="file" id="avatar" accept="image/*" style="display: none;">
+                                    <div style="display: flex; gap: 1rem; align-items: center;">
+                                        <button type="button" class="btn btn-secondary" id="upload-avatar-btn">Upload Image</button>
+                                        <span id="avatar-filename">No file selected</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-buttons">
+                                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                                </div>
+                            </form>
+                        </div>
+                        
+                        <!-- Change Password Tab -->
+                        <div class="profile-content" id="change-password-content">
+                            <form id="change-password-form">
+                                <div class="form-group">
+                                    <label for="current-password">Current Password</label>
+                                    <input type="password" id="current-password" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="new-password">New Password</label>
+                                    <input type="password" id="new-password" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="confirm-password">Confirm New Password</label>
+                                    <input type="password" id="confirm-password" required>
+                                </div>
+                                
+                                <div class="form-buttons">
+                                    <button type="submit" class="btn btn-primary">Change Password</button>
+                                </div>
+                            </form>
+                        </div>
+                        
+                        <!-- Address Tab -->
+                        <div class="profile-content" id="address-content">
+                            <form id="address-form">
+                                <div class="form-group">
+                                    <label for="street-address">Street Address</label>
+                                    <input type="text" id="street-address" value="123 Book Street">
+                                </div>
+                                
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="city">City</label>
+                                        <input type="text" id="city" value="Dhaka">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="postal-code">Postal Code</label>
+                                        <input type="text" id="postal-code" value="1000">
+                                    </div>
+                                </div>
+                                
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="state">State/Division</label>
+                                        <input type="text" id="state" value="Dhaka">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="country">Country</label>
+                                        <select id="country">
+                                            <option value="bangladesh" selected>Bangladesh</option>
+                                            <option value="india">India</option>
+                                            <option value="pakistan">Pakistan</option>
+                                            <option value="nepal">Nepal</option>
+                                            <option value="bhutan">Bhutan</option>
+                                            <option value="sri-lanka">Sri Lanka</option>
+                                            <option value="maldives">Maldives</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-buttons">
+                                    <button type="submit" class="btn btn-primary">Save Address</button>
+                                </div>
+                            </form>
+                        </div>
+                        
+                        <!-- Preferences Tab -->
+                        <div class="profile-content" id="preferences-content">
+                            <form id="preferences-form">
+                                <div class="form-group">
+                                    <label>Email Notifications</label>
+                                    <div style="margin-top: 0.5rem;">
+                                        <div style="display: flex; align-items: center; margin-bottom: 0.5rem;">
+                                            <input type="checkbox" id="notify-orders" checked style="width: auto; margin-right: 0.5rem;">
+                                            <label for="notify-orders" style="font-weight: normal;">Order Updates</label>
+                                        </div>
+                                        <div style="display: flex; align-items: center; margin-bottom: 0.5rem;">
+                                            <input type="checkbox" id="notify-approvals" checked style="width: auto; margin-right: 0.5rem;">
+                                            <label for="notify-approvals" style="font-weight: normal;">Book Approval Status</label>
+                                        </div>
+                                        <div style="display: flex; align-items: center; margin-bottom: 0.5rem;">
+                                            <input type="checkbox" id="notify-sales" checked style="width: auto; margin-right: 0.5rem;">
+                                            <label for="notify-sales" style="font-weight: normal;">Sales Notifications</label>
+                                        </div>
+                                        <div style="display: flex; align-items: center;">
+                                            <input type="checkbox" id="notify-marketing" style="width: auto; margin-right: 0.5rem;">
+                                            <label for="notify-marketing" style="font-weight: normal;">Marketing & Promotions</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="language">Language</label>
+                                    <select id="language">
+                                        <option value="english" selected>English</option>
+                                        <option value="bengali">Bengali</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="form-buttons">
+                                    <button type="submit" class="btn btn-primary">Save Preferences</button>
+                                </div>
+                            </form>
+                        </div>
+                        
+                        <!-- Danger Zone -->
+                        <div class="danger-zone">
+                            <h3><i class="fas fa-exclamation-triangle"></i> Danger Zone</h3>
+                            <p>Once you delete your account, there is no going back. Please be certain.</p>
+                            <button class="btn btn-danger" id="delete-account-btn">Delete My Account</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer (Same as index.html) -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-top">
+                <div class="footer-column">
+                    <h3>BookMarket</h3>
+                    <p>Your one-stop destination for buying and selling books online. Find your next favorite book or give your old books a new home.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                <div class="footer-column">
+                    <h3>Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="../../index.html">Home</a></li>
+                        <li><a href="../browse.html">Browse Books</a></li>
+                        <li><a href="../sell.html">Sell Books</a></li>
+                        <li><a href="../about.html">About Us</a></li>
+                        <li><a href="../contact.html">Contact Us</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Support</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">FAQs</a></li>
+                        <li><a href="#">Shipping Policy</a></li>
+                        <li><a href="#">Return Policy</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Contact</h3>
+                    <ul class="contact-info">
+                        <li><i class="fas fa-map-marker-alt"></i> 123 Book Street, Dhaka, Bangladesh</li>
+                        <li><i class="fas fa-phone"></i> +880 123 456789</li>
+                        <li><i class="fas fa-envelope"></i> support@bookmarket.com</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2023 BookMarket. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="../../js/main.js"></script>
+    <script src="../../js/auth.js"></script>
+    <script src="../../js/customer-navbar.js"></script>
+    <!-- Dashboard specific JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Logout functionality
+            const logoutBtn = document.getElementById('logout-btn');
+            const sidebarLogoutBtn = document.getElementById('sidebar-logout');
+            
+            function handleLogout() {
+                // This will be connected to backend later
+                alert('Logout functionality will be implemented with the backend.');
+                // Redirect to home page
+                // window.location.href = '../../index.html';
+            }
+            
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    handleLogout();
+                });
+            }
+            
+            if (sidebarLogoutBtn) {
+                sidebarLogoutBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    handleLogout();
+                });
+            }
+            
+            // Profile Tabs
+            const profileTabs = document.querySelectorAll('.profile-tab');
+            const profileContents = document.querySelectorAll('.profile-content');
+            
+            profileTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabId = this.getAttribute('data-tab');
+                    
+                    // Remove active class from all tabs and contents
+                    profileTabs.forEach(t => t.classList.remove('active'));
+                    profileContents.forEach(c => c.classList.remove('active'));
+                    
+                    // Add active class to clicked tab and corresponding content
+                    this.classList.add('active');
+                    document.getElementById(tabId + '-content').classList.add('active');
+                });
+            });
+            
+            // Avatar Upload
+            const avatarInput = document.getElementById('avatar');
+            const uploadAvatarBtn = document.getElementById('upload-avatar-btn');
+            const avatarFilename = document.getElementById('avatar-filename');
+            
+            if (uploadAvatarBtn && avatarInput) {
+                uploadAvatarBtn.addEventListener('click', function() {
+                    avatarInput.click();
+                });
+                
+                avatarInput.addEventListener('change', function() {
+                    if (this.files && this.files[0]) {
+                        avatarFilename.textContent = this.files[0].name;
+                    }
+                });
+            }
+            
+            // Form Submissions
+            const forms = document.querySelectorAll('form');
+            
+            forms.forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    // This will be connected to backend later
+                    alert('Form submitted successfully! This will be implemented with the backend.');
+                });
+            });
+            
+            // Delete Account
+            const deleteAccountBtn = document.getElementById('delete-account-btn');
+            
+            if (deleteAccountBtn) {
+                deleteAccountBtn.addEventListener('click', function() {
+                    const confirmDelete = confirm('Are you sure you want to delete your account? This action cannot be undone.');
+                    
+                    if (confirmDelete) {
+                        // This will be connected to backend later
+                        alert('Delete account functionality will be implemented with the backend.');
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

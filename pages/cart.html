@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Shopping Cart - BookMarket</title>
+        <link rel="stylesheet" href="../css/styles.css" />
+        <!-- Additional CSS for Cart page -->
+        <style>
+            /* Cart Page Specific Styles */
+            .cart-container {
+                max-width: var(--container-width);
+                margin: 2rem auto;
+                padding: 0 1rem;
+            }
+
+            .cart-header {
+                margin-bottom: 2rem;
+            }
+
+            .cart-header h1 {
+                margin-bottom: 0.5rem;
+                color: var(--dark-color);
+            }
+
+            .cart-header p {
+                color: #666;
+            }
+
+            .cart-empty {
+                text-align: center;
+                padding: 3rem;
+                background-color: white;
+                border-radius: 8px;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            }
+
+            .cart-empty i {
+                font-size: 4rem;
+                color: #ddd;
+                margin-bottom: 1rem;
+            }
+
+            .cart-empty p {
+                color: #666;
+                margin-bottom: 1.5rem;
+            }
+
+            .cart-layout {
+                display: flex;
+                gap: 2rem;
+                flex-wrap: wrap;
+            }
+
+            .cart-items {
+                flex: 1 1 600px;
+            }
+
+            .cart-summary {
+                flex: 0 0 300px;
+            }
+
+            .cart-card {
+                background-color: white;
+                border-radius: 8px;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+                overflow: hidden;
+                margin-bottom: 2rem;
+            }
+
+            .cart-card-header {
+                background-color: #f5f5f5;
+                padding: 1rem 1.5rem;
+                border-bottom: 1px solid #eee;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .cart-card-header h3 {
+                margin: 0;
+                color: var(--dark-color);
+                font-size: 1.1rem;
+            }
+
+            .cart-item {
+                display: flex;
+                padding: 1.5rem;
+                border-bottom: 1px solid #eee;
+                gap: 1.5rem;
+                position: relative;
+            }
+
+            .cart-item:last-child {
+                border-bottom: none;
+            }
+
+            .cart-item-image {
+                width: 100px;
+                height: 150px;
+                background-color: #f5f5f5;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 4px;
+                overflow: hidden;
+                flex-shrink: 0;
+            }
+
+            .cart-item-image img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+
+            .cart-item-details {
+                flex-grow: 1;
+            }
+
+            .cart-item-title {
+                font-weight: 600;
+                color: var(--dark-color);
+                margin-bottom: 0.5rem;
+                font-size: 1.1rem;
+            }
+
+            .cart-item-author {
+                color: #666;
+                margin-bottom: 0.5rem;
+                font-size: 0.9rem;
+            }
+
+            .cart-item-price {
+                font-weight: 600;
+                color: var(--primary-color);
+                font-size: 1.1rem;
+                margin-top: 0.5rem;
+            }
+
+            .cart-item-condition {
+                display: inline-block;
+                padding: 0.2rem 0.5rem;
+                background-color: #f0f0f0;
+                border-radius: 4px;
+                font-size: 0.8rem;
+                color: #666;
+                margin-top: 0.5rem;
+            }
+
+            .cart-item-seller {
+                font-size: 0.9rem;
+                color: #666;
+                margin-top: 0.5rem;
+            }
+
+            .cart-item-actions {
+                display: flex;
+                gap: 1rem;
+                margin-top: 1rem;
+            }
+
+            .cart-item-quantity {
+                display: flex;
+                align-items: center;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                overflow: hidden;
+            }
+
+            .quantity-btn {
+                width: 30px;
+                height: 30px;
+                background-color: #f0f0f0;
+                border: none;
+                cursor: pointer;
+                font-size: 1rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .quantity-btn:hover {
+                background-color: #e0e0e0;
+            }
+
+            .quantity-input {
+                width: 40px;
+                height: 30px;
+                border: none;
+                text-align: center;
+                font-size: 0.9rem;
+            }
+
+            .remove-btn {
+                color: var(--danger-color);
+                background-color: transparent;
+                border: none;
+                cursor: pointer;
+                font-size: 0.9rem;
+                display: flex;
+                align-items: center;
+                gap: 0.3rem;
+            }
+
+            .remove-btn:hover {
+                text-decoration: underline;
+            }
+
+            .cart-summary-content {
+                padding: 1.5rem;
+            }
+
+            .summary-row {
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 1rem;
+                padding-bottom: 1rem;
+                border-bottom: 1px solid #eee;
+            }
+
+            .summary-row:last-of-type {
+                margin-bottom: 1.5rem;
+                padding-bottom: 1rem;
+                border-bottom: 1px solid #eee;
+                font-weight: 700;
+                font-size: 1.2rem;
+                color: var(--dark-color);
+            }
+
+            .summary-label {
+                color: #666;
+            }
+
+            .summary-value {
+                font-weight: 600;
+                color: var(--dark-color);
+            }
+
+            .checkout-btn {
+                width: 100%;
+                padding: 1rem;
+                background-color: var(--primary-color);
+                color: white;
+                border: none;
+                border-radius: 4px;
+                font-size: 1rem;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 0.5rem;
+            }
+
+            .checkout-btn:hover {
+                background-color: #3a5a97;
+            }
+
+            .continue-shopping {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                color: var(--primary-color);
+                text-decoration: none;
+                font-weight: 600;
+                margin-top: 1rem;
+            }
+
+            .continue-shopping:hover {
+                text-decoration: underline;
+            }
+
+            .promo-code {
+                margin-top: 1.5rem;
+            }
+
+            .promo-code-form {
+                display: flex;
+                gap: 0.5rem;
+            }
+
+            .promo-code-input {
+                flex-grow: 1;
+                padding: 0.8rem;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                font-size: 0.9rem;
+            }
+
+            .promo-code-btn {
+                padding: 0.8rem 1rem;
+                background-color: var(--dark-color);
+                color: white;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+                font-weight: 600;
+                transition: all 0.3s ease;
+            }
+
+            .promo-code-btn:hover {
+                background-color: #333;
+            }
+
+            @media screen and (max-width: 768px) {
+                .cart-item {
+                    flex-direction: column;
+                    align-items: flex-start;
+                }
+
+                .cart-item-image {
+                    width: 100%;
+                    height: 200px;
+                }
+            }
+        </style>
+        <!-- Font Awesome for icons -->
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        />
+    </head>
+    <body>
+        <!-- Navbar -->
+        <nav class="navbar">
+            <div class="navbar-container">
+                <div class="navbar-logo">
+                    <img
+                        src="../images/bookmarket-logo.png"
+                        alt="BookMarket"
+                        onerror="this.src='https://via.placeholder.com/30x30?text=BM'; this.onerror='';"
+                    />
+                    <a href="../index.html">BookMarket</a>
+                </div>
+                <ul class="navbar-menu">
+                    <li><a href="../index.html">Home</a></li>
+                    <li><a href="browse.html">Browse Books</a></li>
+                    <li><a href="sell.html">Sell</a></li>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+                <div class="navbar-buttons">
+                    <a href="cart.html" class="cart-icon"
+                        ><i class="fas fa-shopping-cart"></i>
+                        <span class="cart-count">2</span></a
+                    >
+                    <div class="profile-dropdown">
+                        <button class="dropdown-btn">
+                            My Profile <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="dropdown-content">
+                            <a href="customer/profile.html">Profile</a>
+                            <a href="customer/dashboard.html">Dashboard</a>
+                            <a href="customer/my-orders.html">My Orders</a>
+                            <a href="../index.html" id="logout-btn">Logout</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="navbar-toggle">
+                    <i class="fas fa-bars"></i>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Cart Content -->
+        <div class="cart-container">
+            <div class="cart-header">
+                <h1>Shopping Cart</h1>
+                <p>You have 2 items in your cart</p>
+            </div>
+
+            <!-- Cart Layout -->
+            <div class="cart-layout">
+                <!-- Cart Items -->
+                <div class="cart-items">
+                    <div class="cart-card">
+                        <div class="cart-card-header">
+                            <h3>Cart Items</h3>
+                            <span>2 items</span>
+                        </div>
+
+                        <div class="cart-item">
+                            <div class="cart-item-image">
+                                <img
+                                    src="../images/b_cover3.png"
+                                    alt="1984"
+                                    onerror="this.src='https://via.placeholder.com/100x150?text=Book Cover'; this.onerror='';"
+                                />
+                            </div>
+                            <div class="cart-item-details">
+                                <div class="cart-item-title">1984</div>
+                                <div class="cart-item-author">
+                                    by George Orwell
+                                </div>
+                                <div class="cart-item-condition">Excellent</div>
+                                <div class="cart-item-seller">
+                                    Sold by: BookLover123
+                                </div>
+                                <div class="cart-item-price" data-price="18.99">
+                                    ৳18.99
+                                </div>
+                                <div class="cart-item-actions">
+                                    <div class="cart-item-quantity">
+                                        <button
+                                            class="quantity-btn decrease-btn"
+                                        >
+                                            -
+                                        </button>
+                                        <input
+                                            type="text"
+                                            class="quantity-input"
+                                            value="1"
+                                            readonly
+                                        />
+                                        <button
+                                            class="quantity-btn increase-btn"
+                                        >
+                                            +
+                                        </button>
+                                    </div>
+                                    <button class="remove-btn">
+                                        <i class="fas fa-trash-alt"></i> Remove
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="cart-item">
+                            <div class="cart-item-image">
+                                <img
+                                    src="../images/b_cover1.jpg"
+                                    alt="The Great Gatsby"
+                                    onerror="this.src='https://via.placeholder.com/100x150?text=Book Cover'; this.onerror='';"
+                                />
+                            </div>
+                            <div class="cart-item-details">
+                                <div class="cart-item-title">
+                                    The Great Gatsby
+                                </div>
+                                <div class="cart-item-author">
+                                    by F. Scott Fitzgerald
+                                </div>
+                                <div class="cart-item-condition">Good</div>
+                                <div class="cart-item-seller">
+                                    Sold by: ClassicBooks
+                                </div>
+                                <div class="cart-item-price" data-price="15.99">
+                                    ৳15.99
+                                </div>
+                                <div class="cart-item-actions">
+                                    <div class="cart-item-quantity">
+                                        <button
+                                            class="quantity-btn decrease-btn"
+                                        >
+                                            -
+                                        </button>
+                                        <input
+                                            type="text"
+                                            class="quantity-input"
+                                            value="1"
+                                            readonly
+                                        />
+                                        <button
+                                            class="quantity-btn increase-btn"
+                                        >
+                                            +
+                                        </button>
+                                    </div>
+                                    <button class="remove-btn">
+                                        <i class="fas fa-trash-alt"></i> Remove
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <a href="browse.html" class="continue-shopping">
+                        <i class="fas fa-arrow-left"></i> Continue Shopping
+                    </a>
+                </div>
+
+                <!-- Cart Summary -->
+                <div class="cart-summary">
+                    <div class="cart-card">
+                        <div class="cart-card-header">
+                            <h3>Order Summary</h3>
+                        </div>
+                        <div class="cart-summary-content">
+                            <div class="summary-row">
+                                <div class="summary-label">Subtotal</div>
+                                <div class="summary-value" id="subtotal">
+                                    ৳34.98
+                                </div>
+                            </div>
+                            <div class="summary-row">
+                                <div class="summary-label">Shipping</div>
+                                <div class="summary-value" id="shipping">
+                                    ৳10.00
+                                </div>
+                            </div>
+                            <div class="summary-row">
+                                <div class="summary-label">Tax</div>
+                                <div class="summary-value" id="tax">৳1.00</div>
+                            </div>
+                            <div class="summary-row">
+                                <div class="summary-label">Total</div>
+                                <div class="summary-value" id="total">
+                                    ৳45.98
+                                </div>
+                            </div>
+
+                            <a href="payment.html" class="checkout-btn">
+                                <i class="fas fa-lock"></i> Proceed to Checkout
+                            </a>
+
+                            <div class="promo-code">
+                                <h4>Have a promo code?</h4>
+                                <div class="promo-code-form">
+                                    <input
+                                        type="text"
+                                        class="promo-code-input"
+                                        placeholder="Enter code"
+                                    />
+                                    <button class="promo-code-btn">
+                                        Apply
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Empty Cart State (hidden by default) -->
+            <div class="cart-empty" style="display: none">
+                <i class="fas fa-shopping-cart"></i>
+                <h2>Your cart is empty</h2>
+                <p>Looks like you haven't added any books to your cart yet.</p>
+                <a href="browse.html" class="btn btn-primary">Browse Books</a>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-container">
+                <div class="footer-top">
+                    <div class="footer-column">
+                        <h3>BookMarket</h3>
+                        <p>
+                            Your one-stop destination for buying and selling
+                            books online. Find your next favorite book or give
+                            your old books a new home.
+                        </p>
+                        <div class="social-links">
+                            <a href="#"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#"><i class="fab fa-twitter"></i></a>
+                            <a href="#"><i class="fab fa-instagram"></i></a>
+                            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        </div>
+                    </div>
+                    <div class="footer-column">
+                        <h3>Quick Links</h3>
+                        <ul class="footer-links">
+                            <li><a href="../index.html">Home</a></li>
+                            <li><a href="browse.html">Browse Books</a></li>
+                            <li><a href="sell.html">Sell Books</a></li>
+                            <li><a href="about.html">About Us</a></li>
+                            <li><a href="contact.html">Contact Us</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h3>Support</h3>
+                        <ul class="footer-links">
+                            <li><a href="#">Help Center</a></li>
+                            <li><a href="#">FAQs</a></li>
+                            <li><a href="#">Shipping Policy</a></li>
+                            <li><a href="#">Return Policy</a></li>
+                            <li><a href="#">Privacy Policy</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h3>Contact</h3>
+                        <ul class="contact-info">
+                            <li>
+                                <i class="fas fa-map-marker-alt"></i> 123 Book
+                                Street, Dhaka, Bangladesh
+                            </li>
+                            <li>
+                                <i class="fas fa-phone"></i> +880 123 456789
+                            </li>
+                            <li>
+                                <i class="fas fa-envelope"></i>
+                                support@bookmarket.com
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p>&copy; 2023 BookMarket. All Rights Reserved.</p>
+                </div>
+            </div>
+        </footer>
+
+        <!-- Notification Container -->
+        <div id="notification-container" class="notification-container"></div>
+
+        <!-- JavaScript -->
+        <script src="../js/main.js"></script>
+        <script src="../js/auth.js"></script>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                // Logout functionality
+                const logoutBtn = document.getElementById("logout-btn");
+
+                if (logoutBtn) {
+                    logoutBtn.addEventListener("click", function (e) {
+                        e.preventDefault();
+                        showNotification("Logged out successfully!", "success");
+                        setTimeout(() => {
+                            window.location.href = "../index.html";
+                        }, 1500);
+                    });
+                }
+
+                // Quantity buttons functionality
+                const decreaseBtns = document.querySelectorAll(".decrease-btn");
+                const increaseBtns = document.querySelectorAll(".increase-btn");
+
+                decreaseBtns.forEach((btn) => {
+                    btn.addEventListener("click", function () {
+                        const input = this.nextElementSibling;
+                        let value = parseInt(input.value);
+                        if (value > 1) {
+                            input.value = value - 1;
+                            updateItemPrice(this.closest(".cart-item"));
+                            updateCartTotal();
+                        }
+                    });
+                });
+
+                increaseBtns.forEach((btn) => {
+                    btn.addEventListener("click", function () {
+                        const input = this.previousElementSibling;
+                        let value = parseInt(input.value);
+                        input.value = value + 1;
+                        updateItemPrice(this.closest(".cart-item"));
+                        updateCartTotal();
+                    });
+                });
+
+                // Remove button functionality
+                const removeBtns = document.querySelectorAll(".remove-btn");
+
+                removeBtns.forEach((btn) => {
+                    btn.addEventListener("click", function () {
+                        const cartItem = this.closest(".cart-item");
+                        cartItem.style.opacity = "0.5";
+                        showNotification("Item removed from cart", "info");
+
+                        setTimeout(() => {
+                            cartItem.remove();
+                            updateCartCount();
+                            updateCartTotal();
+
+                            // Check if cart is empty
+                            const cartItems =
+                                document.querySelectorAll(".cart-item");
+                            if (cartItems.length === 0) {
+                                document.querySelector(
+                                    ".cart-layout"
+                                ).style.display = "none";
+                                document.querySelector(
+                                    ".cart-empty"
+                                ).style.display = "block";
+                                document.querySelector(
+                                    ".cart-header p"
+                                ).textContent = "You have 0 items in your cart";
+                            }
+                        }, 500);
+                    });
+                });
+
+                // Promo code button
+                const promoCodeBtn = document.querySelector(".promo-code-btn");
+
+                if (promoCodeBtn) {
+                    promoCodeBtn.addEventListener("click", function () {
+                        const promoInput =
+                            document.querySelector(".promo-code-input");
+                        if (promoInput.value.trim() === "") {
+                            showNotification(
+                                "Please enter a promo code",
+                                "warning"
+                            );
+                        } else {
+                            showNotification(
+                                "Promo code applied successfully!",
+                                "success"
+                            );
+                            // Here you would normally update the cart total with the discount
+                        }
+                    });
+                }
+
+                // Checkout button
+                const checkoutBtn = document.querySelector(".checkout-btn");
+
+                if (checkoutBtn) {
+                    checkoutBtn.addEventListener("click", function (e) {
+                        // This is just for demo purposes, normally it would go to the checkout page
+                        e.preventDefault();
+                        showNotification("Proceeding to checkout...", "info");
+                        setTimeout(() => {
+                            window.location.href = "payment.html";
+                        }, 1000);
+                    });
+                }
+
+                // Helper functions
+                function updateCartCount() {
+                    const cartItems = document.querySelectorAll(".cart-item");
+                    const cartCount = document.querySelector(".cart-count");
+                    if (cartCount) {
+                        cartCount.textContent = cartItems.length;
+                    }
+
+                    // Update cart header
+                    const cartHeader = document.querySelector(".cart-header p");
+                    if (cartHeader) {
+                        cartHeader.textContent = `You have ${
+                            cartItems.length
+                        } item${
+                            cartItems.length !== 1 ? "s" : ""
+                        } in your cart`;
+                    }
+
+                    // Update cart items count in header
+                    const cartItemsCount = document.querySelector(
+                        ".cart-card-header span"
+                    );
+                    if (cartItemsCount) {
+                        cartItemsCount.textContent = `${cartItems.length} item${
+                            cartItems.length !== 1 ? "s" : ""
+                        }`;
+                    }
+                }
+
+                // Update the price for a single item based on quantity
+                function updateItemPrice(cartItem) {
+                    const priceElement =
+                        cartItem.querySelector(".cart-item-price");
+                    const quantityInput =
+                        cartItem.querySelector(".quantity-input");
+                    const basePrice = parseFloat(
+                        priceElement.getAttribute("data-price")
+                    );
+                    const quantity = parseInt(quantityInput.value);
+
+                    const totalItemPrice = basePrice * quantity;
+                    priceElement.textContent = `৳${totalItemPrice.toFixed(2)}`;
+                }
+
+                // Calculate and update the cart totals
+                function updateCartTotal() {
+                    // Calculate subtotal from all items
+                    let subtotal = 0;
+                    const cartItems = document.querySelectorAll(".cart-item");
+
+                    cartItems.forEach((item) => {
+                        const priceElement =
+                            item.querySelector(".cart-item-price");
+                        const quantityInput =
+                            item.querySelector(".quantity-input");
+                        const basePrice = parseFloat(
+                            priceElement.getAttribute("data-price")
+                        );
+                        const quantity = parseInt(quantityInput.value);
+
+                        subtotal += basePrice * quantity;
+                    });
+
+                    // Fixed shipping and tax rates
+                    const shipping = 10.0;
+                    const taxRate = 0.03; // 3% tax
+                    const tax = subtotal * taxRate;
+                    const total = subtotal + shipping + tax;
+
+                    // Update the summary display
+                    document.getElementById(
+                        "subtotal"
+                    ).textContent = `৳${subtotal.toFixed(2)}`;
+                    document.getElementById(
+                        "shipping"
+                    ).textContent = `৳${shipping.toFixed(2)}`;
+                    document.getElementById(
+                        "tax"
+                    ).textContent = `৳${tax.toFixed(2)}`;
+                    document.getElementById(
+                        "total"
+                    ).textContent = `৳${total.toFixed(2)}`;
+
+                    showNotification("Cart updated", "info");
+                }
+            });
+        </script>
+    </body>
+</html>

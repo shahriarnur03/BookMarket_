@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Admin Dashboard - BookMarket</title>
+        <link rel="stylesheet" href="../../css/styles.css" />
+        <!-- Additional CSS for Admin Dashboard page -->
+        <style>
+            /* Admin Dashboard Page Specific Styles */
+            .dashboard-container {
+                max-width: var(--container-width);
+                margin: 2rem auto;
+                padding: 0 1rem;
+            }
+
+            .dashboard-header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin-bottom: 2rem;
+                flex-wrap: wrap;
+                gap: 1rem;
+            }
+
+            .welcome-message h1 {
+                margin-bottom: 0.5rem;
+                color: var(--dark-color);
+            }
+
+            .welcome-message p {
+                color: #666;
+            }
+
+            .dashboard-actions {
+                display: flex;
+                gap: 1rem;
+            }
+
+            .dashboard-layout {
+                display: flex;
+                gap: 2rem;
+            }
+
+            .dashboard-sidebar {
+                width: 250px;
+                flex-shrink: 0;
+            }
+
+            .dashboard-content {
+                flex: 1;
+            }
+
+            .sidebar-menu {
+                background-color: #2c3e50;
+                border-radius: 8px;
+                overflow: hidden;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            }
+
+            .sidebar-menu-item {
+                padding: 1rem 1.5rem;
+                display: flex;
+                align-items: center;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                cursor: pointer;
+                transition: all 0.3s ease;
+                color: white;
+                text-decoration: none;
+            }
+
+            .sidebar-menu-item:last-child {
+                border-bottom: none;
+            }
+
+            .sidebar-menu-item.active {
+                background-color: var(--primary-color);
+            }
+
+            .sidebar-menu-item:hover:not(.active) {
+                background-color: rgba(255, 255, 255, 0.1);
+            }
+
+            .sidebar-menu-item i {
+                margin-right: 0.8rem;
+                width: 20px;
+                text-align: center;
+            }
+
+            .stats-cards {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+                gap: 1.5rem;
+                margin-bottom: 2rem;
+            }
+
+            .stat-card {
+                background-color: white;
+                border-radius: 8px;
+                padding: 1.5rem;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+                position: relative;
+                overflow: hidden;
+            }
+
+            .stat-icon {
+                position: absolute;
+                top: 1rem;
+                right: 1rem;
+                font-size: 1.2rem;
+                color: rgba(0, 0, 0, 0.1);
+            }
+
+            .stat-label {
+                font-size: 0.9rem;
+                color: #666;
+                margin-bottom: 0.5rem;
+            }
+
+            .stat-value {
+                font-size: 1.8rem;
+                font-weight: 700;
+                color: var(--dark-color);
+            }
+
+            .stat-trend {
+                font-size: 0.8rem;
+                margin-top: 0.5rem;
+            }
+
+            .trend-up {
+                color: var(--success-color);
+            }
+
+            .trend-down {
+                color: var(--danger-color);
+            }
+
+            .stat-books {
+                border-top: 3px solid var(--primary-color);
+            }
+
+            .stat-users {
+                border-top: 3px solid var(--success-color);
+            }
+
+            .stat-pending {
+                border-top: 3px solid var(--warning-color);
+            }
+
+            .stat-earnings {
+                border-top: 3px solid var(--secondary-color);
+            }
+
+            .section-card {
+                background-color: white;
+                border-radius: 8px;
+                overflow: hidden;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+                margin-bottom: 2rem;
+            }
+
+            .section-header {
+                padding: 1rem 1.5rem;
+                border-bottom: 1px solid var(--border-color);
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .section-title {
+                margin: 0;
+                font-size: 1.2rem;
+                color: var(--dark-color);
+            }
+
+            .section-action {
+                color: var(--primary-color);
+                text-decoration: none;
+                font-size: 0.9rem;
+                font-weight: 600;
+            }
+
+            .section-content {
+                padding: 1.5rem;
+            }
+
+            .charts-container {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 2rem;
+            }
+
+            .chart-box {
+                height: 300px;
+                position: relative;
+            }
+
+            .chart-placeholder {
+                width: 100%;
+                height: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: #777;
+                font-style: italic;
+            }
+
+            .table-responsive {
+                overflow-x: auto;
+            }
+
+            .admin-table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+
+            .admin-table th,
+            .admin-table td {
+                padding: 1rem;
+                text-align: left;
+                border-bottom: 1px solid var(--border-color);
+            }
+
+            .admin-table th {
+                font-weight: 600;
+                color: var(--dark-color);
+            }
+
+            .admin-table tr:last-child td {
+                border-bottom: none;
+            }
+
+            .status-badge {
+                display: inline-block;
+                padding: 0.3rem 0.8rem;
+                border-radius: 50px;
+                font-size: 0.8rem;
+                font-weight: 600;
+            }
+
+            .status-pending {
+                background-color: rgba(243, 156, 18, 0.1);
+                color: var(--warning-color);
+            }
+
+            .status-processing {
+                background-color: rgba(74, 111, 165, 0.1);
+                color: var(--primary-color);
+            }
+
+            .status-shipped {
+                background-color: rgba(52, 152, 219, 0.1);
+                color: #3498db;
+            }
+
+            .status-delivered {
+                background-color: rgba(39, 174, 96, 0.1);
+                color: var(--success-color);
+            }
+
+            .status-cancelled {
+                background-color: rgba(231, 76, 60, 0.1);
+                color: var(--danger-color);
+            }
+
+            .status-active {
+                background-color: rgba(39, 174, 96, 0.1);
+                color: var(--success-color);
+            }
+
+            .status-suspended {
+                background-color: rgba(231, 76, 60, 0.1);
+                color: var(--danger-color);
+            }
+
+            .action-buttons {
+                display: flex;
+                gap: 0.5rem;
+            }
+
+            .action-button {
+                padding: 0.3rem 0.8rem;
+                border-radius: 4px;
+                font-size: 0.8rem;
+                cursor: pointer;
+                border: none;
+                transition: all 0.3s ease;
+            }
+
+            .btn-view {
+                background-color: var(--primary-color);
+                color: white;
+            }
+
+            .btn-view:hover {
+                background-color: #3a5a80;
+            }
+
+            .btn-approve {
+                background-color: var(--success-color);
+                color: white;
+            }
+
+            .btn-approve:hover {
+                background-color: #219653;
+            }
+
+            .btn-reject {
+                background-color: var(--danger-color);
+                color: white;
+            }
+
+            .btn-reject:hover {
+                background-color: #c0392b;
+            }
+
+            .admin-book-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                gap: 1.5rem;
+            }
+
+            .admin-book-card {
+                background-color: white;
+                border-radius: 8px;
+                overflow: hidden;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+                transition: transform 0.3s ease;
+            }
+
+            .admin-book-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            }
+
+            .book-image {
+                height: 180px;
+                overflow: hidden;
+            }
+
+            .book-image .placeholder-image {
+                width: 100%;
+                height: 100%;
+            }
+
+            .book-info {
+                padding: 1rem;
+            }
+
+            .book-info h4 {
+                margin-bottom: 0.5rem;
+                color: var(--dark-color);
+                font-size: 1rem;
+            }
+
+            .book-seller {
+                font-size: 0.8rem;
+                color: #666;
+                margin-bottom: 0.5rem;
+            }
+
+            .book-actions {
+                margin-top: 1rem;
+                display: flex;
+                justify-content: center;
+                gap: 0.5rem;
+            }
+
+            /* Responsive styles */
+            @media screen and (max-width: 992px) {
+                .dashboard-layout {
+                    flex-direction: column;
+                }
+
+                .dashboard-sidebar {
+                    width: 100%;
+                }
+
+                .charts-container {
+                    grid-template-columns: 1fr;
+                }
+            }
+
+            @media screen and (max-width: 768px) {
+                .stats-cards {
+                    grid-template-columns: repeat(2, 1fr);
+                }
+
+                .admin-book-grid {
+                    grid-template-columns: repeat(2, 1fr);
+                }
+            }
+
+            @media screen and (max-width: 576px) {
+                .stats-cards {
+                    grid-template-columns: 1fr;
+                }
+
+                .admin-book-grid {
+                    grid-template-columns: 1fr;
+                }
+
+                .dashboard-header {
+                    flex-direction: column;
+                    align-items: flex-start;
+                }
+
+                .action-buttons {
+                    flex-direction: column;
+                    gap: 0.5rem;
+                }
+
+                .action-button {
+                    width: 100%;
+                }
+            }
+        </style>
+        <!-- Font Awesome for icons -->
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        />
+    </head>
+    <body>
+        <!-- Navbar (Common Admin Navbar) -->
+        <nav class="navbar">
+            <!-- Navbar will be generated by admin-navbar.js -->
+        </nav>
+
+        <!-- Dashboard Content -->
+        <div class="dashboard-container">
+            <div class="dashboard-header">
+                <div class="welcome-message">
+                    <h1>Admin Dashboard</h1>
+                    <p>Monitor and manage your BookMarket platform</p>
+                </div>
+
+                <div class="dashboard-actions">
+                    <a href="book-management.html" class="btn btn-primary"
+                        ><i class="fas fa-book"></i> Book Management</a
+                    >
+                    <a href="user-management.html" class="btn btn-secondary"
+                        ><i class="fas fa-users"></i> User Management</a
+                    >
+                </div>
+            </div>
+
+            <div class="dashboard-layout">
+                <!-- Dashboard Sidebar -->
+                <div class="dashboard-sidebar">
+                    <div class="sidebar-menu">
+                        <a
+                            href="dashboard.html"
+                            class="sidebar-menu-item active"
+                        >
+                            <i class="fas fa-chart-line"></i> Dashboard
+                        </a>
+                        <a
+                            href="order-management.html"
+                            class="sidebar-menu-item"
+                        >
+                            <i class="fas fa-shopping-bag"></i> Order Management
+                        </a>
+                        <a
+                            href="book-management.html"
+                            class="sidebar-menu-item"
+                        >
+                            <i class="fas fa-book"></i> Book Management
+                        </a>
+                        <a
+                            href="user-management.html"
+                            class="sidebar-menu-item"
+                        >
+                            <i class="fas fa-users"></i> User Management
+                        </a>
+                        <a href="book-approval.html" class="sidebar-menu-item">
+                            <i class="fas fa-check-circle"></i> Book Approval
+                        </a>
+
+                        <a
+                            href="#"
+                            class="sidebar-menu-item"
+                            id="sidebar-logout"
+                        >
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Dashboard Main Content -->
+                <div class="dashboard-content">
+                    <!-- Stats Overview -->
+                    <div class="stats-cards">
+                        <div class="stat-card stat-books">
+                            <div class="stat-icon">
+                                <i class="fas fa-book"></i>
+                            </div>
+                            <div class="stat-label">Total Books</div>
+                            <div class="stat-value" id="stat-total-books">
+                                0
+                            </div>
+                            <div class="stat-trend trend-up">
+                                <i class="fas fa-arrow-up"></i> 15% from last
+                                month
+                            </div>
+                        </div>
+
+                        <div class="stat-card stat-users">
+                            <div class="stat-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="stat-label">Total Users</div>
+                            <div class="stat-value" id="stat-total-users">
+                                0
+                            </div>
+                            <div class="stat-trend trend-up">
+                                <i class="fas fa-arrow-up"></i> 12% from last
+                                month
+                            </div>
+                        </div>
+
+                        <div class="stat-card stat-pending">
+                            <div class="stat-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="stat-label">Pending Approvals</div>
+                            <div class="stat-value" id="stat-pending-approvals">
+                                0
+                            </div>
+                            <div class="stat-trend trend-down">
+                                <i class="fas fa-arrow-down"></i> 5% from last
+                                month
+                            </div>
+                        </div>
+
+                        <div class="stat-card stat-earnings">
+                            <div class="stat-icon">
+                                <i class="fas fa-dollar-sign"></i>
+                            </div>
+                            <div class="stat-label">Total Earnings</div>
+                            <div class="stat-value" id="stat-total-earnings">
+                                ৳0
+                            </div>
+                            <div class="stat-trend trend-up">
+                                <i class="fas fa-arrow-up"></i> 18% from last
+                                month
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Charts -->
+                    <div class="section-card">
+                        <div class="section-header">
+                            <h3 class="section-title">Platform Overview</h3>
+                            <a href="#" class="section-action">View Report</a>
+                        </div>
+
+                        <div class="section-content">
+                            <div class="charts-container">
+                                <div class="chart-box">
+                                    <div class="chart-placeholder">
+                                        Books by Category chart will be
+                                        displayed here
+                                    </div>
+                                </div>
+                                <div class="chart-box">
+                                    <div class="chart-placeholder">
+                                        Earnings Overview chart will be
+                                        displayed here
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Orders -->
+                    <div class="section-card">
+                        <div class="section-header">
+                            <h3 class="section-title">Recent Orders</h3>
+                            <a
+                                href="order-management.html"
+                                class="section-action"
+                                >View All</a
+                            >
+                        </div>
+
+                        <div class="section-content">
+                            <div class="table-responsive">
+                                <table class="admin-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Order ID</th>
+                                            <th>Date</th>
+                                            <th>Customer</th>
+                                            <th>Book</th>
+                                            <th>Amount</th>
+                                            <th>Status</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="recent-orders-body"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pending Book Approvals -->
+                    <div class="section-card">
+                        <div class="section-header">
+                            <h3 class="section-title">
+                                Pending Book Approvals
+                            </h3>
+                            <a href="book-approval.html" class="section-action"
+                                >View All</a
+                            >
+                        </div>
+
+                        <div class="section-content">
+                            <div
+                                class="admin-book-grid"
+                                id="pending-approvals-grid"
+                            ></div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Users -->
+                    <div class="section-card">
+                        <div class="section-header">
+                            <h3 class="section-title">Recent Users</h3>
+                            <a
+                                href="user-management.html"
+                                class="section-action"
+                                >View All</a
+                            >
+                        </div>
+
+                        <div class="section-content">
+                            <div class="table-responsive">
+                                <table class="admin-table">
+                                    <thead>
+                                        <tr>
+                                            <th>User ID</th>
+                                            <th>Name</th>
+                                            <th>Email</th>
+                                            <th>Type</th>
+                                            <th>Joined Date</th>
+                                            <th>Status</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="recent-users-body"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer (Same as index.html) -->
+        <footer class="footer">
+            <div class="footer-container">
+                <div class="footer-top">
+                    <div class="footer-column">
+                        <h3>BookMarket</h3>
+                        <p>
+                            Your one-stop destination for buying and selling
+                            books online. Find your next favorite book or give
+                            your old books a new home.
+                        </p>
+                        <div class="social-links">
+                            <a href="#"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#"><i class="fab fa-twitter"></i></a>
+                            <a href="#"><i class="fab fa-instagram"></i></a>
+                            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        </div>
+                    </div>
+                    <div class="footer-column">
+                        <h3>Quick Links</h3>
+                        <ul class="footer-links">
+                            <li><a href="../../index.html">Home</a></li>
+                            <li>
+                                <a href="order-management.html"
+                                    >Order Management</a
+                                >
+                            </li>
+                            <li><a href="../sell.html">Sell Books</a></li>
+                            <li><a href="../about.html">About Us</a></li>
+                            <li><a href="../contact.html">Contact Us</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h3>Support</h3>
+                        <ul class="footer-links">
+                            <li><a href="#">Help Center</a></li>
+                            <li><a href="#">FAQs</a></li>
+                            <li><a href="#">Shipping Policy</a></li>
+                            <li><a href="#">Return Policy</a></li>
+                            <li><a href="#">Privacy Policy</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h3>Contact</h3>
+                        <ul class="contact-info">
+                            <li>
+                                <i class="fas fa-map-marker-alt"></i> 123 Book
+                                Street, Dhaka, Bangladesh
+                            </li>
+                            <li>
+                                <i class="fas fa-phone"></i> +880 123 456789
+                            </li>
+                            <li>
+                                <i class="fas fa-envelope"></i>
+                                support@bookmarket.com
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p>&copy; 2023 BookMarket. All Rights Reserved.</p>
+                </div>
+            </div>
+        </footer>
+
+        <!-- Notification Container -->
+        <div id="notification-container" class="notification-container"></div>
+
+        <!-- JavaScript -->
+        <script src="../../js/main.js"></script>
+        <script src="../../js/auth.js"></script>
+        <script src="../../js/admin-navbar.js"></script>
+        <!-- Admin Dashboard specific JavaScript -->
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                // Logout functionality
+                const logoutBtn = document.getElementById("logout-btn");
+                const sidebarLogoutBtn =
+                    document.getElementById("sidebar-logout");
+
+                function handleLogout() {
+                    const form = new FormData();
+                    form.append("action", "logout");
+
+                    fetch("../../backend/auth/user_auth.php", {
+                        method: "POST",
+                        body: form,
+                    })
+                        .then((response) => response.json())
+                        .then((data) => {
+                            if (data.success) {
+                                showNotification(
+                                    "Logged out successfully",
+                                    "success"
+                                );
+                                // Clear any stored user data
+                                if (
+                                    typeof window.bookmarketAuth !== "undefined"
+                                ) {
+                                    window.bookmarketAuth.logoutUser();
+                                }
+                                // Redirect to home page
+                                setTimeout(() => {
+                                    window.location.href = "../../index.html";
+                                }, 1000);
+                            } else {
+                                showNotification(
+                                    "Logout failed: " +
+                                        (data.message || "Unknown error"),
+                                    "error"
+                                );
+                            }
+                        })
+                        .catch((error) => {
+                            console.error("Logout error:", error);
+                            showNotification(
+                                "Logout failed. Please try again.",
+                                "error"
+                            );
+                        });
+                }
+
+                if (logoutBtn) {
+                    logoutBtn.addEventListener("click", function (e) {
+                        e.preventDefault();
+                        handleLogout();
+                    });
+                }
+
+                if (sidebarLogoutBtn) {
+                    sidebarLogoutBtn.addEventListener("click", function (e) {
+                        e.preventDefault();
+                        handleLogout();
+                    });
+                }
+
+                // Helpers
+                function formatCurrency(amount) {
+                    const num = parseFloat(amount || 0);
+                    return `৳${num.toLocaleString("en-BD", {
+                        maximumFractionDigits: 2,
+                    })}`;
+                }
+
+                function statusBadge(status) {
+                    const map = {
+                        Pending: "status-pending",
+                        Processing: "status-processing",
+                        Shipped: "status-shipped",
+                        Delivered: "status-delivered",
+                        Cancelled: "status-cancelled",
+                    };
+                    const cls = map[status] || "status-processing";
+                    return `<span class="status-badge ${cls}">${status}</span>`;
+                }
+
+                // Fetch stats (books + orders + users)
+                function loadStats() {
+                    // Books stats for pending approvals and total books
+                    const booksForm = new FormData();
+                    booksForm.append("action", "get_book_stats");
+                    fetch("../../backend/books/book_manager.php", {
+                        method: "POST",
+                        body: booksForm,
+                    })
+                        .then((r) => r.json())
+                        .then((d) => {
+                            if (d.success && d.data) {
+                                const s = d.data;
+                                document.getElementById(
+                                    "stat-total-books"
+                                ).textContent = s.total_books ?? 0;
+                                document.getElementById(
+                                    "stat-pending-approvals"
+                                ).textContent = s.pending_books ?? 0;
+                            }
+                        });
+
+                    // Orders stats for total revenue
+                    const ordersForm = new FormData();
+                    ordersForm.append("action", "get_order_stats");
+                    fetch("../../backend/orders/order_manager.php", {
+                        method: "POST",
+                        body: ordersForm,
+                    })
+                        .then((r) => r.json())
+                        .then((d) => {
+                            if (d.success && d.data) {
+                                document.getElementById(
+                                    "stat-total-earnings"
+                                ).textContent = formatCurrency(
+                                    d.data.total_revenue || 0
+                                );
+                            }
+                        });
+
+                    // Users stats for total users
+                    const usersForm = new FormData();
+                    usersForm.append("action", "get_user_stats");
+                    fetch("../../backend/auth/user_auth.php", {
+                        method: "POST",
+                        body: usersForm,
+                    })
+                        .then((r) => r.json())
+                        .then((d) => {
+                            if (d.success && d.data) {
+                                document.getElementById(
+                                    "stat-total-users"
+                                ).textContent = d.data.total_users ?? 0;
+                            }
+                        });
+                }
+
+                // Fetch recent orders
+                function loadRecentOrders() {
+                    const form = new FormData();
+                    form.append("action", "get_recent_orders");
+                    form.append("limit", "10");
+                    fetch("../../backend/orders/order_manager.php", {
+                        method: "POST",
+                        body: form,
+                    })
+                        .then((r) => r.json())
+                        .then((d) => {
+                            const tbody =
+                                document.getElementById("recent-orders-body");
+                            tbody.innerHTML = "";
+                            if (d.success && Array.isArray(d.data)) {
+                                d.data.forEach((o) => {
+                                    const tr = document.createElement("tr");
+                                    tr.innerHTML = `
+                                        <td>#${o.order_number}</td>
+                                        <td>${new Date(
+                                            o.order_date
+                                        ).toLocaleDateString()}</td>
+                                        <td>${o.first_name || ""} ${
+                                        o.last_name || ""
+                                    } (${o.username})</td>
+                                        <td>-</td>
+                                        <td>${formatCurrency(
+                                            o.total_amount
+                                        )}</td>
+                                        <td>${statusBadge(o.order_status)}</td>
+                                        <td><button class="action-button btn-view" data-order="${
+                                            o.order_number
+                                        }">View</button></td>
+                                    `;
+                                    tbody.appendChild(tr);
+                                });
+                            } else {
+                                tbody.innerHTML =
+                                    '<tr><td colspan="7">No recent orders</td></tr>';
+                            }
+                        });
+                }
+
+                // Fetch pending approvals (books)
+                function loadPendingApprovals() {
+                    const form = new FormData();
+                    form.append("action", "get_all_books");
+                    form.append("status", "pending");
+                    form.append("limit", "6");
+                    fetch("../../backend/books/book_manager.php", {
+                        method: "POST",
+                        body: form,
+                    })
+                        .then((r) => r.json())
+                        .then((d) => {
+                            const grid = document.getElementById(
+                                "pending-approvals-grid"
+                            );
+                            grid.innerHTML = "";
+                            if (d.success && Array.isArray(d.data)) {
+                                d.data.slice(0, 6).forEach((b) => {
+                                    const card = document.createElement("div");
+                                    card.className = "admin-book-card";
+                                    card.innerHTML = `
+                                        <div class="book-image">
+                                            <div class="placeholder-image">${
+                                                b.cover_image_path
+                                                    ? `<img src="../../${b.cover_image_path}" alt="${b.title}"/>`
+                                                    : "Book Cover"
+                                            }</div>
+                                        </div>
+                                        <div class="book-info">
+                                            <h4>${b.title}</h4>
+                                            <div class="book-seller">Seller: ${
+                                                b.seller_name
+                                            }</div>
+                                            <div class="book-price">Price: ${formatCurrency(
+                                                b.price
+                                            )}</div>
+                                            <div class="book-actions">
+                                                <button class="action-button btn-view" data-book="${
+                                                    b.id
+                                                }">View</button>
+                                                <button class="action-button btn-approve" data-book="${
+                                                    b.id
+                                                }">Approve</button>
+                                                <button class="action-button btn-reject" data-book="${
+                                                    b.id
+                                                }">Reject</button>
+                                            </div>
+                                        </div>`;
+                                    grid.appendChild(card);
+                                });
+                            } else {
+                                grid.innerHTML = "<p>No pending books</p>";
+                            }
+                        });
+                }
+
+                // Fetch recent users
+                function loadRecentUsers() {
+                    const form = new FormData();
+                    form.append("action", "get_recent_users");
+                    form.append("limit", "10");
+                    fetch("../../backend/auth/user_auth.php", {
+                        method: "POST",
+                        body: form,
+                    })
+                        .then((r) => r.json())
+                        .then((d) => {
+                            const tbody =
+                                document.getElementById("recent-users-body");
+                            tbody.innerHTML = "";
+                            if (d.success && Array.isArray(d.data)) {
+                                d.data.forEach((u) => {
+                                    const statusCls =
+                                        u.is_active == 1
+                                            ? "status-active"
+                                            : "status-suspended";
+                                    const statusText =
+                                        u.is_active == 1
+                                            ? "Active"
+                                            : "Suspended";
+                                    const tr = document.createElement("tr");
+                                    tr.innerHTML = `
+                                        <td>#${u.id}</td>
+                                        <td>${u.username}</td>
+                                        <td>${u.email}</td>
+                                        <td>${
+                                            u.user_type === "admin"
+                                                ? "Admin"
+                                                : "Customer"
+                                        }</td>
+                                        <td>${new Date(
+                                            u.created_at
+                                        ).toLocaleDateString()}</td>
+                                        <td><span class="status-badge ${statusCls}">${statusText}</span></td>
+                                        <td>
+                                            <div class="action-buttons">
+                                                <button class="action-button btn-view" data-user="${
+                                                    u.id
+                                                }">View</button>
+                                            </div>
+                                        </td>`;
+                                    tbody.appendChild(tr);
+                                });
+                            } else {
+                                tbody.innerHTML =
+                                    '<tr><td colspan="7">No recent users</td></tr>';
+                            }
+                        });
+                }
+
+                // Initial loads
+                loadStats();
+                loadRecentOrders();
+                loadPendingApprovals();
+                loadRecentUsers();
+            });
+        </script>
+    </body>
+</html>

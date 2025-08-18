@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Order Details - BookMarket</title>
+        <link rel="stylesheet" href="../../css/styles.css" />
+        <!-- Additional CSS for Order Details page -->
+        <style>
+            /* Order Details Page Specific Styles */
+            .order-details-container {
+                max-width: var(--container-width);
+                margin: 2rem auto;
+                padding: 0 1rem;
+            }
+
+            .order-details-header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin-bottom: 2rem;
+                flex-wrap: wrap;
+                gap: 1rem;
+            }
+
+            .order-details-header h1 {
+                margin-bottom: 0.5rem;
+                color: var(--dark-color);
+            }
+
+            .order-details-header .back-button {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                color: var(--primary-color);
+                text-decoration: none;
+                font-weight: 600;
+            }
+
+            .order-details-card {
+                background-color: #f9f9f9;
+                border-radius: 8px;
+                padding: 2rem;
+                margin-bottom: 2rem;
+            }
+
+            .order-summary {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 2rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .order-info-item {
+                margin-bottom: 1.5rem;
+            }
+
+            .order-info-label {
+                font-weight: 600;
+                color: #666;
+                margin-bottom: 0.5rem;
+                font-size: 0.9rem;
+                text-transform: uppercase;
+            }
+
+            .order-info-value {
+                font-size: 1.1rem;
+                color: var(--dark-color);
+            }
+
+            .order-status {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+            .status-badge {
+                display: inline-block;
+                padding: 0.3rem 0.8rem;
+                border-radius: 50px;
+                font-size: 0.8rem;
+                font-weight: 600;
+            }
+
+            .status-pending {
+                background-color: rgba(243, 156, 18, 0.1);
+                color: var(--warning-color);
+            }
+
+            .status-processing {
+                background-color: rgba(74, 111, 165, 0.1);
+                color: var(--primary-color);
+            }
+
+            .status-shipped {
+                background-color: rgba(52, 152, 219, 0.1);
+                color: #3498db;
+            }
+
+            .status-delivered {
+                background-color: rgba(39, 174, 96, 0.1);
+                color: var(--success-color);
+            }
+
+            .status-cancelled {
+                background-color: rgba(231, 76, 60, 0.1);
+                color: var(--danger-color);
+            }
+
+            .tracking-section {
+                background-color: #f0f8ff;
+                border-radius: 8px;
+                padding: 1.5rem;
+                margin-bottom: 2rem;
+                border: 1px solid #d1e6ff;
+            }
+
+            .tracking-header {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                margin-bottom: 1rem;
+                color: var(--primary-color);
+                font-weight: 600;
+            }
+
+            .tracking-info {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 1.5rem;
+                margin-bottom: 1rem;
+            }
+
+            .tracking-info-item {
+                margin-bottom: 1rem;
+            }
+
+            .tracking-info-label {
+                font-weight: 600;
+                color: #666;
+                margin-bottom: 0.3rem;
+                font-size: 0.9rem;
+            }
+
+            .tracking-info-value {
+                font-size: 1rem;
+                color: var(--dark-color);
+            }
+
+            .order-items {
+                background-color: white;
+                border-radius: 8px;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+                overflow: hidden;
+                margin-bottom: 2rem;
+            }
+
+            .order-items-header {
+                background-color: #f5f5f5;
+                padding: 1rem 1.5rem;
+                border-bottom: 1px solid #eee;
+            }
+
+            .order-items-header h3 {
+                margin: 0;
+                color: var(--dark-color);
+                font-size: 1.1rem;
+            }
+
+            .order-items-list {
+                padding: 0;
+            }
+
+            .order-item {
+                display: flex;
+                padding: 1.5rem;
+                border-bottom: 1px solid #eee;
+                gap: 1.5rem;
+            }
+
+            .order-item:last-child {
+                border-bottom: none;
+            }
+
+            .item-image {
+                width: 80px;
+                height: 120px;
+                background-color: #f5f5f5;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 4px;
+                overflow: hidden;
+                flex-shrink: 0;
+            }
+
+            .item-image img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+
+            .item-details {
+                flex-grow: 1;
+            }
+
+            .item-title {
+                font-weight: 600;
+                color: var(--dark-color);
+                margin-bottom: 0.5rem;
+                font-size: 1.1rem;
+            }
+
+            .item-author {
+                color: #666;
+                margin-bottom: 0.5rem;
+                font-size: 0.9rem;
+            }
+
+            .item-price {
+                font-weight: 600;
+                color: var(--primary-color);
+                font-size: 1.1rem;
+                margin-top: 0.5rem;
+            }
+
+            .order-total {
+                background-color: white;
+                border-radius: 8px;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+                padding: 1.5rem;
+            }
+
+            .total-row {
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 1rem;
+                padding-bottom: 1rem;
+                border-bottom: 1px solid #eee;
+            }
+
+            .total-row:last-child {
+                margin-bottom: 0;
+                padding-bottom: 0;
+                border-bottom: none;
+                font-weight: 700;
+                font-size: 1.2rem;
+                color: var(--dark-color);
+            }
+
+            .total-label {
+                color: #666;
+            }
+
+            .total-value {
+                font-weight: 600;
+                color: var(--dark-color);
+            }
+
+            .action-buttons {
+                display: flex;
+                gap: 1rem;
+                margin-top: 2rem;
+                flex-wrap: wrap;
+            }
+
+            @media screen and (max-width: 768px) {
+                .order-item {
+                    flex-direction: column;
+                    align-items: flex-start;
+                }
+
+                .item-image {
+                    width: 100%;
+                    height: 200px;
+                }
+            }
+        </style>
+        <!-- Font Awesome for icons -->
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        />
+    </head>
+    <body>
+        <!-- Navbar (Common Customer Navbar) -->
+        <nav class="navbar">
+            <!-- Navbar will be generated by customer-navbar.js -->
+        </nav>
+
+        <!-- Order Details Content -->
+        <div class="order-details-container">
+            <div class="order-details-header">
+                <h1>Order Details</h1>
+                <a href="my-orders.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to My Orders
+                </a>
+            </div>
+
+            <div class="order-details-card">
+                <div class="order-summary">
+                    <div class="order-info-item">
+                        <div class="order-info-label">Order ID</div>
+                        <div class="order-info-value">ORD-2024-002</div>
+                    </div>
+                    <div class="order-info-item">
+                        <div class="order-info-label">Placed On</div>
+                        <div class="order-info-value">January 18, 2024</div>
+                    </div>
+                    <div class="order-info-item">
+                        <div class="order-info-label">Status</div>
+                        <div class="order-status">
+                            <span class="status-badge status-shipped">Shipped</span>
+                        </div>
+                    </div>
+                    <div class="order-info-item">
+                        <div class="order-info-label">Total</div>
+                        <div class="order-info-value">৳45.98</div>
+                    </div>
+                    <div class="order-info-item">
+                        <div class="order-info-label">Items</div>
+                        <div class="order-info-value">2 item(s)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tracking Information -->
+            <div class="tracking-section">
+                <div class="tracking-header">
+                    <i class="fas fa-truck"></i> Tracking Information
+                </div>
+                <div class="tracking-info">
+                    <div class="tracking-info-item">
+                        <div class="tracking-info-label">Tracking Number</div>
+                        <div class="tracking-info-value">1Z999AA1234567891</div>
+                    </div>
+                    <div class="tracking-info-item">
+                        <div class="tracking-info-label">Estimated Delivery</div>
+                        <div class="tracking-info-value">January 23, 2024</div>
+                    </div>
+                    <div class="tracking-info-item">
+                        <div class="tracking-info-label">Carrier</div>
+                        <div class="tracking-info-value">BookMarket Delivery</div>
+                    </div>
+                </div>
+                <div class="tracking-actions">
+                    <a href="#" class="btn btn-primary">
+                        <i class="fas fa-map-marker-alt"></i> Track Package
+                    </a>
+                </div>
+            </div>
+
+            <!-- Order Items -->
+            <div class="order-items">
+                <div class="order-items-header">
+                    <h3>Order Items</h3>
+                </div>
+                <div class="order-items-list">
+                    <div class="order-item">
+                        <div class="item-image">
+                            <img src="../../images/placeholder-book.png" alt="The Lean Startup" onerror="this.src='https://via.placeholder.com/80x120?text=Book Cover'; this.onerror='';">
+                        </div>
+                        <div class="item-details">
+                            <div class="item-title">The Lean Startup</div>
+                            <div class="item-author">by Eric Ries</div>
+                            <div class="item-price">৳18.99 × 1</div>
+                        </div>
+                    </div>
+                    <div class="order-item">
+                        <div class="item-image">
+                            <img src="../../images/placeholder-book.png" alt="The Great Gatsby" onerror="this.src='https://via.placeholder.com/80x120?text=Book Cover'; this.onerror='';">
+                        </div>
+                        <div class="item-details">
+                            <div class="item-title">The Great Gatsby</div>
+                            <div class="item-author">by F. Scott Fitzgerald</div>
+                            <div class="item-price">৳15.99 × 1</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Total -->
+            <div class="order-total">
+                <div class="total-row">
+                    <div class="total-label">Subtotal</div>
+                    <div class="total-value">৳34.98</div>
+                </div>
+                <div class="total-row">
+                    <div class="total-label">Shipping</div>
+                    <div class="total-value">৳10.00</div>
+                </div>
+                <div class="total-row">
+                    <div class="total-label">Tax</div>
+                    <div class="total-value">৳1.00</div>
+                </div>
+                <div class="total-row">
+                    <div class="total-label">Total</div>
+                    <div class="total-value">৳45.98</div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <a href="#" class="btn btn-primary">
+                    <i class="fas fa-download"></i> Download Invoice
+                </a>
+                <a href="#" class="btn btn-secondary">
+                    <i class="fas fa-headset"></i> Contact Support
+                </a>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-container">
+                <div class="footer-top">
+                    <div class="footer-column">
+                        <h3>BookMarket</h3>
+                        <p>
+                            Your one-stop destination for buying and selling
+                            books online. Find your next favorite book or give
+                            your old books a new home.
+                        </p>
+                        <div class="social-links">
+                            <a href="#"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#"><i class="fab fa-twitter"></i></a>
+                            <a href="#"><i class="fab fa-instagram"></i></a>
+                            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        </div>
+                    </div>
+                    <div class="footer-column">
+                        <h3>Quick Links</h3>
+                        <ul class="footer-links">
+                            <li><a href="../../index.html">Home</a></li>
+                            <li><a href="../browse.html">Browse Books</a></li>
+                            <li><a href="../sell.html">Sell Books</a></li>
+                            <li><a href="../about.html">About Us</a></li>
+                            <li><a href="../contact.html">Contact Us</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h3>Support</h3>
+                        <ul class="footer-links">
+                            <li><a href="#">Help Center</a></li>
+                            <li><a href="#">FAQs</a></li>
+                            <li><a href="#">Shipping Policy</a></li>
+                            <li><a href="#">Return Policy</a></li>
+                            <li><a href="#">Privacy Policy</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h3>Contact</h3>
+                        <ul class="contact-info">
+                            <li>
+                                <i class="fas fa-map-marker-alt"></i> 123 Book
+                                Street, Dhaka, Bangladesh
+                            </li>
+                            <li>
+                                <i class="fas fa-phone"></i> +880 123 456789
+                            </li>
+                            <li>
+                                <i class="fas fa-envelope"></i>
+                                support@bookmarket.com
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p>&copy; 2023 BookMarket. All Rights Reserved.</p>
+                </div>
+            </div>
+        </footer>
+
+        <!-- Notification Container -->
+        <div id="notification-container" class="notification-container"></div>
+
+        <!-- JavaScript -->
+        <script src="../../js/main.js"></script>
+        <script src="../../js/auth.js"></script>
+        <script src="../../js/customer-navbar.js"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // Logout functionality
+                const logoutBtn = document.getElementById('logout-btn');
+                const sidebarLogout = document.getElementById('sidebar-logout');
+                
+                if (logoutBtn) {
+                    logoutBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        showNotification('Logged out successfully!', 'success');
+                        setTimeout(() => {
+                            window.location.href = '../../index.html';
+                        }, 1500);
+                    });
+                }
+                
+                if (sidebarLogout) {
+                    sidebarLogout.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        showNotification('Logged out successfully!', 'success');
+                        setTimeout(() => {
+                            window.location.href = '../../index.html';
+                        }, 1500);
+                    });
+                }
+
+                // Track package button
+                const trackButton = document.querySelector('.tracking-actions .btn');
+                if (trackButton) {
+                    trackButton.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        showNotification('Tracking information opened in a new tab', 'info');
+                    });
+                }
+
+                // Download invoice button
+                const downloadButton = document.querySelector('.action-buttons .btn-primary');
+                if (downloadButton) {
+                    downloadButton.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        showNotification('Invoice downloaded successfully', 'success');
+                    });
+                }
+
+                // Contact support button
+                const supportButton = document.querySelector('.action-buttons .btn-secondary');
+                if (supportButton) {
+                    supportButton.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        showNotification('Support request sent', 'success');
+                    });
+                }
+            });
+        </script>
+    </body>
+</html>

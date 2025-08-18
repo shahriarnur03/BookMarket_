@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>About Us - BookMarket</title>
+        <link rel="stylesheet" href="../css/styles.css" />
+        <!-- Additional CSS for About page -->
+        <style>
+            /* About Page Specific Styles */
+            .about-container {
+                max-width: var(--container-width);
+                margin: 0 auto;
+                padding: 2rem 1rem;
+            }
+
+            .about-intro {
+                text-align: center;
+                margin-bottom: 3rem;
+            }
+
+            .about-intro p {
+                max-width: 800px;
+                margin: 0 auto 1rem;
+                color: #555;
+                font-size: 1.1rem;
+                line-height: 1.8;
+            }
+
+            .vision-mission {
+                display: flex;
+                gap: 2rem;
+                margin-bottom: 4rem;
+                flex-wrap: wrap;
+            }
+
+            .vision-card,
+            .mission-card {
+                flex: 1;
+                min-width: 300px;
+                background-color: white;
+                border-radius: 8px;
+                padding: 2rem;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            }
+
+            .card-icon {
+                width: 80px;
+                height: 80px;
+                background-color: var(--primary-color);
+                color: white;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin: 0 auto 1.5rem;
+                font-size: 2rem;
+            }
+
+            .vision-card h3,
+            .mission-card h3 {
+                text-align: center;
+                margin-bottom: 1.5rem;
+                color: var(--dark-color);
+                font-size: 1.5rem;
+            }
+
+            .vision-card p,
+            .mission-card p {
+                color: #555;
+                line-height: 1.7;
+                text-align: center;
+            }
+
+            .team-section {
+                background-color: #f9f9f9;
+                padding: 4rem 0;
+                margin-bottom: 4rem;
+            }
+
+            .team-container {
+                max-width: var(--container-width);
+                margin: 0 auto;
+                padding: 0 1rem;
+            }
+
+            .team-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                gap: 2rem;
+                margin-top: 3rem;
+            }
+
+            .team-card {
+                background-color: white;
+                border-radius: 8px;
+                overflow: hidden;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+                transition: transform 0.3s ease;
+            }
+
+            .team-card:hover {
+                transform: translateY(-5px);
+            }
+
+            .team-image {
+                height: 250px;
+                overflow: hidden;
+            }
+
+            .team-image .placeholder-image {
+                width: 100%;
+                height: 100%;
+            }
+
+            .team-photo {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                transition: transform 0.3s ease;
+            }
+
+            .team-card:hover .team-photo {
+                transform: scale(1.05);
+            }
+
+            .team-info {
+                padding: 1.5rem;
+                text-align: center;
+            }
+
+            .team-info h3 {
+                margin-bottom: 0.5rem;
+                color: var(--dark-color);
+            }
+
+            .team-info .position {
+                color: var(--primary-color);
+                font-weight: 600;
+                margin-bottom: 1rem;
+            }
+
+            .team-info p {
+                color: #555;
+                font-size: 0.9rem;
+                margin-bottom: 1rem;
+            }
+
+            .team-social {
+                display: flex;
+                justify-content: center;
+                gap: 0.8rem;
+            }
+
+            .team-social a {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 36px;
+                height: 36px;
+                background-color: #f0f0f0;
+                border-radius: 50%;
+                color: #555;
+                transition: all 0.3s ease;
+            }
+
+            .team-social a:hover {
+                background-color: var(--primary-color);
+                color: white;
+            }
+
+            .story-section {
+                margin-bottom: 4rem;
+            }
+
+            .story-container {
+                max-width: 800px;
+                margin: 0 auto;
+            }
+
+            .story-content {
+                background-color: white;
+                border-radius: 8px;
+                padding: 2rem;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            }
+
+            .story-content p {
+                color: #555;
+                line-height: 1.8;
+                margin-bottom: 1.5rem;
+            }
+
+            .story-content .quote {
+                font-style: italic;
+                font-size: 1.2rem;
+                color: var(--primary-color);
+                border-left: 3px solid var(--primary-color);
+                padding-left: 1rem;
+                margin: 2rem 0;
+            }
+
+            .statistics {
+                display: flex;
+                justify-content: space-around;
+                flex-wrap: wrap;
+                margin: 3rem 0;
+                gap: 1.5rem;
+            }
+
+            .stat-item {
+                text-align: center;
+            }
+
+            .stat-number {
+                font-size: 2.5rem;
+                font-weight: 700;
+                color: var(--primary-color);
+                margin-bottom: 0.5rem;
+            }
+
+            .stat-label {
+                color: #666;
+            }
+
+            .values-section {
+                background-color: #f9f9f9;
+                padding: 4rem 0;
+            }
+
+            .values-container {
+                max-width: var(--container-width);
+                margin: 0 auto;
+                padding: 0 1rem;
+            }
+
+            .values-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                gap: 2rem;
+                margin-top: 3rem;
+            }
+
+            .value-card {
+                background-color: white;
+                border-radius: 8px;
+                padding: 1.5rem;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+                text-align: center;
+            }
+
+            .value-icon {
+                font-size: 2rem;
+                color: var(--primary-color);
+                margin-bottom: 1rem;
+            }
+
+            .value-card h3 {
+                margin-bottom: 1rem;
+                color: var(--dark-color);
+            }
+
+            .value-card p {
+                color: #555;
+                font-size: 0.9rem;
+            }
+        </style>
+        <!-- Font Awesome for icons -->
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        />
+    </head>
+    <body>
+        <!-- Navbar (Common Customer Navbar) -->
+        <nav class="navbar">
+            <!-- Navbar will be generated by customer-navbar.js -->
+        </nav>
+
+        <!-- About Page Content -->
+        <div class="about-container">
+            <div class="about-intro">
+                <h1 class="section-title">About BookMarket</h1>
+                <p>
+                    BookMarket is Bangladesh's premier online platform
+                    connecting book buyers and sellers. Whether you're looking
+                    to find your next great read at an affordable price or
+                    hoping to give your pre-loved books a new home while making
+                    some money, BookMarket makes the process simple, secure, and
+                    enjoyable.
+                </p>
+                <p>
+                    Founded in 2023, our platform was created with a simple
+                    mission: to make books more accessible while promoting
+                    sustainability through reuse. We believe that knowledge
+                    should be shared, stories should be passed on, and books
+                    deserve second, third, and fourth lives.
+                </p>
+            </div>
+
+            <!-- Vision and Mission -->
+            <div class="vision-mission">
+                <div class="vision-card">
+                    <div class="card-icon">
+                        <i class="fas fa-eye"></i>
+                    </div>
+                    <h3>Our Vision</h3>
+                    <p>
+                        To create a world where every book finds its reader,
+                        where knowledge flows freely, and where literacy is
+                        accessible to all through affordable books.
+                    </p>
+                    <p>
+                        We envision a community of readers and learners who
+                        share not just books, but ideas, stories, and
+                        experiences, making education and entertainment more
+                        sustainable and accessible.
+                    </p>
+                </div>
+
+                <div class="mission-card">
+                    <div class="card-icon">
+                        <i class="fas fa-bullseye"></i>
+                    </div>
+                    <h3>Our Mission</h3>
+                    <p>
+                        To build the most trusted marketplace for buying and
+                        selling books in Bangladesh, with fair prices for buyers
+                        and sellers alike.
+                    </p>
+                    <p>
+                        We are committed to making the process seamless,
+                        providing quality assurance through our approval system,
+                        and ensuring that every transaction benefits both
+                        parties while extending the life of valuable books.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Our Story -->
+            <div class="story-section">
+                <h2 class="section-title">Our Story</h2>
+
+                <div class="story-container">
+                    <div class="story-content">
+                        <p>
+                            BookMarket began with a simple observation:
+                            university students were struggling to afford
+                            textbooks while simultaneously having stacks of
+                            books they no longer needed. Our founder, a
+                            university student himself, noticed this paradox and
+                            saw an opportunity to solve both problems at once.
+                        </p>
+
+                        <p>
+                            What started as a small Facebook group for
+                            exchanging books among friends quickly grew into a
+                            campus-wide phenomenon. Students loved the idea of
+                            getting affordable books while also recouping some
+                            of their educational expenses by selling books they
+                            had finished using.
+                        </p>
+
+                        <div class="quote">
+                            "Books are unique treasures - they should be passed
+                            on, not thrown away. Each book carries not just
+                            knowledge but a piece of its previous owner's
+                            journey."
+                        </div>
+
+                        <p>
+                            As the idea gained traction, we realized that this
+                            concept could benefit people beyond just the
+                            university community. Book lovers, parents of
+                            growing children, professionals upgrading their
+                            skills - all could benefit from a platform dedicated
+                            to the exchange of books.
+                        </p>
+
+                        <p>
+                            Today, BookMarket has evolved into a sophisticated
+                            online marketplace serving all of Bangladesh, but
+                            our core values remain the same: making books
+                            affordable, extending their useful lives, and
+                            building a community of readers who share not just
+                            books but a love of learning.
+                        </p>
+
+                        <div class="statistics">
+                            <div class="stat-item">
+                                <div class="stat-number">15,000+</div>
+                                <div class="stat-label">Books Exchanged</div>
+                            </div>
+
+                            <div class="stat-item">
+                                <div class="stat-number">5,000+</div>
+                                <div class="stat-label">Active Users</div>
+                            </div>
+
+                            <div class="stat-item">
+                                <div class="stat-number">4.8/5</div>
+                                <div class="stat-label">User Satisfaction</div>
+                            </div>
+                        </div>
+
+                        <p>
+                            As we continue to grow, we remain focused on our
+                            original goal: making books more accessible to
+                            everyone while promoting sustainability through
+                            reuse. We invite you to join our community, whether
+                            you're looking to find your next great read or to
+                            pass on books you've already enjoyed.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Our Values -->
+            <div class="values-section">
+                <div class="values-container">
+                    <h2 class="section-title">Our Values</h2>
+
+                    <div class="values-grid">
+                        <div class="value-card">
+                            <div class="value-icon">
+                                <i class="fas fa-book-reader"></i>
+                            </div>
+                            <h3>Literacy for All</h3>
+                            <p>
+                                We believe everyone deserves access to books
+                                regardless of financial circumstances. By making
+                                books more affordable, we help spread knowledge
+                                and stories to more people.
+                            </p>
+                        </div>
+
+                        <div class="value-card">
+                            <div class="value-icon">
+                                <i class="fas fa-leaf"></i>
+                            </div>
+                            <h3>Sustainability</h3>
+                            <p>
+                                By extending the lifecycle of books, we reduce
+                                waste and the environmental impact of producing
+                                new books. Reusing is one of the most effective
+                                forms of conservation.
+                            </p>
+                        </div>
+
+                        <div class="value-card">
+                            <div class="value-icon">
+                                <i class="fas fa-handshake"></i>
+                            </div>
+                            <h3>Community</h3>
+                            <p>
+                                We foster a community of book lovers who share
+                                not just books but ideas, recommendations, and a
+                                passion for reading. Books connect people in
+                                meaningful ways.
+                            </p>
+                        </div>
+
+                        <div class="value-card">
+                            <div class="value-icon">
+                                <i class="fas fa-shield-alt"></i>
+                            </div>
+                            <h3>Trust & Quality</h3>
+                            <p>
+                                Our approval system ensures that all books sold
+                                on our platform meet quality standards and are
+                                accurately described, building trust between
+                                buyers and sellers.
+                            </p>
+                        </div>
+
+                        <div class="value-card">
+                            <div class="value-icon">
+                                <i class="fas fa-graduation-cap"></i>
+                            </div>
+                            <h3>Education Support</h3>
+                            <p>
+                                We particularly focus on making educational
+                                materials more affordable for students, helping
+                                to reduce the financial burden of education.
+                            </p>
+                        </div>
+
+                        <div class="value-card">
+                            <div class="value-icon">
+                                <i class="fas fa-lightbulb"></i>
+                            </div>
+                            <h3>Innovation</h3>
+                            <p>
+                                We continuously improve our platform based on
+                                user feedback, embracing new technologies and
+                                ideas to make book exchange easier and more
+                                efficient.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Meet Our Team -->
+            <div class="team-section">
+                <div class="team-container">
+                    <h2 class="section-title">Meet Our Team</h2>
+
+                    <div class="team-grid">
+                        <div class="team-card">
+                            <div class="team-image">
+                                <img src="../images/team_m1.webp" alt="Founder & CEO" class="team-photo">
+                            </div>
+                            <div class="team-info">
+                                <h3>Ahmed Rahman</h3>
+                                <div class="position">Founder & CEO</div>
+                                <p>
+                                    A passionate entrepreneur and book lover who started BookMarket to solve the textbook affordability crisis for students across Bangladesh.
+                                </p>
+                                <div class="team-social">
+                                    <a href="#"
+                                        ><i class="fab fa-facebook-f"></i
+                                    ></a>
+                                    <a href="#"
+                                        ><i class="fab fa-twitter"></i
+                                    ></a>
+                                    <a href="#"
+                                        ><i class="fab fa-linkedin-in"></i
+                                    ></a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="team-card">
+                            <div class="team-image">
+                                <img src="../images/team_m2.jpg" alt="CTO" class="team-photo">
+                            </div>
+                            <div class="team-info">
+                                <h3>Fatima Khan</h3>
+                                <div class="position">CTO</div>
+                                <p>
+                                    A tech enthusiast with expertise in e-commerce platforms and user experience design, leading our technical development and innovation.
+                                </p>
+                                <div class="team-social">
+                                    <a href="#"
+                                        ><i class="fab fa-facebook-f"></i
+                                    ></a>
+                                    <a href="#"
+                                        ><i class="fab fa-twitter"></i
+                                    ></a>
+                                    <a href="#"
+                                        ><i class="fab fa-linkedin-in"></i
+                                    ></a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="team-card">
+                            <div class="team-image">
+                                <img src="../images/team_m3.jpg" alt="Marketing Director" class="team-photo">
+                            </div>
+                            <div class="team-info">
+                                <h3>Rahim Ali</h3>
+                                <div class="position">Marketing Director</div>
+                                <p>
+                                    A creative marketing professional who builds our brand presence and connects with book lovers across Bangladesh through strategic campaigns.
+                                </p>
+                                <div class="team-social">
+                                    <a href="#"
+                                        ><i class="fab fa-facebook-f"></i
+                                    ></a>
+                                    <a href="#"
+                                        ><i class="fab fa-twitter"></i
+                                    ></a>
+                                    <a href="#"
+                                        ><i class="fab fa-linkedin-in"></i
+                                    ></a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="team-card">
+                            <div class="team-image">
+                                <img src="../images/team_m4.jpg" alt="Operations Manager" class="team-photo">
+                            </div>
+                            <div class="team-info">
+                                <h3>Nadia Islam</h3>
+                                <div class="position">Operations Manager</div>
+                                <p>
+                                    An operations expert who ensures smooth day-to-day functioning, quality control, and excellent customer service for all our users.
+                                </p>
+                                <div class="team-social">
+                                    <a href="#"
+                                        ><i class="fab fa-facebook-f"></i
+                                    ></a>
+                                    <a href="#"
+                                        ><i class="fab fa-twitter"></i
+                                    ></a>
+                                    <a href="#"
+                                        ><i class="fab fa-linkedin-in"></i
+                                    ></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Call to Action -->
+            <div
+                class="cta-section"
+                style="text-align: center; margin-bottom: 4rem"
+            >
+                <h2>Join Our Community</h2>
+                <p style="max-width: 600px; margin: 1rem auto 2rem">
+                    Whether you're buying or selling, BookMarket is here to make
+                    your experience exceptional. Start your journey with us
+                    today.
+                </p>
+                <div style="display: flex; gap: 1rem; justify-content: center">
+                    <a href="browse.html" class="btn btn-primary"
+                        >Browse Books</a
+                    >
+                    <a href="sell.html" class="btn btn-secondary"
+                        >Sell Your Books</a
+                    >
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer (Same as index.html) -->
+        <footer class="footer">
+            <div class="footer-container">
+                <div class="footer-top">
+                    <div class="footer-column">
+                        <h3>BookMarket</h3>
+                        <p>
+                            Your one-stop destination for buying and selling
+                            books online. Find your next favorite book or give
+                            your old books a new home.
+                        </p>
+                        <div class="social-links">
+                            <a href="#"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#"><i class="fab fa-twitter"></i></a>
+                            <a href="#"><i class="fab fa-instagram"></i></a>
+                            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        </div>
+                    </div>
+                    <div class="footer-column">
+                        <h3>Quick Links</h3>
+                        <ul class="footer-links">
+                            <li><a href="../index.html">Home</a></li>
+                            <li><a href="browse.html">Browse Books</a></li>
+                            <li><a href="sell.html">Sell Books</a></li>
+                            <li><a href="about.html">About Us</a></li>
+                            <li><a href="contact.html">Contact Us</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h3>Support</h3>
+                        <ul class="footer-links">
+                            <li><a href="#">Help Center</a></li>
+                            <li><a href="#">FAQs</a></li>
+                            <li><a href="#">Shipping Policy</a></li>
+                            <li><a href="#">Return Policy</a></li>
+                            <li><a href="#">Privacy Policy</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h3>Contact</h3>
+                        <ul class="contact-info">
+                            <li>
+                                <i class="fas fa-map-marker-alt"></i> 123 Book
+                                Street, Dhaka, Bangladesh
+                            </li>
+                            <li>
+                                <i class="fas fa-phone"></i> +880 123 456789
+                            </li>
+                            <li>
+                                <i class="fas fa-envelope"></i>
+                                support@bookmarket.com
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p>&copy; 2023 BookMarket. All Rights Reserved.</p>
+                </div>
+            </div>
+        </footer>
+
+        <!-- Notification Container -->
+        <div id="notification-container" class="notification-container"></div>
+
+        <!-- JavaScript -->
+        <script src="../js/main.js"></script>
+        <script src="../js/auth.js"></script>
+        <script src="../js/customer-navbar.js"></script>
+    </body>
+</html>

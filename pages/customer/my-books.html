@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>My Books - BookMarket</title>
+        <link rel="stylesheet" href="../../css/styles.css" />
+        <!-- Additional CSS for My Books page -->
+        <style>
+            /* My Books Page Specific Styles */
+            .my-books-container {
+                max-width: var(--container-width);
+                margin: 2rem auto;
+                padding: 0 1rem;
+            }
+
+            .my-books-header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin-bottom: 2rem;
+                flex-wrap: wrap;
+                gap: 1rem;
+            }
+
+            .welcome-message h1 {
+                margin-bottom: 0.5rem;
+                color: var(--dark-color);
+            }
+
+            .welcome-message p {
+                color: #666;
+            }
+
+            .my-books-actions {
+                display: flex;
+                gap: 1rem;
+            }
+
+            .my-books-layout {
+                display: flex;
+                gap: 2rem;
+            }
+
+            .my-books-sidebar {
+                width: 250px;
+                flex-shrink: 0;
+            }
+
+            .my-books-content {
+                flex-grow: 1;
+            }
+
+            .sidebar-menu {
+                background-color: white;
+                border-radius: 8px;
+                overflow: hidden;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            }
+
+            .sidebar-menu-item {
+                display: flex;
+                align-items: center;
+                gap: 0.8rem;
+                padding: 1rem 1.5rem;
+                color: var(--dark-color);
+                text-decoration: none;
+                border-bottom: 1px solid #eee;
+                transition: all 0.3s ease;
+            }
+
+            .sidebar-menu-item:last-child {
+                border-bottom: none;
+            }
+
+            .sidebar-menu-item.active {
+                background-color: var(--primary-color);
+                color: white;
+            }
+
+            .sidebar-menu-item:hover:not(.active) {
+                background-color: #f5f5f5;
+            }
+
+            .section-card {
+                background-color: white;
+                border-radius: 8px;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+                overflow: hidden;
+                margin-bottom: 2rem;
+            }
+
+            .section-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 1.5rem;
+                border-bottom: 1px solid #eee;
+            }
+
+            .section-title {
+                margin: 0;
+                color: var(--dark-color);
+                font-size: 1.2rem;
+            }
+
+            .section-action {
+                color: var(--primary-color);
+                text-decoration: none;
+                font-weight: 600;
+                font-size: 0.9rem;
+            }
+
+            .section-action:hover {
+                text-decoration: underline;
+            }
+
+            .section-content {
+                padding: 1.5rem;
+            }
+
+            .books-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                gap: 1.5rem;
+            }
+
+            .book-card {
+                background-color: white;
+                border-radius: 8px;
+                overflow: hidden;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+                transition: transform 0.3s ease;
+                border: 1px solid #eee;
+            }
+
+            .book-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            }
+
+            .book-image {
+                height: 200px;
+                overflow: hidden;
+                position: relative;
+            }
+
+            .book-image img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+
+            .book-placeholder {
+                width: 100%;
+                height: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background-color: #f5f5f5;
+                color: #aaa;
+                font-size: 0.9rem;
+            }
+
+            .book-info {
+                padding: 1rem;
+            }
+
+            .book-title {
+                margin: 0 0 0.5rem;
+                font-size: 1.1rem;
+                color: var(--dark-color);
+            }
+
+            .book-author {
+                color: #666;
+                font-size: 0.9rem;
+                margin-bottom: 0.5rem;
+            }
+
+            .book-price {
+                font-weight: 600;
+                color: var(--primary-color);
+                margin-bottom: 0.8rem;
+                font-size: 1.1rem;
+            }
+
+            .book-status {
+                margin-bottom: 1rem;
+                font-size: 0.9rem;
+                color: #666;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+            .status-badge {
+                display: inline-block;
+                padding: 0.3rem 0.8rem;
+                border-radius: 50px;
+                font-size: 0.8rem;
+                font-weight: 600;
+            }
+
+            .status-pending {
+                background-color: rgba(243, 156, 18, 0.1);
+                color: var(--warning-color);
+            }
+
+            .status-approved {
+                background-color: rgba(39, 174, 96, 0.1);
+                color: var(--success-color);
+            }
+
+            .status-rejected {
+                background-color: rgba(231, 76, 60, 0.1);
+                color: var(--danger-color);
+            }
+
+            .status-sold {
+                background-color: rgba(52, 152, 219, 0.1);
+                color: #3498db;
+            }
+
+            .book-actions {
+                display: flex;
+                gap: 0.5rem;
+            }
+
+            .book-btn {
+                flex: 1;
+                padding: 0.5rem;
+                text-align: center;
+                border-radius: 4px;
+                text-decoration: none;
+                font-size: 0.9rem;
+                font-weight: 600;
+                transition: all 0.3s ease;
+            }
+
+            .view-btn {
+                background-color: var(--primary-color);
+                color: white;
+            }
+
+            .view-btn:hover {
+                background-color: #3a5a97;
+            }
+
+            .edit-btn {
+                background-color: transparent;
+                border: 1px solid var(--primary-color);
+                color: var(--primary-color);
+            }
+
+            .edit-btn:hover {
+                background-color: rgba(74, 111, 165, 0.1);
+            }
+
+            .delete-btn {
+                background-color: transparent;
+                border: 1px solid var(--danger-color);
+                color: var(--danger-color);
+            }
+
+            .delete-btn:hover {
+                background-color: rgba(231, 76, 60, 0.1);
+            }
+
+            .filter-tabs {
+                display: flex;
+                border-bottom: 1px solid #eee;
+                margin-bottom: 1.5rem;
+                overflow-x: auto;
+            }
+
+            .filter-tab {
+                padding: 1rem 1.5rem;
+                cursor: pointer;
+                font-weight: 600;
+                color: #666;
+                border-bottom: 2px solid transparent;
+                transition: all 0.3s ease;
+                white-space: nowrap;
+            }
+
+            .filter-tab.active {
+                color: var(--primary-color);
+                border-bottom-color: var(--primary-color);
+            }
+
+            .filter-tab:hover:not(.active) {
+                color: var(--dark-color);
+                border-bottom-color: #ddd;
+            }
+
+            .empty-state {
+                text-align: center;
+                padding: 3rem 1rem;
+            }
+
+            .empty-state i {
+                font-size: 3rem;
+                color: #ddd;
+                margin-bottom: 1rem;
+            }
+
+            .empty-state h3 {
+                margin-bottom: 1rem;
+                color: var(--dark-color);
+            }
+
+            .empty-state p {
+                color: #666;
+                margin-bottom: 1.5rem;
+                max-width: 500px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            @media screen and (max-width: 992px) {
+                .my-books-layout {
+                    flex-direction: column;
+                }
+
+                .my-books-sidebar {
+                    width: 100%;
+                }
+            }
+
+            @media screen and (max-width: 576px) {
+                .books-grid {
+                    grid-template-columns: 1fr;
+                }
+
+                .my-books-header {
+                    flex-direction: column;
+                    align-items: flex-start;
+                }
+            }
+        </style>
+        <!-- Font Awesome for icons -->
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        />
+    </head>
+    <body>
+        <!-- Navbar (Common Customer Navbar) -->
+        <nav class="navbar">
+            <!-- Navbar will be generated by customer-navbar.js -->
+        </nav>
+
+        <!-- My Books Content -->
+        <div class="my-books-container">
+            <div class="my-books-header">
+                <div class="welcome-message">
+                    <h1>My Books</h1>
+                    <p>Manage your book listings and track approval status</p>
+                </div>
+
+                <div class="my-books-actions">
+                    <a href="../sell.html" class="btn btn-primary"
+                        ><i class="fas fa-plus"></i> Add New Book</a
+                    >
+                </div>
+            </div>
+
+            <div class="my-books-layout">
+                <!-- My Books Sidebar -->
+                <div class="my-books-sidebar">
+                    <div class="sidebar-menu">
+                        <a href="dashboard.html" class="sidebar-menu-item">
+                            <i class="fas fa-chart-line"></i> Dashboard
+                        </a>
+                        <a href="my-orders.html" class="sidebar-menu-item">
+                            <i class="fas fa-shopping-bag"></i> My Orders
+                        </a>
+                        <a
+                            href="my-books.html"
+                            class="sidebar-menu-item active"
+                        >
+                            <i class="fas fa-book"></i> My Books
+                        </a>
+                        <a href="sales-reports.html" class="sidebar-menu-item">
+                            <i class="fas fa-dollar-sign"></i> Sales Reports
+                        </a>
+                        <a href="profile.html" class="sidebar-menu-item">
+                            <i class="fas fa-user"></i> My Profile
+                        </a>
+                        <a
+                            href="#"
+                            class="sidebar-menu-item"
+                            id="sidebar-logout"
+                        >
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </a>
+                    </div>
+                </div>
+
+                <!-- My Books Main Content -->
+                <div class="my-books-content">
+                    <div class="section-card">
+                        <div class="section-header">
+                            <h3 class="section-title">My Book Listings</h3>
+                        </div>
+
+                        <div class="filter-tabs">
+                            <div class="filter-tab active" data-filter="all">
+                                All Books
+                            </div>
+                            <div class="filter-tab" data-filter="approved">
+                                Approved
+                            </div>
+                            <div class="filter-tab" data-filter="pending">
+                                Pending Approval
+                            </div>
+                            <div class="filter-tab" data-filter="rejected">
+                                Rejected
+                            </div>
+                            <div class="filter-tab" data-filter="sold">
+                                Sold
+                            </div>
+                        </div>
+
+                        <div class="section-content">
+                            <div class="books-grid" id="all-books">
+                                <!-- Book Card - Approved -->
+                                <div class="book-card" data-status="approved">
+                                    <div class="book-image">
+                                        <img
+                                            src="../../images/b_cover1.jpg"
+                                            alt="The Art of Programming"
+                                            class="book-cover"
+                                            onerror="this.src='https://via.placeholder.com/200x250/4A90E2/FFFFFF?text=Book+Cover'; this.onerror='';"
+                                        />
+                                    </div>
+                                    <div class="book-info">
+                                        <h4 class="book-title">
+                                            The Art of Programming
+                                        </h4>
+                                        <div class="book-author">
+                                            by John Smith
+                                        </div>
+                                        <div class="book-price">৳450</div>
+                                        <div class="book-status">
+                                            Status:
+                                            <span
+                                                class="status-badge status-approved"
+                                                >Approved</span
+                                            >
+                                        </div>
+                                        <div class="book-actions">
+                                            <a
+                                                href="../book-details.html"
+                                                class="book-btn view-btn"
+                                                >View</a
+                                            >
+                                            <a
+                                                href="#"
+                                                class="book-btn delete-btn"
+                                                >Delete</a
+                                            >
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Book Card - Pending -->
+                                <div class="book-card" data-status="pending">
+                                    <div class="book-image">
+                                        <img
+                                            src="../../images/b_cover2.jpg"
+                                            alt="Data Structures and Algorithms"
+                                            class="book-cover"
+                                            onerror="this.src='https://via.placeholder.com/200x250/27AE60/FFFFFF?text=Book+Cover'; this.onerror='';"
+                                        />
+                                    </div>
+                                    <div class="book-info">
+                                        <h4 class="book-title">
+                                            Data Structures and Algorithms
+                                        </h4>
+                                        <div class="book-author">
+                                            by Jane Doe
+                                        </div>
+                                        <div class="book-price">৳380</div>
+                                        <div class="book-status">
+                                            Status:
+                                            <span
+                                                class="status-badge status-pending"
+                                                >Pending Approval</span
+                                            >
+                                        </div>
+                                        <div class="book-actions">
+                                            <a
+                                                href="../book-details.html"
+                                                class="book-btn view-btn"
+                                                >View</a
+                                            >
+                                            <a
+                                                href="../sell.html"
+                                                class="book-btn edit-btn"
+                                                >Edit</a
+                                            >
+                                            <a
+                                                href="#"
+                                                class="book-btn delete-btn"
+                                                >Delete</a
+                                            >
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Book Card - Rejected -->
+                                <div class="book-card" data-status="rejected">
+                                    <div class="book-image">
+                                        <img
+                                            src="../../images/b_cover3.png"
+                                            alt="Web Development Basics"
+                                            class="book-cover"
+                                            onerror="this.src='https://via.placeholder.com/200x250/E74C3C/FFFFFF?text=Book+Cover'; this.onerror='';"
+                                        />
+                                    </div>
+                                    <div class="book-info">
+                                        <h4 class="book-title">
+                                            Web Development Basics
+                                        </h4>
+                                        <div class="book-author">
+                                            by Mike Johnson
+                                        </div>
+                                        <div class="book-price">৳300</div>
+                                        <div class="book-status">
+                                            Status:
+                                            <span
+                                                class="status-badge status-rejected"
+                                                >Rejected</span
+                                            >
+                                        </div>
+                                        <div class="book-actions">
+                                            <a
+                                                href="../book-details.html"
+                                                class="book-btn view-btn"
+                                                >View</a
+                                            >
+                                            <a
+                                                href="../sell.html"
+                                                class="book-btn edit-btn"
+                                                >Edit</a
+                                            >
+                                            <a
+                                                href="#"
+                                                class="book-btn delete-btn"
+                                                >Delete</a
+                                            >
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Book Card - Sold -->
+                                <div class="book-card" data-status="sold">
+                                    <div class="book-image">
+                                        <img
+                                            src="../../images/b_cover4.webp"
+                                            alt="Introduction to AI"
+                                            class="book-cover"
+                                            onerror="this.src='https://via.placeholder.com/200x250/9B59B6/FFFFFF?text=Book+Cover'; this.onerror='';"
+                                        />
+                                    </div>
+                                    <div class="book-info">
+                                        <h4 class="book-title">
+                                            Introduction to AI
+                                        </h4>
+                                        <div class="book-author">
+                                            by Sarah Williams
+                                        </div>
+                                        <div class="book-price">৳520</div>
+                                        <div class="book-status">
+                                            Status:
+                                            <span
+                                                class="status-badge status-sold"
+                                                >Sold</span
+                                            >
+                                        </div>
+                                        <div class="book-actions">
+                                            <a
+                                                href="../book-details.html"
+                                                class="book-btn view-btn"
+                                                >View</a
+                                            >
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Book Card - Approved -->
+                                <div class="book-card" data-status="approved">
+                                    <div class="book-image">
+                                        <img
+                                            src="../../images/b_cover1.jpg"
+                                            alt="Machine Learning Fundamentals"
+                                            class="book-cover"
+                                            onerror="this.src='https://via.placeholder.com/200x250/4A90E2/FFFFFF?text=Book+Cover'; this.onerror='';"
+                                        />
+                                    </div>
+                                    <div class="book-info">
+                                        <h4 class="book-title">
+                                            Machine Learning Fundamentals
+                                        </h4>
+                                        <div class="book-author">
+                                            by Robert Brown
+                                        </div>
+                                        <div class="book-price">৳480</div>
+                                        <div class="book-status">
+                                            Status:
+                                            <span
+                                                class="status-badge status-approved"
+                                                >Approved</span
+                                            >
+                                        </div>
+                                        <div class="book-actions">
+                                            <a
+                                                href="../book-details.html"
+                                                class="book-btn view-btn"
+                                                >View</a
+                                            >
+                                            <a
+                                                href="#"
+                                                class="book-btn delete-btn"
+                                                >Delete</a
+                                            >
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Book Card - Pending -->
+                                <div class="book-card" data-status="pending">
+                                    <div class="book-image">
+                                        <img
+                                            src="../../images/b_cover2.jpg"
+                                            alt="Cloud Computing Essentials"
+                                            class="book-cover"
+                                            onerror="this.src='https://via.placeholder.com/200x250/27AE60/FFFFFF?text=Book+Cover'; this.onerror='';"
+                                        />
+                                    </div>
+                                    <div class="book-info">
+                                        <h4 class="book-title">
+                                            Cloud Computing Essentials
+                                        </h4>
+                                        <div class="book-author">
+                                            by Emily Clark
+                                        </div>
+                                        <div class="book-price">৳420</div>
+                                        <div class="book-status">
+                                            Status:
+                                            <span
+                                                class="status-badge status-pending"
+                                                >Pending Approval</span
+                                            >
+                                        </div>
+                                        <div class="book-actions">
+                                            <a
+                                                href="../book-details.html"
+                                                class="book-btn view-btn"
+                                                >View</a
+                                            >
+                                            <a
+                                                href="../sell.html"
+                                                class="book-btn edit-btn"
+                                                >Edit</a
+                                            >
+                                            <a
+                                                href="#"
+                                                class="book-btn delete-btn"
+                                                >Delete</a
+                                            >
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Empty State (Hidden by default) -->
+                            <div class="empty-state" style="display: none">
+                                <i class="fas fa-book"></i>
+                                <h3>No books found</h3>
+                                <p>
+                                    You don't have any books in this category
+                                    yet.
+                                </p>
+                                <a href="../sell.html" class="btn btn-primary"
+                                    >Add a Book</a
+                                >
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-container">
+                <div class="footer-top">
+                    <div class="footer-column">
+                        <h3>BookMarket</h3>
+                        <p>
+                            Your one-stop destination for buying and selling
+                            books online. Find your next favorite book or give
+                            your old books a new home.
+                        </p>
+                        <div class="social-links">
+                            <a href="#"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#"><i class="fab fa-twitter"></i></a>
+                            <a href="#"><i class="fab fa-instagram"></i></a>
+                            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        </div>
+                    </div>
+                    <div class="footer-column">
+                        <h3>Quick Links</h3>
+                        <ul class="footer-links">
+                            <li><a href="../../index.html">Home</a></li>
+                            <li><a href="../browse.html">Browse Books</a></li>
+                            <li><a href="../sell.html">Sell Books</a></li>
+                            <li><a href="../about.html">About Us</a></li>
+                            <li><a href="../contact.html">Contact Us</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h3>Support</h3>
+                        <ul class="footer-links">
+                            <li><a href="#">Help Center</a></li>
+                            <li><a href="#">FAQs</a></li>
+                            <li><a href="#">Shipping Policy</a></li>
+                            <li><a href="#">Return Policy</a></li>
+                            <li><a href="#">Privacy Policy</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h3>Contact</h3>
+                        <ul class="contact-info">
+                            <li>
+                                <i class="fas fa-map-marker-alt"></i> 123 Book
+                                Street, Dhaka, Bangladesh
+                            </li>
+                            <li>
+                                <i class="fas fa-phone"></i> +880 123 456789
+                            </li>
+                            <li>
+                                <i class="fas fa-envelope"></i>
+                                support@bookmarket.com
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p>&copy; 2023 BookMarket. All Rights Reserved.</p>
+                </div>
+            </div>
+        </footer>
+
+        <!-- Notification Container -->
+        <div id="notification-container" class="notification-container"></div>
+
+        <!-- JavaScript -->
+        <script src="../../js/main.js"></script>
+        <script src="../../js/auth.js"></script>
+        <script src="../../js/customer-navbar.js"></script>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                // Logout functionality
+                const logoutBtn = document.getElementById("logout-btn");
+                const sidebarLogout = document.getElementById("sidebar-logout");
+
+                if (logoutBtn) {
+                    logoutBtn.addEventListener("click", function (e) {
+                        e.preventDefault();
+                        showNotification("Logged out successfully!", "success");
+                        setTimeout(() => {
+                            window.location.href = "../../index.html";
+                        }, 1500);
+                    });
+                }
+
+                if (sidebarLogout) {
+                    sidebarLogout.addEventListener("click", function (e) {
+                        e.preventDefault();
+                        showNotification("Logged out successfully!", "success");
+                        setTimeout(() => {
+                            window.location.href = "../../index.html";
+                        }, 1500);
+                    });
+                }
+
+                // Filter tabs functionality
+                const filterTabs = document.querySelectorAll(".filter-tab");
+                const bookCards = document.querySelectorAll(".book-card");
+                const emptyState = document.querySelector(".empty-state");
+
+                filterTabs.forEach((tab) => {
+                    tab.addEventListener("click", function () {
+                        // Remove active class from all tabs
+                        filterTabs.forEach((t) => t.classList.remove("active"));
+
+                        // Add active class to clicked tab
+                        this.classList.add("active");
+
+                        // Get filter value
+                        const filter = this.getAttribute("data-filter");
+
+                        // Filter books
+                        let visibleCount = 0;
+
+                        bookCards.forEach((card) => {
+                            const status = card.getAttribute("data-status");
+
+                            if (filter === "all" || filter === status) {
+                                card.style.display = "block";
+                                visibleCount++;
+                            } else {
+                                card.style.display = "none";
+                            }
+                        });
+
+                        // Show/hide empty state
+                        if (visibleCount === 0) {
+                            emptyState.style.display = "block";
+                        } else {
+                            emptyState.style.display = "none";
+                        }
+                    });
+                });
+
+                // Delete button functionality
+                const deleteButtons = document.querySelectorAll(".delete-btn");
+
+                deleteButtons.forEach((btn) => {
+                    btn.addEventListener("click", function (e) {
+                        e.preventDefault();
+
+                        if (
+                            confirm(
+                                "Are you sure you want to delete this book listing?"
+                            )
+                        ) {
+                            const bookCard = this.closest(".book-card");
+                            bookCard.style.opacity = "0.5";
+
+                            showNotification(
+                                "Book listing deleted successfully",
+                                "success"
+                            );
+
+                            setTimeout(() => {
+                                bookCard.remove();
+
+                                // Check if any books are visible in the current filter
+                                const activeFilter = document
+                                    .querySelector(".filter-tab.active")
+                                    .getAttribute("data-filter");
+                                const visibleBooks = document.querySelectorAll(
+                                    `.book-card[data-status="${activeFilter}"]:not([style*="display: none"])`
+                                );
+
+                                if (activeFilter === "all") {
+                                    const anyBooks =
+                                        document.querySelectorAll(".book-card");
+                                    if (anyBooks.length === 0) {
+                                        emptyState.style.display = "block";
+                                    }
+                                } else if (visibleBooks.length === 0) {
+                                    emptyState.style.display = "block";
+                                }
+                            }, 500);
+                        }
+                    });
+                });
+
+                // Edit button functionality
+                const editButtons = document.querySelectorAll(".edit-btn");
+
+                editButtons.forEach((btn) => {
+                    btn.addEventListener("click", function (e) {
+                        // This would normally go to the edit page with the book ID
+                        // For demo purposes, we'll just show a notification
+                        showNotification("Editing book listing", "info");
+                    });
+                });
+
+                // View button functionality
+                const viewButtons = document.querySelectorAll(".view-btn");
+
+                viewButtons.forEach((btn) => {
+                    btn.addEventListener("click", function (e) {
+                        // This would normally go to the book details page with the book ID
+                        // For demo purposes, we'll just show a notification
+                        showNotification("Viewing book details", "info");
+                    });
+                });
+            });
+        </script>
+    </body>
+</html>

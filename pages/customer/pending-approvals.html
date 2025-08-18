@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pending Approvals - Customer Dashboard - BookMarket</title>
+    <link rel="stylesheet" href="../../css/styles.css">
+    <!-- Additional CSS for Dashboard page -->
+    <style>
+        /* Dashboard Page Specific Styles */
+        .dashboard-container {
+            max-width: var(--container-width);
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .dashboard-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .welcome-message h1 {
+            margin-bottom: 0.5rem;
+            color: var(--dark-color);
+        }
+
+        .welcome-message p {
+            color: #666;
+        }
+
+        .dashboard-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .dashboard-layout {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .dashboard-sidebar {
+            width: 250px;
+            flex-shrink: 0;
+        }
+
+        .dashboard-content {
+            flex: 1;
+        }
+
+        .sidebar-menu {
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar-menu-item {
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--dark-color);
+            text-decoration: none;
+        }
+
+        .sidebar-menu-item:last-child {
+            border-bottom: none;
+        }
+
+        .sidebar-menu-item.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .sidebar-menu-item:hover:not(.active) {
+            background-color: #f5f5f5;
+        }
+
+        .sidebar-menu-item i {
+            margin-right: 0.8rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        .section-card {
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .section-header {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .section-title {
+            margin: 0;
+            font-size: 1.2rem;
+            color: var(--dark-color);
+        }
+
+        .section-content {
+            padding: 1.5rem;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        .approvals-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .approvals-table th, .approvals-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .approvals-table th {
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+
+        .approvals-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-pending {
+            background-color: rgba(243, 156, 18, 0.1);
+            color: var(--warning-color);
+        }
+
+        .status-reviewing {
+            background-color: rgba(74, 111, 165, 0.1);
+            color: var(--primary-color);
+        }
+
+        .action-button {
+            padding: 0.3rem 0.8rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            background-color: transparent;
+            border: 1px solid var(--primary-color);
+            color: var(--primary-color);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-right: 0.5rem;
+        }
+
+        .action-button:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .action-button.delete {
+            border-color: var(--danger-color);
+            color: var(--danger-color);
+        }
+
+        .action-button.delete:hover {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 0;
+            color: #777;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #ddd;
+        }
+
+        .empty-state p {
+            margin-bottom: 1.5rem;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .pagination-button {
+            padding: 0.5rem 1rem;
+            margin: 0 0.25rem;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background-color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .pagination-button:hover {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .pagination-button.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        /* Responsive styles */
+        @media screen and (max-width: 992px) {
+            .dashboard-layout {
+                flex-direction: column;
+            }
+            
+            .dashboard-sidebar {
+                width: 100%;
+            }
+        }
+
+        @media screen and (max-width: 768px) {
+            .approvals-table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+    </style>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navbar (Common Customer Navbar) -->
+    <nav class="navbar">
+        <!-- Navbar will be generated by customer-navbar.js -->
+    </nav>
+
+    <!-- Dashboard Content -->
+    <div class="dashboard-container">
+        <div class="dashboard-header">
+            <div class="welcome-message">
+                <h1>Pending Approvals</h1>
+                <p>Track the status of your book approval requests</p>
+            </div>
+            <div class="dashboard-actions">
+                <a href="../sell.html" class="btn btn-primary"><i class="fas fa-plus"></i> Add New Book</a>
+            </div>
+        </div>
+
+        <div class="dashboard-layout">
+            <!-- Dashboard Sidebar -->
+            <div class="dashboard-sidebar">
+                <div class="sidebar-menu">
+                    <a href="dashboard.html" class="sidebar-menu-item">
+                        <i class="fas fa-chart-line"></i> Dashboard
+                    </a>
+                    <a href="my-orders.html" class="sidebar-menu-item">
+                        <i class="fas fa-shopping-bag"></i> My Orders
+                    </a>
+                    <a href="my-books.html" class="sidebar-menu-item">
+                        <i class="fas fa-book"></i> My Books
+                    </a>
+                    <a href="pending-approvals.html" class="sidebar-menu-item active">
+                        <i class="fas fa-clock"></i> Pending Approvals
+                    </a>
+                    <a href="sales-reports.html" class="sidebar-menu-item">
+                        <i class="fas fa-dollar-sign"></i> Sales Reports
+                    </a>
+                    <a href="profile.html" class="sidebar-menu-item">
+                        <i class="fas fa-user"></i> My Profile
+                    </a>
+                    <a href="#" class="sidebar-menu-item" id="sidebar-logout">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </a>
+                </div>
+            </div>
+
+            <!-- Dashboard Main Content -->
+            <div class="dashboard-content">
+                <div class="section-card">
+                    <div class="section-header">
+                        <h3 class="section-title">Books Awaiting Approval</h3>
+                    </div>
+                    
+                    <div class="section-content">
+                        <div class="table-responsive">
+                            <table class="approvals-table">
+                                <thead>
+                                    <tr>
+                                        <th>Book Title</th>
+                                        <th>Submitted Date</th>
+                                        <th>Price</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>To Kill a Mockingbird</td>
+                                        <td>Jun 28, 2023</td>
+                                        <td>৳280</td>
+                                        <td><span class="status-badge status-pending">Pending</span></td>
+                                        <td>
+                                            <button class="action-button">View</button>
+                                            <button class="action-button">Edit</button>
+                                            <button class="action-button delete">Cancel</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>The Lord of the Rings</td>
+                                        <td>Jun 29, 2023</td>
+                                        <td>৳450</td>
+                                        <td><span class="status-badge status-reviewing">Under Review</span></td>
+                                        <td>
+                                            <button class="action-button">View</button>
+                                            <button class="action-button" disabled>Edit</button>
+                                            <button class="action-button delete">Cancel</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Harry Potter and the Philosopher's Stone</td>
+                                        <td>Jun 30, 2023</td>
+                                        <td>৳380</td>
+                                        <td><span class="status-badge status-pending">Pending</span></td>
+                                        <td>
+                                            <button class="action-button">View</button>
+                                            <button class="action-button">Edit</button>
+                                            <button class="action-button delete">Cancel</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <!-- If no pending approvals -->
+                        <!-- <div class="empty-state">
+                            <i class="fas fa-check-circle"></i>
+                            <h3>No Pending Approvals</h3>
+                            <p>You don't have any books waiting for approval at the moment.</p>
+                            <a href="../sell.html" class="btn btn-primary">Add New Book</a>
+                        </div> -->
+                    </div>
+                </div>
+                
+                <div class="section-card">
+                    <div class="section-header">
+                        <h3 class="section-title">Approval Process</h3>
+                    </div>
+                    
+                    <div class="section-content">
+                        <div style="padding: 1rem; background-color: #f9f9f9; border-radius: 8px; margin-bottom: 1rem;">
+                            <h4 style="margin-bottom: 1rem; color: var(--primary-color);">How Book Approval Works</h4>
+                            <ol style="padding-left: 1.5rem; margin-bottom: 0;">
+                                <li style="margin-bottom: 0.5rem;">Submit your book details through the <a href="../sell.html">Sell</a> page.</li>
+                                <li style="margin-bottom: 0.5rem;">Our admin team reviews your submission (usually within 24-48 hours).</li>
+                                <li style="margin-bottom: 0.5rem;">If approved, you'll need to pay a 5% commission fee.</li>
+                                <li style="margin-bottom: 0.5rem;">After payment, your book will be listed on the platform.</li>
+                                <li style="margin-bottom: 0.5rem;">If rejected, you'll receive a notification with the reason.</li>
+                            </ol>
+                        </div>
+                        
+                        <div style="padding: 1rem; background-color: #fff3e0; border-radius: 8px; border-left: 4px solid var(--warning-color);">
+                            <h4 style="margin-bottom: 0.5rem; color: var(--warning-color);"><i class="fas fa-exclamation-triangle"></i> Important Note</h4>
+                            <p style="margin-bottom: 0;">You can edit your book details while it's in "Pending" status, but not once it's "Under Review". If your book is rejected, you can make the suggested changes and resubmit.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer (Same as index.html) -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-top">
+                <div class="footer-column">
+                    <h3>BookMarket</h3>
+                    <p>Your one-stop destination for buying and selling books online. Find your next favorite book or give your old books a new home.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                <div class="footer-column">
+                    <h3>Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="../../index.html">Home</a></li>
+                        <li><a href="../browse.html">Browse Books</a></li>
+                        <li><a href="../sell.html">Sell Books</a></li>
+                        <li><a href="../about.html">About Us</a></li>
+                        <li><a href="../contact.html">Contact Us</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Support</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">FAQs</a></li>
+                        <li><a href="#">Shipping Policy</a></li>
+                        <li><a href="#">Return Policy</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Contact</h3>
+                    <ul class="contact-info">
+                        <li><i class="fas fa-map-marker-alt"></i> 123 Book Street, Dhaka, Bangladesh</li>
+                        <li><i class="fas fa-phone"></i> +880 123 456789</li>
+                        <li><i class="fas fa-envelope"></i> support@bookmarket.com</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2023 BookMarket. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="../../js/main.js"></script>
+    <script src="../../js/auth.js"></script>
+    <script src="../../js/customer-navbar.js"></script>
+    <!-- Dashboard specific JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Logout functionality
+            const logoutBtn = document.getElementById('logout-btn');
+            const sidebarLogoutBtn = document.getElementById('sidebar-logout');
+            
+            function handleLogout() {
+                // This will be connected to backend later
+                alert('Logout functionality will be implemented with the backend.');
+                // Redirect to home page
+                // window.location.href = '../../index.html';
+            }
+            
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    handleLogout();
+                });
+            }
+            
+            if (sidebarLogoutBtn) {
+                sidebarLogoutBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    handleLogout();
+                });
+            }
+            
+            // Action buttons
+            const viewButtons = document.querySelectorAll('.action-button:not(.delete)');
+            const deleteButtons = document.querySelectorAll('.action-button.delete');
+            
+            viewButtons.forEach(button => {
+                if (!button.disabled) {
+                    button.addEventListener('click', function() {
+                        // This will be connected to backend later
+                        if (this.textContent.trim() === 'View') {
+                            alert('View book details functionality will be implemented with the backend.');
+                        } else if (this.textContent.trim() === 'Edit') {
+                            alert('Edit book functionality will be implemented with the backend.');
+                        }
+                    });
+                }
+            });
+            
+            deleteButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // This will be connected to backend later
+                    const confirmCancel = confirm('Are you sure you want to cancel this approval request?');
+                    
+                    if (confirmCancel) {
+                        alert('Cancel approval request functionality will be implemented with the backend.');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

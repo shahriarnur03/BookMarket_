@@ -1,0 +1,21 @@
+
+# IDE and OS specific files
+.vscode/
+.idea/
+.DS_Store
+nbproject/
+
+# User-uploaded content
+/backend/uploads/books/
+/backend/uploads/profiles/
+/backend/uploads/temp/
+
+# It's good practice to keep the directories but ignore their contents.
+# You can add a .gitkeep file in the empty directories if you want Git to track the folder itself.
+
+# Log files
+*.log
+error_log
+
+# Local configuration files (IMPORTANT for security)
+/backend/config/database.php
