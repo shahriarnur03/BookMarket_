@@ -31,7 +31,6 @@ class UserAuth {
             $stats = $this->db->selectOne(
                 "SELECT 
                     COUNT(*) as total_users,
-                    COUNT(CASE WHEN is_active = 1 THEN 1 END) as active_users,
                     COUNT(CASE WHEN user_type = 'admin' THEN 1 END) as admin_users,
                     COUNT(CASE WHEN user_type = 'customer' THEN 1 END) as customer_users
                  FROM users"
@@ -39,7 +38,6 @@ class UserAuth {
             
             if ($stats) {
                 $stats['total_users'] = intval($stats['total_users'] ?? 0);
-                $stats['active_users'] = intval($stats['active_users'] ?? 0);
                 $stats['admin_users'] = intval($stats['admin_users'] ?? 0);
                 $stats['customer_users'] = intval($stats['customer_users'] ?? 0);
             }
@@ -59,7 +57,7 @@ class UserAuth {
     public function getRecentUsers($limit = 10) {
         try {
             $users = $this->db->select(
-                "SELECT id, username, email, user_type, is_active, created_at 
+                "SELECT id, username, email, user_type, created_at 
                  FROM users 
                  ORDER BY created_at DESC 
                  LIMIT ?",
@@ -168,7 +166,7 @@ class UserAuth {
             
             // Get user by email
             $user = $this->db->selectOne(
-                "SELECT * FROM users WHERE email = ? AND is_active = 1",
+                "SELECT * FROM users WHERE email = ?",
                 [cleanInput($email)]
             );
             
@@ -213,7 +211,7 @@ class UserAuth {
         try {
             $user = $this->db->selectOne(
                 "SELECT id, username, email, user_type, first_name, last_name, phone, address, city, postal_code, country, profile_image, created_at 
-                 FROM users WHERE id = ? AND is_active = 1",
+                 FROM users WHERE id = ?",
                 [$userId]
             );
             
@@ -221,6 +219,27 @@ class UserAuth {
             
         } catch (Exception $e) {
             error_log("Get User Profile Error: " . $e->getMessage());
+            return false;
+        }
+    }
+    
+    /**
+     * Get user details by ID (admin function)
+     * @param int $userId User ID
+     * @return array|false User details or false on failure
+     */
+    public function getUserDetails($userId) {
+        try {
+            $user = $this->db->selectOne(
+                "SELECT id, username, email, user_type, first_name, last_name, phone, address, city, postal_code, country, profile_image, created_at 
+                 FROM users WHERE id = ?",
+                [$userId]
+            );
+            
+            return $user;
+            
+        } catch (Exception $e) {
+            error_log("Get User Details Error: " . $e->getMessage());
             return false;
         }
     }
@@ -362,7 +381,7 @@ class UserAuth {
     public function getAllUsers($limit = 50, $offset = 0) {
         try {
             $users = $this->db->select(
-                "SELECT id, username, email, user_type, first_name, last_name, phone, city, is_active, created_at 
+                "SELECT id, username, email, user_type, first_name, last_name, phone, city, created_at 
                  FROM users ORDER BY created_at DESC LIMIT ? OFFSET ?",
                 [$limit, $offset]
             );
@@ -375,31 +394,7 @@ class UserAuth {
         }
     }
     
-    /**
-     * Update user status (admin function)
-     * @param int $userId User ID
-     * @param bool $isActive Active status
-     * @return array Result with success status and message
-     */
-    public function updateUserStatus($userId, $isActive) {
-        try {
-            $result = $this->db->execute(
-                "UPDATE users SET is_active = ? WHERE id = ?",
-                [$isActive ? 1 : 0, $userId]
-            );
-            
-            if ($result !== false) {
-                $status = $isActive ? 'activated' : 'suspended';
-                return ['success' => true, 'message' => "User $status successfully"];
-            } else {
-                return ['success' => false, 'message' => 'User status update failed'];
-            }
-            
-        } catch (Exception $e) {
-            error_log("Update User Status Error: " . $e->getMessage());
-            return ['success' => false, 'message' => 'User status update failed. Please try again.'];
-        }
-    }
+
     
     /**
      * Delete user (admin function)
@@ -431,7 +426,7 @@ class UserAuth {
 }
 
 // Handle AJAX requests
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') {
     $userAuth = new UserAuth();
     $action = $_POST['action'] ?? '';
     
@@ -496,31 +491,49 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
             break;
             
-        case 'update_user_status':
-            if (!isAdmin()) {
-                sendErrorResponse('Access denied', 403);
-            }
-            $result = $userAuth->updateUserStatus($_POST['user_id'], $_POST['is_active']);
-            sendJSONResponse($result);
-            break;
+
             
         case 'delete_user':
-            if (!isAdmin()) {
-                sendErrorResponse('Access denied', 403);
+            if (!isLoggedIn()) {
+                sendErrorResponse('User not logged in', 401);
             }
-            $result = $userAuth->deleteUser($_POST['user_id']);
-            sendJSONResponse($result);
+            if (!isAdmin()) {
+                sendErrorResponse('Access denied. Admin privileges required', 403);
+            }
+            $userId = $_POST['user_id'] ?? 0;
+            if (!$userId) {
+                sendErrorResponse('User ID is required');
+            }
+            $result = $userAuth->deleteUser($userId);
+            if ($result && $result['success']) {
+                sendSuccessResponse(['message' => $result['message']]);
+            } else {
+                sendErrorResponse($result['message'] ?? 'Failed to delete user');
+            }
             break;
         
-        case 'get_user_stats':
+        case 'check_admin_auth':
+            if (!isLoggedIn()) {
+                sendErrorResponse('User not logged in', 401);
+            }
             if (!isAdmin()) {
-                sendErrorResponse('Access denied', 403);
+                sendErrorResponse('Access denied. Admin privileges required', 403);
+            }
+            sendSuccessResponse(['message' => 'Admin authenticated successfully']);
+            break;
+
+        case 'get_user_stats':
+            if (!isLoggedIn()) {
+                sendErrorResponse('User not logged in', 401);
+            }
+            if (!isAdmin()) {
+                sendErrorResponse('Access denied. Admin privileges required', 403);
             }
             $stats = $userAuth->getUserStats();
             if ($stats !== false) {
-                sendSuccessResponse($stats, 'User stats retrieved successfully');
+                sendSuccessResponse($stats, 'User statistics retrieved successfully');
             } else {
-                sendErrorResponse('Failed to retrieve user stats');
+                sendErrorResponse('Failed to retrieve user statistics');
             }
             break;
         
@@ -534,6 +547,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 sendSuccessResponse($users, 'Recent users retrieved successfully');
             } else {
                 sendErrorResponse('Failed to retrieve recent users');
+            }
+            break;
+            
+        case 'get_user_details':
+            if (!isAdmin()) {
+                sendErrorResponse('Access denied', 403);
+            }
+            $userDetails = $userAuth->getUserDetails($_POST['user_id']);
+            if ($userDetails) {
+                sendSuccessResponse($userDetails, 'User details retrieved successfully');
+            } else {
+                sendErrorResponse('Failed to retrieve user details');
             }
             break;
             

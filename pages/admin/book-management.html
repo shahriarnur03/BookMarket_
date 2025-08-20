@@ -416,6 +416,9 @@
                         <a href="book-approval.html" class="sidebar-menu-item">
                             <i class="fas fa-check-circle"></i> Book Approval
                         </a>
+                        <a href="book-upload.html" class="sidebar-menu-item">
+                            <i class="fas fa-upload"></i> Book Upload
+                        </a>
 
                         <a
                             href="#"
@@ -431,7 +434,21 @@
                 <div class="dashboard-content">
                     <div class="section-card">
                         <div class="section-header">
-                            <h3 class="section-title">Book Management</h3>
+                            <div
+                                style="
+                                    display: flex;
+                                    justify-content: space-between;
+                                    align-items: center;
+                                "
+                            >
+                                <h3 class="section-title">Book Management</h3>
+                                <a
+                                    href="book-upload.html"
+                                    class="btn btn-success"
+                                >
+                                    <i class="fas fa-plus"></i> Add New Book
+                                </a>
+                            </div>
                         </div>
 
                         <div class="section-content">
@@ -630,28 +647,43 @@
 
                 function handleLogout() {
                     const form = new FormData();
-                    form.append('action', 'logout');
-                    
-                    fetch('../../backend/auth/user_auth.php', { method: 'POST', body: form })
-                        .then(response => response.json())
-                        .then(data => {
+                    form.append("action", "logout");
+
+                    fetch("../../backend/auth/user_auth.php", {
+                        method: "POST",
+                        body: form,
+                    })
+                        .then((response) => response.json())
+                        .then((data) => {
                             if (data.success) {
-                                showNotification('Logged out successfully', 'success');
+                                showNotification(
+                                    "Logged out successfully",
+                                    "success"
+                                );
                                 // Clear any stored user data
-                                if (typeof window.bookmarketAuth !== 'undefined') {
+                                if (
+                                    typeof window.bookmarketAuth !== "undefined"
+                                ) {
                                     window.bookmarketAuth.logoutUser();
                                 }
                                 // Redirect to home page
                                 setTimeout(() => {
-                                    window.location.href = '../../index.html';
+                                    window.location.href = "../../index.html";
                                 }, 1000);
                             } else {
-                                showNotification('Logout failed: ' + (data.message || 'Unknown error'), 'error');
+                                showNotification(
+                                    "Logout failed: " +
+                                        (data.message || "Unknown error"),
+                                    "error"
+                                );
                             }
                         })
-                        .catch(error => {
-                            console.error('Logout error:', error);
-                            showNotification('Logout failed. Please try again.', 'error');
+                        .catch((error) => {
+                            console.error("Logout error:", error);
+                            showNotification(
+                                "Logout failed. Please try again.",
+                                "error"
+                            );
                         });
                 }
 
@@ -679,6 +711,16 @@
 
                 function formatDate(dateString) {
                     return new Date(dateString).toLocaleDateString();
+                }
+
+                // Format seller name with type
+                function formatSellerName(firstName, lastName, sellerType) {
+                    if (!firstName && !lastName) return "N/A";
+                    const fullName = [firstName, lastName]
+                        .filter(Boolean)
+                        .join(" ");
+                    const type = sellerType === "admin" ? "Admin" : "Customer";
+                    return `${fullName} (${type})`;
                 }
 
                 // Load books data with pagination
@@ -719,7 +761,11 @@
                                         <td>${book.category_name}</td>
                                         <td>${book.book_condition}</td>
                                         <td>${formatCurrency(book.price)}</td>
-                                        <td>${book.seller_name}</td>
+                                        <td>${formatSellerName(
+                                            book.first_name,
+                                            book.last_name,
+                                            book.seller_type
+                                        )}</td>
                                         <td>
                                             <div class="action-buttons">
                                                 <a href="book-view.html?id=${
@@ -834,17 +880,44 @@
                                 `Are you sure you want to delete book ${bookId}? This action cannot be undone.`
                             );
                             if (confirmDelete) {
-                                // This will be connected to backend later
-                                showNotification(
-                                    `Book ${bookId} deleted successfully!`,
-                                    "success"
-                                );
+                                // Call backend to delete book
+                                const formData = new FormData();
+                                formData.append("action", "delete_book");
+                                formData.append("book_id", bookId);
 
-                                // Remove the row from the table
-                                const row = this.closest("tr");
-                                if (row) {
-                                    row.remove();
-                                }
+                                fetch("../../backend/books/book_manager.php", {
+                                    method: "POST",
+                                    body: formData,
+                                })
+                                    .then((response) => response.json())
+                                    .then((data) => {
+                                        if (data.success) {
+                                            showNotification(
+                                                data.message,
+                                                "success"
+                                            );
+                                            // Remove the row from the table
+                                            const row = this.closest("tr");
+                                            if (row) {
+                                                row.remove();
+                                            }
+                                        } else {
+                                            showNotification(
+                                                data.message,
+                                                "error"
+                                            );
+                                        }
+                                    })
+                                    .catch((error) => {
+                                        console.error(
+                                            "Error deleting book:",
+                                            error
+                                        );
+                                        showNotification(
+                                            "Error deleting book",
+                                            "error"
+                                        );
+                                    });
                             }
                         });
                     });

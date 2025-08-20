@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Order Details - Admin Dashboard</title>
+        <link rel="stylesheet" href="../../css/styles.css" />
+        <!-- Additional CSS for Order Details page -->
+        <style>
+            .order-details-container {
+                max-width: var(--container-width);
+                margin: 2rem auto;
+                padding: 0 1rem;
+            }
+
+            .back-button {
+                display: inline-flex;
+                align-items: center;
+                gap: 0.5rem;
+                padding: 0.5rem 1rem;
+                background-color: var(--secondary-color);
+                color: white;
+                text-decoration: none;
+                border-radius: 4px;
+                margin-bottom: 1rem;
+                transition: background-color 0.3s ease;
+            }
+
+            .back-button:hover {
+                background-color: #5a6c7d;
+            }
+
+            .order-header {
+                background-color: white;
+                border-radius: 8px;
+                padding: 2rem;
+                margin-bottom: 2rem;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            }
+
+            .order-basic-info {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 1.5rem;
+                margin-bottom: 2rem;
+            }
+
+            .info-group {
+                display: flex;
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .info-label {
+                font-weight: 600;
+                color: var(--dark-color);
+                font-size: 0.9rem;
+            }
+
+            .info-value {
+                color: #666;
+                font-size: 1rem;
+            }
+
+            .order-status {
+                display: inline-block;
+                padding: 0.5rem 1rem;
+                border-radius: 50px;
+                font-size: 0.9rem;
+                font-weight: 600;
+            }
+
+            .status-pending {
+                background-color: rgba(243, 156, 18, 0.1);
+                color: var(--warning-color);
+            }
+
+            .status-processing {
+                background-color: rgba(74, 111, 165, 0.1);
+                color: var(--primary-color);
+            }
+
+            .status-shipped {
+                background-color: rgba(52, 152, 219, 0.1);
+                color: #3498db;
+            }
+
+            .status-delivered {
+                background-color: rgba(39, 174, 96, 0.1);
+                color: var(--success-color);
+            }
+
+            .status-cancelled {
+                background-color: rgba(231, 76, 60, 0.1);
+                color: var(--danger-color);
+            }
+
+            .order-actions {
+                display: flex;
+                gap: 1rem;
+                flex-wrap: wrap;
+            }
+
+            .action-button {
+                padding: 0.75rem 1.5rem;
+                border-radius: 4px;
+                font-size: 0.9rem;
+                cursor: pointer;
+                border: none;
+                transition: all 0.3s ease;
+                text-decoration: none;
+                display: inline-flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+            .btn-update {
+                background-color: var(--primary-color);
+                color: white;
+            }
+
+            .btn-update:hover {
+                background-color: #3a5a80;
+            }
+
+            .btn-cancel {
+                background-color: var(--danger-color);
+                color: white;
+            }
+
+            .btn-cancel:hover {
+                background-color: #c0392b;
+            }
+
+            .order-sections {
+                display: grid;
+                gap: 2rem;
+            }
+
+            .section-card {
+                background-color: white;
+                border-radius: 8px;
+                overflow: hidden;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            }
+
+            .section-header {
+                padding: 1rem 1.5rem;
+                border-bottom: 1px solid var(--border-color);
+                background-color: #f8f9fa;
+            }
+
+            .section-title {
+                margin: 0;
+                font-size: 1.2rem;
+                color: var(--dark-color);
+            }
+
+            .section-content {
+                padding: 1.5rem;
+            }
+
+            .table-responsive {
+                overflow-x: auto;
+            }
+
+            .admin-table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+
+            .admin-table th,
+            .admin-table td {
+                padding: 1rem;
+                text-align: left;
+                border-bottom: 1px solid var(--border-color);
+            }
+
+            .admin-table th {
+                font-weight: 600;
+                color: var(--dark-color);
+                background-color: #f8f9fa;
+            }
+
+            .admin-table tr:last-child td {
+                border-bottom: none;
+            }
+
+            .no-data {
+                text-align: center;
+                padding: 2rem;
+                color: #666;
+                font-style: italic;
+            }
+
+            .loading {
+                text-align: center;
+                padding: 2rem;
+                color: #666;
+            }
+
+            .order-total {
+                background-color: #f8f9fa;
+                padding: 1rem;
+                border-radius: 4px;
+                margin-top: 1rem;
+                text-align: right;
+                font-size: 1.2rem;
+                font-weight: 600;
+                color: var(--dark-color);
+            }
+
+            @media screen and (max-width: 768px) {
+                .order-basic-info {
+                    grid-template-columns: 1fr;
+                }
+                
+                .order-actions {
+                    flex-direction: column;
+                }
+                
+                .action-button {
+                    justify-content: center;
+                }
+            }
+        </style>
+        <!-- Font Awesome for icons -->
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        />
+    </head>
+    <body>
+        <!-- Navbar (Common Admin Navbar) -->
+        <nav class="navbar">
+            <!-- Navbar will be generated by admin-navbar.js -->
+        </nav>
+
+        <!-- Order Details Content -->
+        <div class="order-details-container">
+            <a href="dashboard.html" class="back-button">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </a>
+
+            <div class="order-header">
+                <h1>Order Details</h1>
+                <div id="order-basic-info" class="order-basic-info">
+                    <div class="loading">Loading order information...</div>
+                </div>
+                <div id="order-actions" class="order-actions" style="display: none;">
+                    <!-- Action buttons will be populated here -->
+                </div>
+            </div>
+
+            <div class="order-sections">
+                <!-- Order Items Section -->
+                <div class="section-card">
+                    <div class="section-header">
+                        <h3 class="section-title">Order Items</h3>
+                    </div>
+                    <div class="section-content">
+                        <div id="order-items-content">
+                            <div class="loading">Loading order items...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notification Container -->
+        <div id="notification-container" class="notification-container"></div>
+
+        <!-- JavaScript -->
+        <script src="../../js/main.js"></script>
+        <script src="../../js/auth.js"></script>
+        <script src="../../js/admin-navbar.js"></script>
+        
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                // Check authentication first
+                checkAdminAuth();
+                
+                // Get order ID from URL parameter
+                const urlParams = new URLSearchParams(window.location.search);
+                const orderId = urlParams.get('id');
+                
+                if (!orderId) {
+                    showNotification("No order ID provided", "error");
+                    return;
+                }
+
+                // Check if user is authenticated as admin
+                function checkAdminAuth() {
+                    const form = new FormData();
+                    form.append("action", "check_admin_auth");
+                    
+                    fetch("../../backend/auth/user_auth.php", {
+                        method: "POST",
+                        body: form,
+                    })
+                    .then((r) => r.json())
+                    .then((d) => {
+                        if (!d.success) {
+                            showNotification("Access denied. Please login as admin.", "error");
+                            setTimeout(() => {
+                                window.location.href = "../../pages/login.html";
+                            }, 2000);
+                            return;
+                        }
+                        // User is authenticated, continue loading order details
+                        loadOrderDetails(orderId);
+                    })
+                    .catch((error) => {
+                        console.error("Auth check error:", error);
+                        showNotification("Authentication failed. Please login again.", "error");
+                        setTimeout(() => {
+                            window.location.href = "../../pages/login.html";
+                        }, 2000);
+                    });
+                }
+
+                // Event delegation for action buttons
+                document.addEventListener("click", function(e) {
+                    if (e.target.classList.contains("btn-update")) {
+                        const newStatus = prompt("Enter new order status (Pending, Processing, Shipped, Delivered, Cancelled):");
+                        if (newStatus && ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'].includes(newStatus)) {
+                            updateOrderStatus(orderId, newStatus);
+                        } else if (newStatus !== null) {
+                            showNotification("Invalid status. Please use: Pending, Processing, Shipped, Delivered, or Cancelled", "error");
+                        }
+                    } else if (e.target.classList.contains("btn-cancel")) {
+                        if (confirm("Are you sure you want to cancel this order?")) {
+                            updateOrderStatus(orderId, "Cancelled");
+                        }
+                    }
+                });
+            });
+
+            function loadOrderDetails(orderId) {
+                const form = new FormData();
+                form.append("action", "get_order_details");
+                form.append("order_id", orderId);
+                
+                fetch("../../backend/orders/order_manager.php", {
+                    method: "POST",
+                    body: form,
+                })
+                    .then((r) => r.json())
+                    .then((d) => {
+                        if (d.success && d.data) {
+                            displayOrderInfo(d.data);
+                            displayOrderItems(d.data.items || []);
+                        } else {
+                            showNotification("Failed to load order details", "error");
+                        }
+                    })
+                    .catch((error) => {
+                        console.error("Load order details error:", error);
+                        showNotification("Failed to load order details", "error");
+                    });
+            }
+
+            function displayOrderInfo(order) {
+                const basicInfo = document.getElementById("order-basic-info");
+                const actions = document.getElementById("order-actions");
+                
+                basicInfo.innerHTML = `
+                    <div class="info-group">
+                        <div class="info-label">Order Number</div>
+                        <div class="info-value">#${order.order_number}</div>
+                    </div>
+                    <div class="info-group">
+                        <div class="info-label">Customer</div>
+                        <div class="info-value">${order.first_name || ''} ${order.last_name || ''} (${order.username})</div>
+                    </div>
+                    <div class="info-group">
+                        <div class="info-label">Email</div>
+                        <div class="info-value">${order.email || 'N/A'}</div>
+                    </div>
+                    <div class="info-group">
+                        <div class="info-label">Phone</div>
+                        <div class="info-value">${order.phone || 'N/A'}</div>
+                    </div>
+                    <div class="info-group">
+                        <div class="info-label">Order Date</div>
+                        <div class="info-value">${new Date(order.order_date).toLocaleDateString()}</div>
+                    </div>
+                    <div class="info-group">
+                        <div class="info-label">Order Status</div>
+                        <div class="info-value">
+                            <span class="order-status status-${order.order_status.toLowerCase()}">
+                                ${order.order_status}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="info-group">
+                        <div class="info-label">Payment Status</div>
+                        <div class="info-value">${order.payment_status}</div>
+                    </div>
+                    <div class="info-group">
+                        <div class="info-label">Payment Method</div>
+                        <div class="info-value">${order.payment_method || 'N/A'}</div>
+                    </div>
+                    <div class="info-group">
+                        <div class="info-label">Shipping Address</div>
+                        <div class="info-value">${order.shipping_address || 'N/A'}</div>
+                    </div>
+                    <div class="info-group">
+                        <div class="info-label">Shipping City</div>
+                        <div class="info-value">${order.shipping_city || 'N/A'}</div>
+                    </div>
+                    <div class="info-group">
+                        <div class="info-label">Total Amount</div>
+                        <div class="info-value" style="font-weight: 600; color: var(--primary-color);">৳${order.total_amount}</div>
+                    </div>
+                `;
+
+                // Show action buttons for non-delivered/cancelled orders
+                if (!['Delivered', 'Cancelled'].includes(order.order_status)) {
+                    actions.style.display = 'flex';
+                    actions.innerHTML = `
+                        <button class="action-button btn-update">
+                            <i class="fas fa-edit"></i> Update Status
+                        </button>
+                        <button class="action-button btn-cancel">
+                            <i class="fas fa-times"></i> Cancel Order
+                        </button>
+                    `;
+                }
+            }
+
+            function displayOrderItems(items) {
+                const content = document.getElementById("order-items-content");
+                if (!items || items.length === 0) {
+                    content.innerHTML = '<div class="no-data">No order items found</div>';
+                    return;
+                }
+
+                let html = '<div class="table-responsive"><table class="admin-table">';
+                html += '<thead><tr><th>Book Title</th><th>Author</th><th>Category</th><th>Condition</th><th>Price</th><th>Quantity</th><th>Seller</th></tr></thead><tbody>';
+                
+                let totalAmount = 0;
+                items.forEach(item => {
+                    totalAmount += parseFloat(item.price_per_item) * parseInt(item.quantity);
+                    html += `
+                        <tr>
+                            <td>${item.title}</td>
+                            <td>${item.author}</td>
+                            <td>${item.category_name || 'N/A'}</td>
+                            <td>${item.book_condition}</td>
+                            <td>৳${item.price_per_item}</td>
+                            <td>${item.quantity}</td>
+                            <td>${item.seller_name}</td>
+                        </tr>
+                    `;
+                });
+                
+                html += '</tbody></table></div>';
+                html += `<div class="order-total">Total: ৳${totalAmount.toFixed(2)}</div>`;
+                content.innerHTML = html;
+            }
+
+            function updateOrderStatus(orderId, newStatus) {
+                const form = new FormData();
+                form.append("action", "update_order_status");
+                form.append("order_id", orderId);
+                form.append("status", newStatus);
+                form.append("notes", `Status updated to ${newStatus} by admin`);
+                
+                fetch("../../backend/orders/order_manager.php", {
+                    method: "POST",
+                    body: form,
+                })
+                    .then((r) => r.json())
+                    .then((d) => {
+                        if (d.success) {
+                            showNotification("Order status updated successfully", "success");
+                            loadOrderDetails(orderId); // Reload order info
+                        } else {
+                            showNotification("Failed to update order status: " + (d.message || "Unknown error"), "error");
+                        }
+                    })
+                    .catch((error) => {
+                        console.error("Update order status error:", error);
+                        showNotification("Failed to update order status. Please try again.", "error");
+                    });
+            }
+        </script>
+    </body>
+</html>

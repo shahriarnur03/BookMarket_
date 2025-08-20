@@ -424,6 +424,9 @@
                         >
                             <i class="fas fa-check-circle"></i> Book Approval
                         </a>
+                        <a href="book-upload.html" class="sidebar-menu-item">
+                            <i class="fas fa-upload"></i> Book Upload
+                        </a>
 
                         <a
                             href="#"
@@ -642,28 +645,43 @@
 
                 function handleLogout() {
                     const form = new FormData();
-                    form.append('action', 'logout');
-                    
-                    fetch('../../backend/auth/user_auth.php', { method: 'POST', body: form })
-                        .then(response => response.json())
-                        .then(data => {
+                    form.append("action", "logout");
+
+                    fetch("../../backend/auth/user_auth.php", {
+                        method: "POST",
+                        body: form,
+                    })
+                        .then((response) => response.json())
+                        .then((data) => {
                             if (data.success) {
-                                showNotification('Logged out successfully', 'success');
+                                showNotification(
+                                    "Logged out successfully",
+                                    "success"
+                                );
                                 // Clear any stored user data
-                                if (typeof window.bookmarketAuth !== 'undefined') {
+                                if (
+                                    typeof window.bookmarketAuth !== "undefined"
+                                ) {
                                     window.bookmarketAuth.logoutUser();
                                 }
                                 // Redirect to home page
                                 setTimeout(() => {
-                                    window.location.href = '../../index.html';
+                                    window.location.href = "../../index.html";
                                 }, 1000);
                             } else {
-                                showNotification('Logout failed: ' + (data.message || 'Unknown error'), 'error');
+                                showNotification(
+                                    "Logout failed: " +
+                                        (data.message || "Unknown error"),
+                                    "error"
+                                );
                             }
                         })
-                        .catch(error => {
-                            console.error('Logout error:', error);
-                            showNotification('Logout failed. Please try again.', 'error');
+                        .catch((error) => {
+                            console.error("Logout error:", error);
+                            showNotification(
+                                "Logout failed. Please try again.",
+                                "error"
+                            );
                         });
                 }
 
@@ -892,11 +910,7 @@
                                 "Are you sure you want to approve this book?"
                             );
                             if (confirmApprove) {
-                                // This will be connected to backend later
-                                showNotification(
-                                    "Approve book functionality will be implemented with the backend.",
-                                    "info"
-                                );
+                                updateBookStatus(bookId, "approved");
                             }
                         });
                     });
@@ -908,12 +922,7 @@
                                 "Please provide a reason for rejection:"
                             );
                             if (reason) {
-                                // This will be connected to backend later
-                                showNotification(
-                                    "Reject book functionality will be implemented with the backend. Reason: " +
-                                        reason,
-                                    "info"
-                                );
+                                updateBookStatus(bookId, "rejected", reason);
                             }
                         });
                     });
@@ -990,6 +999,51 @@
                         }
                     });
                 });
+
+                // Update book status function
+                function updateBookStatus(
+                    bookId,
+                    status,
+                    rejectionReason = ""
+                ) {
+                    const form = new FormData();
+                    form.append("action", "update_book_status");
+                    form.append("book_id", bookId);
+                    form.append("status", status);
+                    if (rejectionReason) {
+                        form.append("rejection_reason", rejectionReason);
+                    }
+
+                    fetch("../../backend/books/book_manager.php", {
+                        method: "POST",
+                        body: form,
+                    })
+                        .then((r) => r.json())
+                        .then((d) => {
+                            if (d.success) {
+                                showNotification(
+                                    `Book ${status} successfully!`,
+                                    "success"
+                                );
+                                // Reload the books list to reflect changes
+                                loadPendingBooks(currentPage, currentFilters);
+                            } else {
+                                showNotification(
+                                    `Failed to ${status} book: ${
+                                        d.message || "Unknown error"
+                                    }`,
+                                    "error"
+                                );
+                            }
+                        })
+                        .catch((error) => {
+                            console.error("Update book status error:", error);
+                            showNotification(
+                                `Failed to ${status} book. Please try again.`,
+                                "error"
+                            );
+                        });
+                }
 
                 // Initial load
                 loadPendingBooks(1, {});

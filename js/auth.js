@@ -109,25 +109,24 @@ document.addEventListener("DOMContentLoaded", function () {
                             <div class="dropdown-content">
                                 <a href="${basePath}pages/customer/profile.html">Profile</a>
                                 <a href="${dashboardPath}">Dashboard</a>
+                                <a href="${basePath}pages/cart.html">My Cart</a>
                                 <a href="${basePath}pages/customer/my-orders.html">My Orders</a>
                                 <a href="#" id="logout-btn">Logout</a>
                             </div>
                         `;
                     }
 
-                    // Only add cart icon for customers, not for admins
-                    if (userType !== "admin") {
-                        if (!existingCartIcon) {
-                            const cartIcon = document.createElement("a");
-                            cartIcon.href = basePath + "pages/cart.html";
-                            cartIcon.className = "cart-icon";
-                            cartIcon.innerHTML =
-                                '<i class="fas fa-shopping-cart"></i> <span class="cart-count">0</span>';
-                            container.appendChild(cartIcon);
-                        }
-                    } else if (existingCartIcon) {
-                        // Remove cart icon for admin users
-                        existingCartIcon.remove();
+                    // Make sure cart icon exists for customers
+                    if (userType === "customer" && !existingCartIcon) {
+                        const cartIcon = document.createElement("a");
+                        cartIcon.href = basePath + "pages/cart.html";
+                        cartIcon.className = "cart-icon";
+                        cartIcon.innerHTML =
+                            '<i class="fas fa-shopping-cart"></i> <span class="cart-count">0</span>';
+                        container.appendChild(cartIcon);
+
+                        // Fetch real cart count from database
+                        updateCartCountFromDatabase();
                     }
 
                     container.appendChild(profileDropdown);
@@ -189,6 +188,36 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             }
         });
+    }
+
+    // Update cart count from database
+    function updateCartCountFromDatabase() {
+        const user = JSON.parse(
+            localStorage.getItem("bookmarket_user") || "{}"
+        );
+        if (!user.userId) return;
+
+        const form = new FormData();
+        form.append("action", "get_cart_count");
+        form.append("user_id", user.userId);
+
+        fetch("../backend/cart/cart_manager.php", {
+            method: "POST",
+            body: form,
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.success !== false) {
+                    const cartCountElements =
+                        document.querySelectorAll(".cart-count");
+                    cartCountElements.forEach((element) => {
+                        element.textContent = data.count || 0;
+                    });
+                }
+            })
+            .catch((error) => {
+                console.error("Failed to fetch cart count:", error);
+            });
     }
 
     // Initialize authentication state

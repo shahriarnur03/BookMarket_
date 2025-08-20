@@ -8,8 +8,8 @@
  */
 
 // Include required files
-require_once '../config/database.php';
-require_once '../config/session.php';
+require_once __DIR__ . '/../config/database.php';
+require_once __DIR__ . '/../config/session.php';
 
 /**
  * Book Manager Class
@@ -254,6 +254,30 @@ class BookManager {
     }
     
     /**
+     * Get all books for a specific user (admin function)
+     * @param int $userId User ID
+     * @return array|false Books array or false on failure
+     */
+    public function getUserBooks($userId) {
+        try {
+            $books = $this->db->select(
+                "SELECT b.*, c.name as category_name
+                 FROM books b
+                 JOIN categories c ON b.category_id = c.id
+                 WHERE b.seller_id = ?
+                 ORDER BY b.created_at DESC",
+                [intval($userId)]
+            );
+            
+            return $books;
+            
+        } catch (Exception $e) {
+            error_log("Get User Books Error: " . $e->getMessage());
+            return false;
+        }
+    }
+    
+    /**
      * Get all books for admin management
      * @param array $filters Filter parameters
      * @param int $limit Number of books to return
@@ -288,7 +312,7 @@ class BookManager {
             $params[] = $offset;
             
             $books = $this->db->select(
-                "SELECT b.*, c.name as category_name, u.username as seller_name, u.email as seller_email
+                "SELECT b.*, c.name as category_name, u.first_name, u.last_name, u.username, u.email as seller_email, u.user_type as seller_type
                  FROM books b
                  JOIN categories c ON b.category_id = c.id
                  JOIN users u ON b.seller_id = u.id
@@ -448,6 +472,42 @@ class BookManager {
     }
     
     /**
+     * Get detailed book information
+     * @param int $bookId Book ID
+     * @return array|false Book details or false on failure
+     */
+    public function getBookDetails($bookId) {
+        try {
+            $book = $this->db->selectOne(
+                "SELECT b.*, c.name as category_name, u.first_name, u.last_name, u.username as seller_name, u.user_type as seller_type 
+                 FROM books b 
+                 LEFT JOIN categories c ON b.category_id = c.id 
+                 LEFT JOIN users u ON b.seller_id = u.id 
+                 WHERE b.id = ?",
+                [intval($bookId)]
+            );
+            
+            if ($book) {
+                // Combine first and last name for seller
+                if ($book['first_name'] && $book['last_name']) {
+                    $book['seller_name'] = $book['first_name'] . ' ' . $book['last_name'];
+                } elseif ($book['seller_name']) {
+                    $book['seller_name'] = $book['seller_name'];
+                } else {
+                    $book['seller_name'] = 'Unknown Seller';
+                }
+                
+                return $book;
+            }
+            
+            return false;
+        } catch (Exception $e) {
+            error_log("Get Book Details Error: " . $e->getMessage());
+            return false;
+        }
+    }
+    
+    /**
      * Get book categories
      * @return array|false Categories array or false on failure
      */
@@ -584,6 +644,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             sendJSONResponse($result);
             break;
             
+        case 'get_book_details':
+            if (!isAdmin()) {
+                sendErrorResponse('Access denied', 403);
+            }
+            $book = $bookManager->getBookDetails($_POST['book_id']);
+            if ($book !== false) {
+                sendSuccessResponse($book, 'Book details retrieved successfully');
+            } else {
+                sendErrorResponse('Failed to retrieve book details');
+            }
+            break;
+            
         case 'get_categories':
             $categories = $bookManager->getCategories();
             if ($categories !== false) {
@@ -602,6 +674,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 sendSuccessResponse($stats, 'Statistics retrieved successfully');
             } else {
                 sendErrorResponse('Failed to retrieve statistics');
+            }
+            break;
+            
+        case 'get_user_books':
+            if (!isAdmin()) {
+                sendErrorResponse('Access denied', 403);
+            }
+            $userId = $_POST['user_id'] ?? 0;
+            if (!$userId) {
+                sendErrorResponse('User ID is required');
+            }
+            $books = $bookManager->getUserBooks($userId);
+            if ($books !== false) {
+                sendSuccessResponse($books, 'User books retrieved successfully');
+            } else {
+                sendErrorResponse('Failed to retrieve user books');
             }
             break;
             

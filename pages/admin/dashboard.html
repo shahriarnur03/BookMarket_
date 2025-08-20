@@ -264,16 +264,6 @@
                 color: var(--danger-color);
             }
 
-            .status-active {
-                background-color: rgba(39, 174, 96, 0.1);
-                color: var(--success-color);
-            }
-
-            .status-suspended {
-                background-color: rgba(231, 76, 60, 0.1);
-                color: var(--danger-color);
-            }
-
             .action-buttons {
                 display: flex;
                 gap: 0.5rem;
@@ -297,76 +287,6 @@
                 background-color: #3a5a80;
             }
 
-            .btn-approve {
-                background-color: var(--success-color);
-                color: white;
-            }
-
-            .btn-approve:hover {
-                background-color: #219653;
-            }
-
-            .btn-reject {
-                background-color: var(--danger-color);
-                color: white;
-            }
-
-            .btn-reject:hover {
-                background-color: #c0392b;
-            }
-
-            .admin-book-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-                gap: 1.5rem;
-            }
-
-            .admin-book-card {
-                background-color: white;
-                border-radius: 8px;
-                overflow: hidden;
-                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-                transition: transform 0.3s ease;
-            }
-
-            .admin-book-card:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            }
-
-            .book-image {
-                height: 180px;
-                overflow: hidden;
-            }
-
-            .book-image .placeholder-image {
-                width: 100%;
-                height: 100%;
-            }
-
-            .book-info {
-                padding: 1rem;
-            }
-
-            .book-info h4 {
-                margin-bottom: 0.5rem;
-                color: var(--dark-color);
-                font-size: 1rem;
-            }
-
-            .book-seller {
-                font-size: 0.8rem;
-                color: #666;
-                margin-bottom: 0.5rem;
-            }
-
-            .book-actions {
-                margin-top: 1rem;
-                display: flex;
-                justify-content: center;
-                gap: 0.5rem;
-            }
-
             /* Responsive styles */
             @media screen and (max-width: 992px) {
                 .dashboard-layout {
@@ -384,10 +304,6 @@
 
             @media screen and (max-width: 768px) {
                 .stats-cards {
-                    grid-template-columns: repeat(2, 1fr);
-                }
-
-                .admin-book-grid {
                     grid-template-columns: repeat(2, 1fr);
                 }
             }
@@ -474,8 +390,9 @@
                         >
                             <i class="fas fa-users"></i> User Management
                         </a>
-                        <a href="book-approval.html" class="sidebar-menu-item">
-                            <i class="fas fa-check-circle"></i> Book Approval
+
+                        <a href="book-upload.html" class="sidebar-menu-item">
+                            <i class="fas fa-upload"></i> Book Upload
                         </a>
 
                         <a
@@ -520,20 +437,6 @@
                             </div>
                         </div>
 
-                        <div class="stat-card stat-pending">
-                            <div class="stat-icon">
-                                <i class="fas fa-clock"></i>
-                            </div>
-                            <div class="stat-label">Pending Approvals</div>
-                            <div class="stat-value" id="stat-pending-approvals">
-                                0
-                            </div>
-                            <div class="stat-trend trend-down">
-                                <i class="fas fa-arrow-down"></i> 5% from last
-                                month
-                            </div>
-                        </div>
-
                         <div class="stat-card stat-earnings">
                             <div class="stat-icon">
                                 <i class="fas fa-dollar-sign"></i>
@@ -559,13 +462,19 @@
                         <div class="section-content">
                             <div class="charts-container">
                                 <div class="chart-box">
-                                    <div class="chart-placeholder">
+                                    <div
+                                        id="chart-books-by-category"
+                                        class="chart-placeholder"
+                                    >
                                         Books by Category chart will be
                                         displayed here
                                     </div>
                                 </div>
                                 <div class="chart-box">
-                                    <div class="chart-placeholder">
+                                    <div
+                                        id="chart-earnings-overview"
+                                        class="chart-placeholder"
+                                    >
                                         Earnings Overview chart will be
                                         displayed here
                                     </div>
@@ -605,25 +514,6 @@
                         </div>
                     </div>
 
-                    <!-- Pending Book Approvals -->
-                    <div class="section-card">
-                        <div class="section-header">
-                            <h3 class="section-title">
-                                Pending Book Approvals
-                            </h3>
-                            <a href="book-approval.html" class="section-action"
-                                >View All</a
-                            >
-                        </div>
-
-                        <div class="section-content">
-                            <div
-                                class="admin-book-grid"
-                                id="pending-approvals-grid"
-                            ></div>
-                        </div>
-                    </div>
-
                     <!-- Recent Users -->
                     <div class="section-card">
                         <div class="section-header">
@@ -645,7 +535,6 @@
                                             <th>Email</th>
                                             <th>Type</th>
                                             <th>Joined Date</th>
-                                            <th>Status</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
@@ -730,13 +619,63 @@
         <script src="../../js/main.js"></script>
         <script src="../../js/auth.js"></script>
         <script src="../../js/admin-navbar.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
         <!-- Admin Dashboard specific JavaScript -->
         <script>
             document.addEventListener("DOMContentLoaded", function () {
+                // Check authentication first
+                checkAdminAuth();
+
                 // Logout functionality
                 const logoutBtn = document.getElementById("logout-btn");
                 const sidebarLogoutBtn =
                     document.getElementById("sidebar-logout");
+
+                // Check if user is authenticated as admin
+                function checkAdminAuth() {
+                    const form = new FormData();
+                    form.append("action", "check_admin_auth");
+
+                    fetch("../../backend/auth/user_auth.php", {
+                        method: "POST",
+                        body: form,
+                    })
+                        .then((r) => r.json())
+                        .then((d) => {
+                            if (!d.success) {
+                                showNotification(
+                                    "Access denied. Please login as admin.",
+                                    "error"
+                                );
+                                setTimeout(() => {
+                                    window.location.href =
+                                        "../../pages/login.html";
+                                }, 2000);
+                                return;
+                            }
+                            // User is authenticated, continue loading dashboard
+                            loadDashboardData();
+                        })
+                        .catch((error) => {
+                            console.error("Auth check error:", error);
+                            showNotification(
+                                "Authentication failed. Please login again.",
+                                "error"
+                            );
+                            setTimeout(() => {
+                                window.location.href = "../../pages/login.html";
+                            }, 2000);
+                        });
+                }
+
+                // Load dashboard data after authentication
+                function loadDashboardData() {
+                    // Initial loads
+                    loadStats();
+                    loadRecentOrders();
+                    loadRecentUsers();
+                    loadCharts();
+                }
 
                 function handleLogout() {
                     const form = new FormData();
@@ -816,7 +755,7 @@
 
                 // Fetch stats (books + orders + users)
                 function loadStats() {
-                    // Books stats for pending approvals and total books
+                    // Books stats for total books
                     const booksForm = new FormData();
                     booksForm.append("action", "get_book_stats");
                     fetch("../../backend/books/book_manager.php", {
@@ -830,9 +769,6 @@
                                 document.getElementById(
                                     "stat-total-books"
                                 ).textContent = s.total_books ?? 0;
-                                document.getElementById(
-                                    "stat-pending-approvals"
-                                ).textContent = s.pending_books ?? 0;
                             }
                         });
 
@@ -901,8 +837,8 @@
                                             o.total_amount
                                         )}</td>
                                         <td>${statusBadge(o.order_status)}</td>
-                                        <td><button class="action-button btn-view" data-order="${
-                                            o.order_number
+                                        <td><button class="action-button btn-view" data-order-id="${
+                                            o.id
                                         }">View</button></td>
                                     `;
                                     tbody.appendChild(tr);
@@ -910,62 +846,6 @@
                             } else {
                                 tbody.innerHTML =
                                     '<tr><td colspan="7">No recent orders</td></tr>';
-                            }
-                        });
-                }
-
-                // Fetch pending approvals (books)
-                function loadPendingApprovals() {
-                    const form = new FormData();
-                    form.append("action", "get_all_books");
-                    form.append("status", "pending");
-                    form.append("limit", "6");
-                    fetch("../../backend/books/book_manager.php", {
-                        method: "POST",
-                        body: form,
-                    })
-                        .then((r) => r.json())
-                        .then((d) => {
-                            const grid = document.getElementById(
-                                "pending-approvals-grid"
-                            );
-                            grid.innerHTML = "";
-                            if (d.success && Array.isArray(d.data)) {
-                                d.data.slice(0, 6).forEach((b) => {
-                                    const card = document.createElement("div");
-                                    card.className = "admin-book-card";
-                                    card.innerHTML = `
-                                        <div class="book-image">
-                                            <div class="placeholder-image">${
-                                                b.cover_image_path
-                                                    ? `<img src="../../${b.cover_image_path}" alt="${b.title}"/>`
-                                                    : "Book Cover"
-                                            }</div>
-                                        </div>
-                                        <div class="book-info">
-                                            <h4>${b.title}</h4>
-                                            <div class="book-seller">Seller: ${
-                                                b.seller_name
-                                            }</div>
-                                            <div class="book-price">Price: ${formatCurrency(
-                                                b.price
-                                            )}</div>
-                                            <div class="book-actions">
-                                                <button class="action-button btn-view" data-book="${
-                                                    b.id
-                                                }">View</button>
-                                                <button class="action-button btn-approve" data-book="${
-                                                    b.id
-                                                }">Approve</button>
-                                                <button class="action-button btn-reject" data-book="${
-                                                    b.id
-                                                }">Reject</button>
-                                            </div>
-                                        </div>`;
-                                    grid.appendChild(card);
-                                });
-                            } else {
-                                grid.innerHTML = "<p>No pending books</p>";
                             }
                         });
                 }
@@ -986,14 +866,6 @@
                             tbody.innerHTML = "";
                             if (d.success && Array.isArray(d.data)) {
                                 d.data.forEach((u) => {
-                                    const statusCls =
-                                        u.is_active == 1
-                                            ? "status-active"
-                                            : "status-suspended";
-                                    const statusText =
-                                        u.is_active == 1
-                                            ? "Active"
-                                            : "Suspended";
                                     const tr = document.createElement("tr");
                                     tr.innerHTML = `
                                         <td>#${u.id}</td>
@@ -1007,28 +879,248 @@
                                         <td>${new Date(
                                             u.created_at
                                         ).toLocaleDateString()}</td>
-                                        <td><span class="status-badge ${statusCls}">${statusText}</span></td>
                                         <td>
                                             <div class="action-buttons">
                                                 <button class="action-button btn-view" data-user="${
                                                     u.id
                                                 }">View</button>
+                                                <button class="action-button btn-delete" data-user="${
+                                                    u.id
+                                                }">Delete</button>
                                             </div>
                                         </td>`;
                                     tbody.appendChild(tr);
                                 });
                             } else {
                                 tbody.innerHTML =
-                                    '<tr><td colspan="7">No recent users</td></tr>';
+                                    '<tr><td colspan="6">No recent users</td></tr>';
                             }
                         });
                 }
 
+                // Event delegation for user actions
+                document.addEventListener("click", function (e) {
+                    if (e.target.classList.contains("btn-view")) {
+                        const userId = e.target.dataset.user;
+                        const orderId = e.target.dataset.orderId;
+
+                        if (userId) {
+                            // View user details
+                            window.location.href = `user-details.html?id=${userId}`;
+                        } else if (orderId) {
+                            // View order details
+                            window.location.href = `order-details.html?id=${orderId}`;
+                        }
+                    } else if (e.target.classList.contains("btn-delete")) {
+                        const userId = e.target.dataset.user;
+                        if (
+                            userId &&
+                            confirm(
+                                "Are you sure you want to delete this user? This action cannot be undone."
+                            )
+                        ) {
+                            deleteUser(userId);
+                        }
+                    }
+                });
+
+                // Delete user function
+                function deleteUser(userId) {
+                    const form = new FormData();
+                    form.append("action", "delete_user");
+                    form.append("user_id", userId);
+
+                    fetch("../../backend/auth/user_auth.php", {
+                        method: "POST",
+                        body: form,
+                    })
+                        .then((r) => r.json())
+                        .then((d) => {
+                            if (d.success) {
+                                showNotification(
+                                    "User deleted successfully",
+                                    "success"
+                                );
+                                loadRecentUsers(); // Reload the table
+                            } else {
+                                showNotification(
+                                    "Failed to delete user: " +
+                                        (d.message || "Unknown error"),
+                                    "error"
+                                );
+                            }
+                        })
+                        .catch((error) => {
+                            console.error("Delete user error:", error);
+                            showNotification(
+                                "Failed to delete user. Please try again.",
+                                "error"
+                            );
+                        });
+                }
+
+                // Charts: Books by Category (donut) and Earnings Overview (area)
+                function renderBooksByCategoryChart(categories) {
+                    const container = document.getElementById(
+                        "chart-books-by-category"
+                    );
+                    if (!container) return;
+                    const labels = categories.map((c) => c.name);
+                    const series = categories.map((c) =>
+                        parseInt(c.book_count || c.count || 0)
+                    );
+                    if (!series.length || series.every((v) => v === 0)) {
+                        container.textContent = "No category data available";
+                        return;
+                    }
+                    const options = {
+                        chart: { type: "donut", height: 300 },
+                        labels: labels,
+                        series: series,
+                        legend: { position: "bottom" },
+                        dataLabels: { enabled: true },
+                        tooltip: {
+                            y: {
+                                formatter: function (val) {
+                                    return val + " books";
+                                },
+                            },
+                        },
+                        colors: [
+                            "#1f77b4",
+                            "#ff7f0e",
+                            "#2ca02c",
+                            "#d62728",
+                            "#9467bd",
+                            "#8c564b",
+                            "#e377c2",
+                            "#7f7f7f",
+                            "#bcbd22",
+                            "#17becf",
+                        ],
+                        responsive: [
+                            {
+                                breakpoint: 768,
+                                options: {
+                                    chart: { height: 320 },
+                                    legend: { position: "bottom" },
+                                },
+                            },
+                        ],
+                    };
+                    container.classList.remove("chart-placeholder");
+                    const chart = new ApexCharts(container, options);
+                    chart.render();
+                }
+
+                function renderEarningsOverviewChart(timeseries) {
+                    const container = document.getElementById(
+                        "chart-earnings-overview"
+                    );
+                    if (!container) return;
+                    const categories = timeseries.map(
+                        (p) => p.month_label || p.month
+                    );
+                    const data = timeseries.map((p) =>
+                        parseFloat(p.revenue || 0)
+                    );
+                    if (!data.length) {
+                        container.textContent = "No earnings data available";
+                        return;
+                    }
+                    const options = {
+                        chart: {
+                            type: "area",
+                            height: 300,
+                            toolbar: { show: false },
+                        },
+                        series: [{ name: "Revenue", data: data }],
+                        xaxis: { categories: categories },
+                        yaxis: {
+                            labels: {
+                                formatter: function (val) {
+                                    return (
+                                        "৳" +
+                                        Number(val).toLocaleString("en-BD")
+                                    );
+                                },
+                            },
+                        },
+                        dataLabels: { enabled: false },
+                        stroke: { curve: "smooth", width: 3 },
+                        fill: {
+                            type: "gradient",
+                            gradient: {
+                                shadeIntensity: 0.5,
+                                opacityFrom: 0.5,
+                                opacityTo: 0.1,
+                            },
+                        },
+                        colors: ["#10b981"],
+                        tooltip: {
+                            y: {
+                                formatter: function (val) {
+                                    return (
+                                        "৳" +
+                                        Number(val).toLocaleString("en-BD")
+                                    );
+                                },
+                            },
+                        },
+                    };
+                    container.classList.remove("chart-placeholder");
+                    const chart = new ApexCharts(container, options);
+                    chart.render();
+                }
+
+                function loadCharts() {
+                    // Books by Category
+                    fetch("../../backend/api/home_data.php?action=categories")
+                        .then((r) => r.json())
+                        .then((d) => {
+                            if (d.success && Array.isArray(d.data)) {
+                                const filtered = d.data.filter(
+                                    (c) => (c.book_count ?? 0) >= 0
+                                );
+                                renderBooksByCategoryChart(filtered);
+                            }
+                        })
+                        .catch(() => {
+                            const c = document.getElementById(
+                                "chart-books-by-category"
+                            );
+                            if (c) c.textContent = "Failed to load categories";
+                        });
+
+                    // Earnings Overview (last 12 months)
+                    const form = new FormData();
+                    form.append("action", "get_revenue_timeseries");
+                    form.append("months", "12");
+                    fetch("../../backend/orders/order_manager.php", {
+                        method: "POST",
+                        body: form,
+                    })
+                        .then((r) => r.json())
+                        .then((d) => {
+                            if (d.success && Array.isArray(d.data)) {
+                                renderEarningsOverviewChart(d.data);
+                            }
+                        })
+                        .catch(() => {
+                            const c = document.getElementById(
+                                "chart-earnings-overview"
+                            );
+                            if (c)
+                                c.textContent = "Failed to load earnings data";
+                        });
+                }
+
                 // Initial loads
-                loadStats();
-                loadRecentOrders();
-                loadPendingApprovals();
-                loadRecentUsers();
+                // loadStats();
+                // loadRecentOrders();
+
+                // loadRecentUsers();
+                // loadCharts();
             });
         </script>
     </body>

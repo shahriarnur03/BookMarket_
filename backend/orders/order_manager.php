@@ -8,8 +8,8 @@
  */
 
 // Include required files
-require_once '../config/database.php';
-require_once '../config/session.php';
+require_once __DIR__ . '/../config/database.php';
+require_once __DIR__ . '/../config/session.php';
 
 /**
  * Order Manager Class
@@ -343,6 +343,50 @@ class OrderManager {
     }
     
     /**
+     * Get revenue time series aggregated by month for the last N months
+     * @param int $months Number of months to include
+     * @return array|false Array of [month, month_label, revenue] or false on failure
+     */
+    public function getRevenueTimeseries($months = 12) {
+        try {
+            $months = intval($months);
+            if ($months < 1) { $months = 1; }
+            if ($months > 36) { $months = 36; }
+            
+            // Start from the first day of the month (months-1) ago
+            $startTimestamp = strtotime('-' . ($months - 1) . ' months', strtotime(date('Y-m-01')));
+            $startDate = date('Y-m-01', $startTimestamp);
+            
+            $rows = $this->db->select(
+                "SELECT DATE_FORMAT(order_date, '%Y-%m') as ym, SUM(total_amount) as revenue\n                 FROM orders\n                 WHERE order_status IN ('Delivered', 'Shipped') AND order_date >= ?\n                 GROUP BY ym\n                 ORDER BY ym ASC",
+                [$startDate]
+            );
+            
+            $map = [];
+            foreach ($rows as $r) {
+                $map[$r['ym']] = floatval($r['revenue'] ?? 0);
+            }
+            
+            $result = [];
+            for ($i = 0; $i < $months; $i++) {
+                $ts = strtotime('+' . $i . ' months', $startTimestamp);
+                $key = date('Y-m', $ts);
+                $label = date('M Y', $ts);
+                $result[] = [
+                    'month' => $key,
+                    'month_label' => $label,
+                    'revenue' => isset($map[$key]) ? $map[$key] : 0.0
+                ];
+            }
+            
+            return $result;
+        } catch (Exception $e) {
+            error_log("Get Revenue Timeseries Error: " . $e->getMessage());
+            return false;
+        }
+    }
+    
+    /**
      * Get recent orders for admin dashboard
      * @param int $limit Number of orders to return
      * @return array|false Recent orders array or false on failure
@@ -399,6 +443,33 @@ class OrderManager {
     }
     
     /**
+     * Get all orders for a specific user (admin function)
+     * @param int $userId User ID
+     * @return array|false Orders array or false on failure
+     */
+    public function getUserOrdersAdmin($userId) {
+        try {
+            $orders = $this->db->select(
+                "SELECT o.*, 
+                        COUNT(oi.id) as total_items,
+                        SUM(oi.quantity) as total_quantity
+                 FROM orders o
+                 LEFT JOIN order_items oi ON o.id = oi.order_id
+                 WHERE o.user_id = ?
+                 GROUP BY o.id
+                 ORDER BY o.order_date DESC",
+                [intval($userId)]
+            );
+            
+            return $orders;
+            
+        } catch (Exception $e) {
+            error_log("Get User Orders Error: " . $e->getMessage());
+            return false;
+        }
+    }
+    
+    /**
      * Log admin action for audit trail
      * @param string $actionType Type of action
      * @param string $description Action description
@@ -449,7 +520,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 sendErrorResponse('User not logged in', 401);
             }
             $orderId = $_POST['order_id'] ?? 0;
-            $orderDetails = $orderManager->getOrderDetails($orderId, getCurrentUserId());
+            // Allow admin to view any order, or user to view their own orders
+            $userId = isAdmin() ? null : getCurrentUserId();
+            $orderDetails = $orderManager->getOrderDetails($orderId, $userId);
             if ($orderDetails) {
                 sendSuccessResponse($orderDetails, 'Order details retrieved successfully');
             } else {
@@ -505,6 +578,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
             break;
             
+        case 'get_revenue_timeseries':
+            if (!isAdmin()) {
+                sendErrorResponse('Access denied', 403);
+            }
+            $months = isset($_POST['months']) ? intval($_POST['months']) : 12;
+            $data = $orderManager->getRevenueTimeseries($months);
+            if ($data !== false) {
+                sendSuccessResponse($data, 'Revenue timeseries retrieved successfully');
+            } else {
+                sendErrorResponse('Failed to retrieve revenue timeseries');
+            }
+            break;
+            
         case 'get_recent_orders':
             if (!isAdmin()) {
                 sendErrorResponse('Access denied', 403);
@@ -526,6 +612,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 sendSuccessResponse($stats, 'Selling statistics retrieved successfully');
             } else {
                 sendErrorResponse('Failed to retrieve selling statistics');
+            }
+            break;
+            
+        case 'get_user_orders':
+            if (!isAdmin()) {
+                sendErrorResponse('Access denied', 403);
+            }
+            $userId = $_POST['user_id'] ?? 0;
+            if (!$userId) {
+                sendErrorResponse('User ID is required');
+            }
+            $orders = $orderManager->getUserOrdersAdmin($userId);
+            if ($orders !== false) {
+                sendSuccessResponse($orders, 'User orders retrieved successfully');
+            } else {
+                sendErrorResponse('Failed to retrieve user orders');
             }
             break;
             

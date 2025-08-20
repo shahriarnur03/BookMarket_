@@ -199,13 +199,23 @@
                 font-size: 0.9rem;
             }
 
-            .btn-tracking {
+            .btn-update {
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 gap: 0.5rem;
                 padding: 0.8rem 1rem;
                 font-size: 0.9rem;
+                background-color: var(--primary-color);
+                color: white;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+                transition: background-color 0.3s ease;
+            }
+
+            .btn-update:hover {
+                background-color: #3a5a80;
             }
 
             .status-badge {
@@ -217,13 +227,13 @@
                 text-transform: uppercase;
             }
 
-            .status-confirmed {
-                background-color: #3498db;
+            .status-pending {
+                background-color: #f39c12;
                 color: white;
             }
 
             .status-processing {
-                background-color: #f39c12;
+                background-color: #3498db;
                 color: white;
             }
 
@@ -234,6 +244,11 @@
 
             .status-delivered {
                 background-color: #27ae60;
+                color: white;
+            }
+
+            .status-cancelled {
+                background-color: #e74c3c;
                 color: white;
             }
 
@@ -539,8 +554,8 @@
                     font-size: 0.9rem;
                 }
 
-                .btn-tracking {
-                    background-color: var(--secondary-color);
+                .btn-update {
+                    background-color: var(--primary-color);
                     color: white;
                     border: none;
                     padding: 0.8rem 1.5rem;
@@ -554,8 +569,8 @@
                     justify-content: center;
                 }
 
-                .btn-tracking:hover {
-                    background-color: #d35400;
+                .btn-update:hover {
+                    background-color: #3a5a80;
                 }
 
                 /* Status Badge Styles */
@@ -689,6 +704,9 @@
                         </a>
                         <a href="book-approval.html" class="sidebar-menu-item">
                             <i class="fas fa-check-circle"></i> Book Approval
+                        </a>
+                        <a href="book-upload.html" class="sidebar-menu-item">
+                            <i class="fas fa-upload"></i> Book Upload
                         </a>
                         <a
                             href="#"
@@ -966,20 +984,18 @@
 
                 function getStatusBadge(status) {
                     const statusMap = {
-                        pending: "status-pending",
-                        confirmed: "status-confirmed",
-                        processing: "status-processing",
-                        shipped: "status-shipped",
-                        delivered: "status-delivered",
-                        cancelled: "status-cancelled",
+                        Pending: "status-pending",
+                        Processing: "status-processing",
+                        Shipped: "status-shipped",
+                        Delivered: "status-delivered",
+                        Cancelled: "status-cancelled",
                     };
                     const statusText = {
-                        pending: "Pending",
-                        confirmed: "Order Confirmed",
-                        processing: "Processing",
-                        shipped: "Shipped",
-                        delivered: "Delivered",
-                        cancelled: "Cancelled",
+                        Pending: "Pending",
+                        Processing: "Processing",
+                        Shipped: "Shipped",
+                        Delivered: "Delivered",
+                        Cancelled: "Cancelled",
                     };
                     return `<span class="status-badge ${
                         statusMap[status] || "status-pending"
@@ -1025,7 +1041,9 @@
                                                 order.order_number || order.id
                                             }</h4>
                                             <div class="order-status">
-                                                ${getStatusBadge(order.status)}
+                                                ${getStatusBadge(
+                                                    order.order_status
+                                                )}
                                                 <div class="order-price">
                                                     ${formatCurrency(
                                                         order.total_amount
@@ -1050,48 +1068,42 @@
                                                 <select class="status-select" data-order-id="${
                                                     order.id
                                                 }">
-                                                    <option value="pending" ${
-                                                        order.status ===
-                                                        "pending"
+                                                    <option value="Pending" ${
+                                                        order.order_status ===
+                                                        "Pending"
                                                             ? "selected"
                                                             : ""
                                                     }>Pending</option>
-                                                    <option value="confirmed" ${
-                                                        order.status ===
-                                                        "confirmed"
-                                                            ? "selected"
-                                                            : ""
-                                                    }>Order Confirmed</option>
-                                                    <option value="processing" ${
-                                                        order.status ===
-                                                        "processing"
+                                                    <option value="Processing" ${
+                                                        order.order_status ===
+                                                        "Processing"
                                                             ? "selected"
                                                             : ""
                                                     }>Processing</option>
-                                                    <option value="shipped" ${
-                                                        order.status ===
-                                                        "shipped"
+                                                    <option value="Shipped" ${
+                                                        order.order_status ===
+                                                        "Shipped"
                                                             ? "selected"
                                                             : ""
                                                     }>Shipped</option>
-                                                    <option value="delivered" ${
-                                                        order.status ===
-                                                        "delivered"
+                                                    <option value="Delivered" ${
+                                                        order.order_status ===
+                                                        "Delivered"
                                                             ? "selected"
                                                             : ""
                                                     }>Delivered</option>
-                                                    <option value="cancelled" ${
-                                                        order.status ===
-                                                        "cancelled"
+                                                    <option value="Cancelled" ${
+                                                        order.order_status ===
+                                                        "Cancelled"
                                                             ? "selected"
                                                             : ""
                                                     }>Cancelled</option>
                                                 </select>
                                             </div>
-                                            <button class="btn btn-secondary btn-tracking" data-order-id="${
+                                            <button class="btn btn-primary btn-update" data-order-id="${
                                                 order.id
                                             }">
-                                                <i class="fas fa-truck"></i> View Tracking
+                                                <i class="fas fa-save"></i> Update
                                             </button>
                                         </div>
                                     `;
@@ -1190,24 +1202,32 @@
                 function attachOrderListeners() {
                     const statusSelects =
                         document.querySelectorAll(".status-select");
-                    const trackingButtons =
-                        document.querySelectorAll(".btn-tracking");
+                    const updateButtons =
+                        document.querySelectorAll(".btn-update");
 
                     statusSelects.forEach((select) => {
                         select.addEventListener("change", function () {
                             const orderId = this.getAttribute("data-order-id");
                             const newStatus = this.value;
-                            updateOrderStatus(orderId, newStatus);
+                            // Don't auto-update on change, wait for Update button click
                         });
                     });
 
-                    trackingButtons.forEach((button) => {
+                    updateButtons.forEach((button) => {
                         button.addEventListener("click", function () {
                             const orderId = this.getAttribute("data-order-id");
-                            showNotification(
-                                `View tracking for order ${orderId}`,
-                                "info"
+                            const statusSelect = document.querySelector(
+                                `.status-select[data-order-id="${orderId}"]`
                             );
+                            const newStatus = statusSelect.value;
+
+                            if (
+                                confirm(
+                                    `Are you sure you want to update order #${orderId} status to "${newStatus}"?`
+                                )
+                            ) {
+                                updateOrderStatus(orderId, newStatus);
+                            }
                         });
                     });
                 }

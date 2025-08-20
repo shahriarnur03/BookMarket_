@@ -37,8 +37,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     <img src="${homePath.replace(
                         "index.html",
                         ""
-                    )}images/bookmarket-logo.png" alt="BookMarket" onerror="this.src='https://via.placeholder.com/30x30?text=BM'; this.onerror='';">
-                    <a href="${homePath}">BookMarket</a>
+                    )}images/bookmarket-logo.png" alt="BanglaBook" onerror="this.src='https://via.placeholder.com/30x30?text=BB'; this.onerror='';">
+                    <a href="${homePath}">BanglaBook</a>
                 </div>
                 <ul class="navbar-menu">
                     <li><a href="${homePath}">Home</a></li>
@@ -108,10 +108,20 @@ document.addEventListener("DOMContentLoaded", function () {
     // Generate the navbar
     generateCustomerNavbar();
 
-    // Wait a bit for auth system to initialize, then update UI
-    setTimeout(() => {
-        if (typeof window.bookmarketAuth !== "undefined") {
+    // Wait for auth system to initialize, then update UI
+    function waitForAuthSystem() {
+        if (
+            typeof window.bookmarketAuth !== "undefined" &&
+            window.bookmarketAuth.updateUIForAuthState
+        ) {
+            console.log("✅ Auth system ready, updating UI...");
             window.bookmarketAuth.updateUIForAuthState();
+        } else {
+            console.log("⏳ Auth system not ready yet, waiting...");
+            setTimeout(waitForAuthSystem, 100);
         }
-    }, 100);
+    }
+
+    // Start waiting for auth system
+    setTimeout(waitForAuthSystem, 100);
 });

@@ -7,6 +7,9 @@
  * @version 1.0
  */
 
+// Prevent any output before JSON response
+ob_start();
+
 // Include required files
 require_once '../config/session.php';
 
@@ -373,14 +376,28 @@ class FileUploadManager {
 
 // Handle AJAX requests
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $uploadManager = new FileUploadManager();
-    $action = $_POST['action'] ?? '';
+    // Clear any output buffer
+    ob_clean();
     
-    switch ($action) {
-        case 'upload_book_images':
-            if (!isLoggedIn()) {
-                sendErrorResponse('User not logged in', 401);
-            }
+    // Disable error display (only log to file)
+    error_reporting(E_ALL);
+    ini_set('display_errors', 0);
+    ini_set('log_errors', 1);
+    
+    // Log the incoming request
+    error_log("File Upload Request: " . json_encode($_POST));
+    error_log("Files: " . json_encode($_FILES));
+    
+    try {
+        $uploadManager = new FileUploadManager();
+        $action = $_POST['action'] ?? '';
+        
+        switch ($action) {
+            case 'upload_book_images':
+                if (!isLoggedIn()) {
+                    error_log("User not logged in for file upload");
+                    sendErrorResponse('User not logged in', 401);
+                }
             
             if (!isset($_FILES['images'])) {
                 sendErrorResponse('No files uploaded');
@@ -421,6 +438,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         default:
             sendErrorResponse('Invalid action', 400);
             break;
+        }
+    } catch (Exception $e) {
+        error_log("General error in file upload: " . $e->getMessage());
+        sendErrorResponse('Server error: ' . $e->getMessage(), 500);
     }
 }
 ?>

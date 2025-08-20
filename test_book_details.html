@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Test Book Details</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 20px;
+            }
+            .test-section {
+                margin: 20px 0;
+                padding: 20px;
+                border: 1px solid #ccc;
+            }
+            .success {
+                color: green;
+            }
+            .error {
+                color: red;
+            }
+            .loading {
+                color: orange;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Book Details Test Page</h1>
+
+        <div class="test-section">
+            <h2>Test Results:</h2>
+            <div id="test-results"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>API Test:</h2>
+            <button onclick="testAPI()">Test API Call</button>
+            <div id="api-results"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>DOM Test:</h2>
+            <div id="book-title">Loading...</div>
+            <div id="book-author">Loading...</div>
+            <div id="book-price">Loading...</div>
+            <button onclick="testDOM()">Test DOM Update</button>
+        </div>
+
+        <script>
+            function log(message, type = "info") {
+                const results = document.getElementById("test-results");
+                const div = document.createElement("div");
+                div.className = type;
+                div.textContent = `${new Date().toLocaleTimeString()}: ${message}`;
+                results.appendChild(div);
+            }
+
+            function testAPI() {
+                log("Testing API call...", "loading");
+
+                const form = new FormData();
+                form.append("action", "get_book_details");
+                form.append("book_id", "25");
+
+                fetch("../backend/api/book_details.php", {
+                    method: "POST",
+                    body: form,
+                })
+                    .then((response) => {
+                        log(`Response status: ${response.status}`, "success");
+                        return response.json();
+                    })
+                    .then((data) => {
+                        log(
+                            `API Response: ${JSON.stringify(data, null, 2)}`,
+                            "success"
+                        );
+
+                        if (data.success) {
+                            // Test DOM update
+                            updateDOM(data.data.book);
+                        }
+                    })
+                    .catch((error) => {
+                        log(`API Error: ${error.message}`, "error");
+                    });
+            }
+
+            function testDOM() {
+                log("Testing DOM update...", "loading");
+
+                const title = document.getElementById("book-title");
+                const author = document.getElementById("book-author");
+                const price = document.getElementById("book-price");
+
+                if (title && author && price) {
+                    title.textContent = "Test Title";
+                    author.textContent = "Test Author";
+                    price.textContent = "Test Price";
+                    log("DOM update successful!", "success");
+                } else {
+                    log("DOM elements not found!", "error");
+                }
+            }
+
+            function updateDOM(book) {
+                log("Updating DOM with book data...", "loading");
+
+                const title = document.getElementById("book-title");
+                const author = document.getElementById("book-author");
+                const price = document.getElementById("book-price");
+
+                if (title && author && price) {
+                    title.textContent = book.title || "No Title";
+                    author.textContent = book.author
+                        ? `by ${book.author}`
+                        : "No Author";
+                    price.textContent = book.price
+                        ? `৳${book.price}`
+                        : "No Price";
+                    log("DOM updated with book data!", "success");
+                } else {
+                    log("DOM elements not found!", "error");
+                }
+            }
+
+            // Page load test
+            document.addEventListener("DOMContentLoaded", function () {
+                log("Page loaded successfully!", "success");
+                log("Testing basic functionality...", "loading");
+
+                // Test if elements exist
+                const title = document.getElementById("book-title");
+                if (title) {
+                    log("Book title element found", "success");
+                } else {
+                    log("Book title element NOT found", "error");
+                }
+            });
+        </script>
+    </body>
+</html>

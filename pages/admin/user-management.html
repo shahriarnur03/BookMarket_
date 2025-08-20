@@ -3,182 +3,68 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>User Management - Admin Dashboard - BookMarket</title>
+        <title>User Management - Admin Dashboard</title>
         <link rel="stylesheet" href="../../css/styles.css" />
-        <!-- Additional CSS for Admin Dashboard page -->
+        <!-- Additional CSS for User Management page -->
         <style>
-            /* Admin Dashboard Page Specific Styles */
-            .dashboard-container {
+            .user-management-container {
                 max-width: var(--container-width);
                 margin: 2rem auto;
                 padding: 0 1rem;
             }
 
-            /* Pagination Styles */
-            .pagination-ellipsis {
-                display: inline-block;
-                padding: 0.5rem 0.75rem;
-                margin: 0 0.25rem;
-                color: #666;
-                font-weight: 500;
-            }
-
-            .pagination-button.disabled {
-                opacity: 0.5;
-                cursor: not-allowed;
-                pointer-events: none;
-            }
-
-            .dashboard-header {
+            .page-header {
                 display: flex;
-                align-items: center;
                 justify-content: space-between;
+                align-items: center;
                 margin-bottom: 2rem;
                 flex-wrap: wrap;
                 gap: 1rem;
             }
 
-            .welcome-message h1 {
-                margin-bottom: 0.5rem;
+            .page-title {
+                margin: 0;
                 color: var(--dark-color);
             }
 
-            .welcome-message p {
-                color: #666;
-            }
-
-            .dashboard-layout {
+            .search-filters {
                 display: flex;
-                gap: 2rem;
-            }
-
-            .dashboard-sidebar {
-                width: 250px;
-                flex-shrink: 0;
-            }
-
-            .dashboard-content {
-                flex: 1;
-            }
-
-            .sidebar-menu {
-                background-color: #2c3e50;
-                border-radius: 8px;
-                overflow: hidden;
-                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            }
-
-            .sidebar-menu-item {
-                padding: 1rem 1.5rem;
-                display: flex;
+                gap: 1rem;
+                flex-wrap: wrap;
                 align-items: center;
-                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-                cursor: pointer;
-                transition: all 0.3s ease;
-                color: white;
-                text-decoration: none;
             }
 
-            .sidebar-menu-item:last-child {
-                border-bottom: none;
+            .search-input {
+                padding: 0.5rem 1rem;
+                border: 1px solid var(--border-color);
+                border-radius: 4px;
+                min-width: 200px;
             }
 
-            .sidebar-menu-item.active {
-                background-color: var(--primary-color);
+            .filter-select {
+                padding: 0.5rem 1rem;
+                border: 1px solid var(--border-color);
+                border-radius: 4px;
+                background-color: white;
             }
 
-            .sidebar-menu-item:hover:not(.active) {
-                background-color: rgba(255, 255, 255, 0.1);
-            }
-
-            .sidebar-menu-item i {
-                margin-right: 0.8rem;
-                width: 20px;
-                text-align: center;
-            }
-
-            .section-card {
+            .users-table-container {
                 background-color: white;
                 border-radius: 8px;
                 overflow: hidden;
                 box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-                margin-bottom: 2rem;
             }
 
-            .section-header {
-                padding: 1rem 1.5rem;
+            .table-header {
+                padding: 1.5rem;
                 border-bottom: 1px solid var(--border-color);
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
+                background-color: #f8f9fa;
             }
 
-            .section-title {
+            .table-title {
                 margin: 0;
                 font-size: 1.2rem;
                 color: var(--dark-color);
-            }
-
-            .section-content {
-                padding: 1.5rem;
-            }
-
-            .search-filter {
-                margin-bottom: 1.5rem;
-            }
-
-            .search-box {
-                display: flex;
-                margin-bottom: 1rem;
-            }
-
-            .search-input {
-                flex: 1;
-                padding: 0.8rem 1rem;
-                border: 1px solid var(--border-color);
-                border-radius: 4px 0 0 4px;
-                font-size: 1rem;
-            }
-
-            .search-button {
-                padding: 0 1.5rem;
-                background-color: var(--primary-color);
-                color: white;
-                border: none;
-                border-radius: 0 4px 4px 0;
-                cursor: pointer;
-            }
-
-            .filter-row {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 1rem;
-                margin-bottom: 1rem;
-            }
-
-            .filter-group {
-                flex: 1;
-                min-width: 200px;
-            }
-
-            .filter-group label {
-                display: block;
-                margin-bottom: 0.5rem;
-                font-weight: 600;
-                color: var(--dark-color);
-            }
-
-            .filter-group select {
-                width: 100%;
-                padding: 0.6rem;
-                border: 1px solid var(--border-color);
-                border-radius: 4px;
-            }
-
-            .filter-buttons {
-                display: flex;
-                justify-content: flex-end;
-                gap: 1rem;
             }
 
             .table-responsive {
@@ -200,13 +86,18 @@
             .admin-table th {
                 font-weight: 600;
                 color: var(--dark-color);
+                background-color: #f8f9fa;
             }
 
             .admin-table tr:last-child td {
                 border-bottom: none;
             }
 
-            .status-badge {
+            .admin-table tr:hover {
+                background-color: #f8f9fa;
+            }
+
+            .user-type-badge {
                 display: inline-block;
                 padding: 0.3rem 0.8rem;
                 border-radius: 50px;
@@ -214,14 +105,14 @@
                 font-weight: 600;
             }
 
-            .status-active {
-                background-color: rgba(39, 174, 96, 0.1);
-                color: var(--success-color);
+            .user-type-admin {
+                background-color: rgba(74, 111, 165, 0.1);
+                color: var(--primary-color);
             }
 
-            .status-suspended {
-                background-color: rgba(231, 76, 60, 0.1);
-                color: var(--danger-color);
+            .user-type-customer {
+                background-color: rgba(52, 152, 219, 0.1);
+                color: #3498db;
             }
 
             .action-buttons {
@@ -247,79 +138,108 @@
                 background-color: #3a5a80;
             }
 
-            .btn-suspend {
+            .btn-delete {
                 background-color: var(--danger-color);
                 color: white;
             }
 
-            .btn-suspend:hover {
+            .btn-delete:hover {
                 background-color: #c0392b;
-            }
-
-            .btn-activate {
-                background-color: var(--success-color);
-                color: white;
-            }
-
-            .btn-activate:hover {
-                background-color: #219653;
             }
 
             .pagination {
                 display: flex;
                 justify-content: center;
+                align-items: center;
+                gap: 0.5rem;
                 margin-top: 2rem;
+                padding: 1rem;
             }
 
-            .pagination-button {
+            .pagination button {
                 padding: 0.5rem 1rem;
-                margin: 0 0.25rem;
                 border: 1px solid var(--border-color);
-                border-radius: 4px;
                 background-color: white;
                 cursor: pointer;
+                border-radius: 4px;
                 transition: all 0.3s ease;
             }
 
-            .pagination-button:hover {
+            .pagination button:hover:not(:disabled) {
                 background-color: var(--primary-color);
                 color: white;
                 border-color: var(--primary-color);
             }
 
-            .pagination-button.active {
+            .pagination button:disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+            }
+
+            .pagination .current-page {
                 background-color: var(--primary-color);
                 color: white;
                 border-color: var(--primary-color);
             }
 
-            /* Responsive styles */
-            @media screen and (max-width: 992px) {
-                .dashboard-layout {
-                    flex-direction: column;
-                }
+            .stats-summary {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 1.5rem;
+                margin-bottom: 2rem;
+            }
 
-                .dashboard-sidebar {
-                    width: 100%;
-                }
+            .stat-card {
+                background-color: white;
+                border-radius: 8px;
+                padding: 1.5rem;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+                text-align: center;
+            }
+
+            .stat-value {
+                font-size: 2rem;
+                font-weight: 700;
+                color: var(--primary-color);
+                margin-bottom: 0.5rem;
+            }
+
+            .stat-label {
+                color: #666;
+                font-size: 0.9rem;
+            }
+
+            .no-data {
+                text-align: center;
+                padding: 3rem;
+                color: #666;
+                font-style: italic;
+            }
+
+            .loading {
+                text-align: center;
+                padding: 3rem;
+                color: #666;
             }
 
             @media screen and (max-width: 768px) {
-                .filter-row {
+                .page-header {
                     flex-direction: column;
+                    align-items: flex-start;
                 }
 
-                .filter-group {
+                .search-filters {
                     width: 100%;
+                    justify-content: flex-start;
+                }
+
+                .search-input {
+                    min-width: 150px;
                 }
 
                 .action-buttons {
                     flex-direction: column;
-                    gap: 0.5rem;
-                }
-
-                .action-button {
-                    width: 100%;
+                    gap: 0.3rem;
                 }
             }
         </style>
@@ -330,276 +250,83 @@
         />
     </head>
     <body>
-        <!-- Navbar (Modified for logged-in admin) -->
+        <!-- Navbar (Common Admin Navbar) -->
         <nav class="navbar">
-            <div class="navbar-container">
-                <div class="navbar-logo">
-                    <a href="../../index.html">BookMarket</a>
-                </div>
-                <ul class="navbar-menu">
-                    <li><a href="../../index.html">Home</a></li>
-                    <li>
-                        <a href="order-management.html">Order Management</a>
-                    </li>
-                    <li><a href="book-management.html">Book Management</a></li>
-                    <li>
-                        <a href="user-management.html" class="active"
-                            >User Management</a
-                        >
-                    </li>
-                    <li><a href="book-approval.html">Book Approval</a></li>
-                </ul>
-                <div class="navbar-buttons">
-                    <div class="profile-dropdown">
-                        <button class="dropdown-btn">
-                            Admin <i class="fas fa-chevron-down"></i>
-                        </button>
-                        <div class="dropdown-content">
-                            <a href="profile.html">Profile</a>
-                            <a href="dashboard.html">Dashboard</a>
-                            <a href="../../index.html" id="logout-btn"
-                                >Logout</a
-                            >
-                        </div>
-                    </div>
-                </div>
-                <div class="navbar-toggle">
-                    <i class="fas fa-bars"></i>
-                </div>
-            </div>
+            <!-- Navbar will be generated by admin-navbar.js -->
         </nav>
 
-        <!-- Dashboard Content -->
-        <div class="dashboard-container">
-            <div class="dashboard-header">
-                <div class="welcome-message">
-                    <h1>User Management</h1>
-                    <p>Manage all users in the BookMarket platform</p>
+        <!-- User Management Content -->
+        <div class="user-management-container">
+            <div class="page-header">
+                <h1 class="page-title">User Management</h1>
+                <div class="search-filters">
+                    <input
+                        type="text"
+                        class="search-input"
+                        id="search-input"
+                        placeholder="Search users..."
+                    />
+
+                    <select class="filter-select" id="type-filter">
+                        <option value="">All Types</option>
+                        <option value="admin">Admin</option>
+                        <option value="customer">Customer</option>
+                    </select>
                 </div>
             </div>
 
-            <div class="dashboard-layout">
-                <!-- Dashboard Sidebar -->
-                <div class="dashboard-sidebar">
-                    <div class="sidebar-menu">
-                        <a href="dashboard.html" class="sidebar-menu-item">
-                            <i class="fas fa-chart-line"></i> Dashboard
-                        </a>
-                        <a
-                            href="order-management.html"
-                            class="sidebar-menu-item"
-                        >
-                            <i class="fas fa-shopping-bag"></i> Order Management
-                        </a>
-                        <a
-                            href="book-management.html"
-                            class="sidebar-menu-item"
-                        >
-                            <i class="fas fa-book"></i> Book Management
-                        </a>
-                        <a
-                            href="user-management.html"
-                            class="sidebar-menu-item active"
-                        >
-                            <i class="fas fa-users"></i> User Management
-                        </a>
-                        <a href="book-approval.html" class="sidebar-menu-item">
-                            <i class="fas fa-check-circle"></i> Book Approval
-                        </a>
-                        <a
-                            href="#"
-                            class="sidebar-menu-item"
-                            id="sidebar-logout"
-                        >
-                            <i class="fas fa-sign-out-alt"></i> Logout
-                        </a>
-                    </div>
+            <!-- Stats Summary -->
+            <div class="stats-summary">
+                <div class="stat-card">
+                    <div class="stat-value" id="total-users">0</div>
+                    <div class="stat-label">Total Users</div>
                 </div>
-
-                <!-- Dashboard Main Content -->
-                <div class="dashboard-content">
-                    <div class="section-card">
-                        <div class="section-header">
-                            <h3 class="section-title">User Management</h3>
-                        </div>
-
-                        <div class="section-content">
-                            <!-- Search and Filter -->
-                            <div class="search-filter">
-                                <div class="search-box">
-                                    <input
-                                        type="text"
-                                        class="search-input"
-                                        placeholder="Search by name, email..."
-                                    />
-                                    <button class="search-button">
-                                        <i class="fas fa-search"></i>
-                                    </button>
-                                </div>
-
-                                <div class="filter-row">
-                                    <div class="filter-group">
-                                        <label for="user-type">User Type</label>
-                                        <select id="user-type">
-                                            <option value="">All Types</option>
-                                            <option value="customer">
-                                                Customer
-                                            </option>
-                                            <option value="admin">Admin</option>
-                                        </select>
-                                    </div>
-
-                                    <div class="filter-group">
-                                        <label for="user-status"
-                                            >User Status</label
-                                        >
-                                        <select id="user-status">
-                                            <option value="">All Status</option>
-                                            <option value="active">
-                                                Active
-                                            </option>
-                                            <option value="suspended">
-                                                Suspended
-                                            </option>
-                                        </select>
-                                    </div>
-
-                                    <div class="filter-group">
-                                        <label for="join-date"
-                                            >Joined Since</label
-                                        >
-                                        <input
-                                            type="date"
-                                            id="join-date"
-                                            style="
-                                                width: 100%;
-                                                padding: 0.6rem;
-                                                border: 1px solid
-                                                    var(--border-color);
-                                                border-radius: 4px;
-                                            "
-                                        />
-                                    </div>
-                                </div>
-
-                                <div class="filter-buttons">
-                                    <button
-                                        class="btn btn-secondary"
-                                        id="reset-filters"
-                                    >
-                                        Reset Filters
-                                    </button>
-                                    <button
-                                        class="btn btn-primary"
-                                        id="apply-filters"
-                                    >
-                                        Apply Filters
-                                    </button>
-                                </div>
-                            </div>
-
-                            <!-- Users Table -->
-                            <div class="table-responsive">
-                                <table class="admin-table">
-                                    <thead>
-                                        <tr>
-                                            <th>User ID</th>
-                                            <th>Name</th>
-                                            <th>Email</th>
-                                            <th>Type</th>
-                                            <th>Joined Date</th>
-                                            <th>Status</th>
-                                            <th>Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="users-table-body"></tbody>
-                                </table>
-                            </div>
-
-                            <!-- Pagination -->
-                            <div class="pagination">
-                                <button class="pagination-button">
-                                    <i class="fas fa-chevron-left"></i>
-                                </button>
-                                <button class="pagination-button active">
-                                    1
-                                </button>
-                                <button class="pagination-button">2</button>
-                                <button class="pagination-button">3</button>
-                                <button class="pagination-button">
-                                    <i class="fas fa-chevron-right"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="admin-users">0</div>
+                    <div class="stat-label">Admin Users</div>
                 </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="customer-users">0</div>
+                    <div class="stat-label">Customer Users</div>
+                </div>
+            </div>
+
+            <!-- Users Table -->
+            <div class="users-table-container">
+                <div class="table-header">
+                    <h3 class="table-title">All Users</h3>
+                </div>
+                <div class="table-responsive">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>User ID</th>
+                                <th>Username</th>
+                                <th>Full Name</th>
+                                <th>Email</th>
+                                <th>Type</th>
+                                <th>Joined Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="users-table-body">
+                            <tr>
+                                <td colspan="8" class="loading">
+                                    Loading users...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            <div class="pagination" id="pagination" style="display: none">
+                <button id="prev-page" disabled>Previous</button>
+                <span id="page-info">Page 1 of 1</span>
+                <button id="next-page" disabled>Next</button>
             </div>
         </div>
-
-        <!-- Footer (Same as index.html) -->
-        <footer class="footer">
-            <div class="footer-container">
-                <div class="footer-top">
-                    <div class="footer-column">
-                        <h3>BookMarket</h3>
-                        <p>
-                            Your one-stop destination for buying and selling
-                            books online. Find your next favorite book or give
-                            your old books a new home.
-                        </p>
-                        <div class="social-links">
-                            <a href="#"><i class="fab fa-facebook-f"></i></a>
-                            <a href="#"><i class="fab fa-twitter"></i></a>
-                            <a href="#"><i class="fab fa-instagram"></i></a>
-                            <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                        </div>
-                    </div>
-                    <div class="footer-column">
-                        <h3>Quick Links</h3>
-                        <ul class="footer-links">
-                            <li><a href="../../index.html">Home</a></li>
-                            <li>
-                                <a href="order-management.html"
-                                    >Order Management</a
-                                >
-                            </li>
-                            <li><a href="../sell.html">Sell Books</a></li>
-                            <li><a href="../about.html">About Us</a></li>
-                            <li><a href="../contact.html">Contact Us</a></li>
-                        </ul>
-                    </div>
-                    <div class="footer-column">
-                        <h3>Support</h3>
-                        <ul class="footer-links">
-                            <li><a href="#">Help Center</a></li>
-                            <li><a href="#">FAQs</a></li>
-                            <li><a href="#">Shipping Policy</a></li>
-                            <li><a href="#">Return Policy</a></li>
-                            <li><a href="#">Privacy Policy</a></li>
-                        </ul>
-                    </div>
-                    <div class="footer-column">
-                        <h3>Contact</h3>
-                        <ul class="contact-info">
-                            <li>
-                                <i class="fas fa-map-marker-alt"></i> 123 Book
-                                Street, Dhaka, Bangladesh
-                            </li>
-                            <li>
-                                <i class="fas fa-phone"></i> +880 123 456789
-                            </li>
-                            <li>
-                                <i class="fas fa-envelope"></i>
-                                support@bookmarket.com
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="footer-bottom">
-                    <p>&copy; 2023 BookMarket. All Rights Reserved.</p>
-                </div>
-            </div>
-        </footer>
 
         <!-- Notification Container -->
         <div id="notification-container" class="notification-container"></div>
@@ -608,344 +335,284 @@
         <script src="../../js/main.js"></script>
         <script src="../../js/auth.js"></script>
         <script src="../../js/admin-navbar.js"></script>
-        <!-- Admin Dashboard specific JavaScript -->
+
         <script>
+            let currentPage = 1;
+            const usersPerPage = 10;
+            let allUsers = [];
+            let filteredUsers = [];
+
             document.addEventListener("DOMContentLoaded", function () {
-                // Logout functionality
-                const logoutBtn = document.getElementById("logout-btn");
-                const sidebarLogoutBtn =
-                    document.getElementById("sidebar-logout");
+                // Check authentication first
+                checkAdminAuth();
 
-                function handleLogout() {
-                    const form = new FormData();
-                    form.append('action', 'logout');
-                    
-                    fetch('../../backend/auth/user_auth.php', { method: 'POST', body: form })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                showNotification('Logged out successfully', 'success');
-                                // Clear any stored user data
-                                if (typeof window.bookmarketAuth !== 'undefined') {
-                                    window.bookmarketAuth.logoutUser();
-                                }
-                                // Redirect to home page
-                                setTimeout(() => {
-                                    window.location.href = '../../index.html';
-                                }, 1000);
-                            } else {
-                                showNotification('Logout failed: ' + (data.message || 'Unknown error'), 'error');
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Logout error:', error);
-                            showNotification('Logout failed. Please try again.', 'error');
-                        });
-                }
+                // Initialize search and filters
+                initializeFilters();
 
-                if (logoutBtn) {
-                    logoutBtn.addEventListener("click", function (e) {
-                        e.preventDefault();
-                        handleLogout();
-                    });
-                }
+                // Load initial data
+                loadUsers();
+                loadUserStats();
+            });
 
-                if (sidebarLogoutBtn) {
-                    sidebarLogoutBtn.addEventListener("click", function (e) {
-                        e.preventDefault();
-                        handleLogout();
-                    });
-                }
+            // Check if user is authenticated as admin
+            function checkAdminAuth() {
+                const form = new FormData();
+                form.append("action", "check_admin_auth");
 
-                // Helper functions
-                function formatDate(dateString) {
-                    return new Date(dateString).toLocaleDateString();
-                }
-
-                function statusBadge(isActive) {
-                    const cls =
-                        isActive == 1 ? "status-active" : "status-suspended";
-                    const text = isActive == 1 ? "Active" : "Suspended";
-                    return `<span class="status-badge ${cls}">${text}</span>`;
-                }
-
-                // Load users data with pagination
-                let currentPage = 1;
-                let totalPages = 1;
-                let currentFilters = {};
-
-                function loadUsers(page = 1, filters = {}) {
-                    currentPage = page;
-                    currentFilters = filters;
-
-                    const form = new FormData();
-                    form.append("action", "get_all_users");
-                    form.append("page", page);
-                    form.append("limit", 10); // Items per page
-
-                    if (filters.user_type)
-                        form.append("user_type", filters.user_type);
-                    if (filters.user_status)
-                        form.append("is_active", filters.user_status);
-
-                    fetch("../../backend/auth/user_auth.php", {
-                        method: "POST",
-                        body: form,
-                    })
-                        .then((response) => response.json())
-                        .then((data) => {
-                            const tbody =
-                                document.getElementById("users-table-body");
-                            tbody.innerHTML = "";
-
-                            if (data.success && Array.isArray(data.data)) {
-                                data.data.forEach((user) => {
-                                    const tr = document.createElement("tr");
-                                    tr.innerHTML = `
-                                        <td>#${user.id}</td>
-                                        <td>${user.first_name || ""} ${
-                                        user.last_name || ""
-                                    } (${user.username})</td>
-                                        <td>${user.email}</td>
-                                        <td>${
-                                            user.user_type === "admin"
-                                                ? "Admin"
-                                                : "Customer"
-                                        }</td>
-                                        <td>${formatDate(user.created_at)}</td>
-                                        <td>${statusBadge(user.is_active)}</td>
-                                        <td>
-                                            <div class="action-buttons">
-                                                <button class="action-button btn-view" data-user="${
-                                                    user.id
-                                                }">View</button>
-                                                ${
-                                                    user.is_active == 1
-                                                        ? `<button class="action-button btn-suspend" data-user="${user.id}">Suspend</button>`
-                                                        : `<button class="action-button btn-activate" data-user="${user.id}">Activate</button>`
-                                                }
-                                            </div>
-                                        </td>
-                                    `;
-                                    tbody.appendChild(tr);
-                                });
-
-                                // Update pagination
-                                updatePagination(
-                                    data.total_pages || 1,
-                                    data.current_page || 1
-                                );
-
-                                // Re-attach event listeners to new action buttons
-                                attachActionListeners();
-                            } else {
-                                tbody.innerHTML =
-                                    '<tr><td colspan="7">No users found</td></tr>';
-                                updatePagination(1, 1);
-                            }
-                        })
-                        .catch((error) => {
-                            console.error("Error loading users:", error);
-                            showNotification("Error loading users", "error");
-                        });
-                }
-
-                // Update pagination controls
-                function updatePagination(totalPages, currentPage) {
-                    const paginationContainer =
-                        document.querySelector(".pagination");
-                    if (!paginationContainer) return;
-
-                    totalPages = Math.max(1, totalPages);
-                    currentPage = Math.max(
-                        1,
-                        Math.min(currentPage, totalPages)
-                    );
-
-                    let paginationHTML = "";
-
-                    // Previous button
-                    paginationHTML += `<button class="pagination-button ${
-                        currentPage === 1 ? "disabled" : ""
-                    }" data-page="${currentPage - 1}">
-                        <i class="fas fa-chevron-left"></i>
-                    </button>`;
-
-                    // Page numbers
-                    for (let i = 1; i <= totalPages; i++) {
-                        if (
-                            i === 1 ||
-                            i === totalPages ||
-                            (i >= currentPage - 2 && i <= currentPage + 2)
-                        ) {
-                            paginationHTML += `<button class="pagination-button ${
-                                i === currentPage ? "active" : ""
-                            }" data-page="${i}">${i}</button>`;
-                        } else if (
-                            i === currentPage - 3 ||
-                            i === currentPage + 3
-                        ) {
-                            paginationHTML += `<span class="pagination-ellipsis">...</span>`;
-                        }
-                    }
-
-                    // Next button
-                    paginationHTML += `<button class="pagination-button ${
-                        currentPage === totalPages ? "disabled" : ""
-                    }" data-page="${currentPage + 1}">
-                        <i class="fas fa-chevron-right"></i>
-                    </button>`;
-
-                    paginationContainer.innerHTML = paginationHTML;
-
-                    // Attach pagination event listeners
-                    attachPaginationListeners();
-                }
-
-                // Attach pagination event listeners
-                function attachPaginationListeners() {
-                    const paginationButtons = document.querySelectorAll(
-                        ".pagination-button:not(.disabled)"
-                    );
-                    paginationButtons.forEach((button) => {
-                        button.addEventListener("click", function () {
-                            const page = parseInt(
-                                this.getAttribute("data-page")
-                            );
-                            if (page && page > 0) {
-                                loadUsers(page, currentFilters);
-                            }
-                        });
-                    });
-                }
-
-                // Attach action button listeners
-                function attachActionListeners() {
-                    const viewButtons = document.querySelectorAll(".btn-view");
-                    const suspendButtons =
-                        document.querySelectorAll(".btn-suspend");
-                    const activateButtons =
-                        document.querySelectorAll(".btn-activate");
-
-                    viewButtons.forEach((button) => {
-                        button.addEventListener("click", function () {
-                            const userId = this.getAttribute("data-user");
+                fetch("../../backend/auth/user_auth.php", {
+                    method: "POST",
+                    body: form,
+                })
+                    .then((r) => r.json())
+                    .then((d) => {
+                        if (!d.success) {
                             showNotification(
-                                `View user ${userId} details`,
-                                "info"
+                                "Access denied. Please login as admin.",
+                                "error"
                             );
-                        });
-                    });
-
-                    suspendButtons.forEach((button) => {
-                        button.addEventListener("click", function () {
-                            const userId = this.getAttribute("data-user");
-                            const confirmSuspend = confirm(
-                                "Are you sure you want to suspend this user?"
-                            );
-                            if (confirmSuspend) {
-                                showNotification(
-                                    `User ${userId} suspended`,
-                                    "success"
-                                );
-                                loadUsers(); // Reload to update status
-                            }
-                        });
-                    });
-
-                    activateButtons.forEach((button) => {
-                        button.addEventListener("click", function () {
-                            const userId = this.getAttribute("data-user");
-                            const confirmActivate = confirm(
-                                "Are you sure you want to activate this user?"
-                            );
-                            if (confirmActivate) {
-                                showNotification(
-                                    `User ${userId} activated`,
-                                    "success"
-                                );
-                                loadUsers(); // Reload to update status
-                            }
-                        });
-                    });
-                }
-
-                // Filter functionality
-                const resetFiltersBtn =
-                    document.getElementById("reset-filters");
-                const applyFiltersBtn =
-                    document.getElementById("apply-filters");
-
-                if (resetFiltersBtn) {
-                    resetFiltersBtn.addEventListener("click", function () {
-                        document.getElementById("user-type").selectedIndex = 0;
-                        document.getElementById(
-                            "user-status"
-                        ).selectedIndex = 0;
-                        document.getElementById("join-date").value = "";
-                        loadUsers(1, {});
-                        showNotification("Filters reset successfully!", "info");
-                    });
-                }
-
-                if (applyFiltersBtn) {
-                    applyFiltersBtn.addEventListener("click", function () {
-                        const userType =
-                            document.getElementById("user-type").value;
-                        const userStatus =
-                            document.getElementById("user-status").value;
-                        const joinDate =
-                            document.getElementById("join-date").value;
-
-                        const filters = {};
-                        if (userType) filters.user_type = userType;
-                        if (userStatus) filters.user_status = userStatus;
-
-                        loadUsers(1, filters);
+                            setTimeout(() => {
+                                window.location.href = "../../pages/login.html";
+                            }, 2000);
+                            return;
+                        }
+                        // User is authenticated, continue loading
+                    })
+                    .catch((error) => {
+                        console.error("Auth check error:", error);
                         showNotification(
-                            `Filters applied: User Type: ${
-                                userType || "All"
-                            }, User Status: ${
-                                userStatus || "All"
-                            }, Joined Since: ${joinDate || "Any"}`,
-                            "info"
+                            "Authentication failed. Please login again.",
+                            "error"
                         );
+                        setTimeout(() => {
+                            window.location.href = "../../pages/login.html";
+                        }, 2000);
                     });
-                }
+            }
 
-                // Pagination buttons
-                const paginationButtons =
-                    document.querySelectorAll(".pagination-button");
+            function initializeFilters() {
+                const searchInput = document.getElementById("search-input");
+                const typeFilter = document.getElementById("type-filter");
 
-                paginationButtons.forEach((button) => {
-                    button.addEventListener("click", function () {
-                        // Remove active class from all buttons
-                        paginationButtons.forEach((btn) =>
-                            btn.classList.remove("active")
-                        );
+                searchInput.addEventListener("input", filterUsers);
+                typeFilter.addEventListener("change", filterUsers);
+            }
 
-                        // Add active class to clicked button (except next/prev buttons)
-                        if (!this.innerHTML.includes("fa-chevron")) {
-                            this.classList.add("active");
-                        }
+            function filterUsers() {
+                const searchTerm = document
+                    .getElementById("search-input")
+                    .value.toLowerCase();
+                const typeFilter = document.getElementById("type-filter").value;
 
-                        // This will be connected to backend later
-                        const page = this.textContent;
-                        if (!this.innerHTML.includes("fa-chevron")) {
-                            alert(
-                                `Loading page ${page}. This will be connected to backend later.`
-                            );
-                        } else {
-                            alert(
-                                "Loading previous/next page. This will be connected to backend later."
-                            );
-                        }
-                    });
+                filteredUsers = allUsers.filter((user) => {
+                    const matchesSearch =
+                        user.username.toLowerCase().includes(searchTerm) ||
+                        user.email.toLowerCase().includes(searchTerm) ||
+                        `${user.first_name} ${user.last_name}`
+                            .toLowerCase()
+                            .includes(searchTerm);
+
+                    const matchesType =
+                        typeFilter === "" || user.user_type === typeFilter;
+
+                    return matchesSearch && matchesType;
                 });
 
-                // Initial load
-                loadUsers(1, {});
+                currentPage = 1;
+                displayUsers();
+                updatePagination();
+            }
+
+            function loadUsers() {
+                const form = new FormData();
+                form.append("action", "get_all_users");
+
+                fetch("../../backend/auth/user_auth.php", {
+                    method: "POST",
+                    body: form,
+                })
+                    .then((r) => r.json())
+                    .then((d) => {
+                        if (d.success && Array.isArray(d.data)) {
+                            allUsers = d.data;
+                            filteredUsers = [...allUsers];
+                            displayUsers();
+                            updatePagination();
+                        } else {
+                            document.getElementById(
+                                "users-table-body"
+                            ).innerHTML =
+                                '<tr><td colspan="7" class="no-data">No users found</td></tr>';
+                        }
+                    })
+                    .catch((error) => {
+                        console.error("Load users error:", error);
+                        document.getElementById("users-table-body").innerHTML =
+                            '<tr><td colspan="8" class="no-data">Failed to load users</td></tr>';
+                    });
+            }
+
+            function loadUserStats() {
+                const form = new FormData();
+                form.append("action", "get_user_stats");
+
+                fetch("../../backend/auth/user_auth.php", {
+                    method: "POST",
+                    body: form,
+                })
+                    .then((r) => r.json())
+                    .then((d) => {
+                        if (d.success && d.data) {
+                            const stats = d.data;
+                            document.getElementById("total-users").textContent =
+                                stats.total_users || 0;
+                            document.getElementById("admin-users").textContent =
+                                stats.admin_users || 0;
+                            document.getElementById(
+                                "customer-users"
+                            ).textContent = stats.customer_users || 0;
+                        }
+                    })
+                    .catch((error) => {
+                        console.error("Load user stats error:", error);
+                    });
+            }
+
+            function displayUsers() {
+                const tbody = document.getElementById("users-table-body");
+                const startIndex = (currentPage - 1) * usersPerPage;
+                const endIndex = startIndex + usersPerPage;
+                const pageUsers = filteredUsers.slice(startIndex, endIndex);
+
+                if (pageUsers.length === 0) {
+                    tbody.innerHTML =
+                        '<tr><td colspan="7" class="no-data">No users found</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = "";
+                pageUsers.forEach((user) => {
+                    const typeClass = `user-type-${user.user_type}`;
+                    const typeText =
+                        user.user_type === "admin" ? "Admin" : "Customer";
+
+                    const tr = document.createElement("tr");
+                    tr.innerHTML = `
+                        <td>#${user.id}</td>
+                        <td>${user.username}</td>
+                        <td>${user.first_name || ""} ${
+                        user.last_name || ""
+                    }</td>
+                        <td>${user.email}</td>
+                        <td><span class="user-type-badge ${typeClass}">${typeText}</span></td>
+                        <td>${new Date(
+                            user.created_at
+                        ).toLocaleDateString()}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="action-button btn-view" data-user-id="${
+                                    user.id
+                                }">View</button>
+                                <button class="action-button btn-delete" data-user-id="${
+                                    user.id
+                                }">Delete</button>
+                            </div>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
+
+            function updatePagination() {
+                const totalPages = Math.ceil(
+                    filteredUsers.length / usersPerPage
+                );
+                const pagination = document.getElementById("pagination");
+                const prevBtn = document.getElementById("prev-page");
+                const nextBtn = document.getElementById("next-page");
+                const pageInfo = document.getElementById("page-info");
+
+                if (totalPages <= 1) {
+                    pagination.style.display = "none";
+                    return;
+                }
+
+                pagination.style.display = "flex";
+                prevBtn.disabled = currentPage === 1;
+                nextBtn.disabled = currentPage === totalPages;
+                pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+
+                prevBtn.onclick = () => {
+                    if (currentPage > 1) {
+                        currentPage--;
+                        displayUsers();
+                        updatePagination();
+                    }
+                };
+
+                nextBtn.onclick = () => {
+                    if (currentPage < totalPages) {
+                        currentPage++;
+                        displayUsers();
+                        updatePagination();
+                    }
+                };
+            }
+
+            // Event delegation for action buttons
+            document.addEventListener("click", function (e) {
+                if (e.target.classList.contains("btn-view")) {
+                    const userId = e.target.dataset.userId;
+                    if (userId) {
+                        window.location.href = `user-details.html?id=${userId}`;
+                    }
+                } else if (e.target.classList.contains("btn-delete")) {
+                    const userId = e.target.dataset.userId;
+                    if (
+                        userId &&
+                        confirm(
+                            "Are you sure you want to delete this user? This action cannot be undone."
+                        )
+                    ) {
+                        deleteUser(userId);
+                    }
+                }
             });
+
+            function deleteUser(userId) {
+                const form = new FormData();
+                form.append("action", "delete_user");
+                form.append("user_id", userId);
+
+                fetch("../../backend/auth/user_auth.php", {
+                    method: "POST",
+                    body: form,
+                })
+                    .then((r) => r.json())
+                    .then((d) => {
+                        if (d.success) {
+                            showNotification(
+                                "User deleted successfully",
+                                "success"
+                            );
+                            // Reload users and stats
+                            loadUsers();
+                            loadUserStats();
+                        } else {
+                            showNotification(
+                                "Failed to delete user: " +
+                                    (d.message || "Unknown error"),
+                                "error"
+                            );
+                        }
+                    })
+                    .catch((error) => {
+                        console.error("Delete user error:", error);
+                        showNotification(
+                            "Failed to delete user. Please try again.",
+                            "error"
+                        );
+                    });
+            }
         </script>
     </body>
 </html>
