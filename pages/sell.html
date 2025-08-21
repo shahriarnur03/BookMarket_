@@ -621,11 +621,13 @@
 
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="book-isbn">ISBN (Optional)</label>
+                            <label for="book-quantity">Quantity*</label>
                             <input
-                                type="text"
-                                id="book-isbn"
-                                placeholder="Enter ISBN if available"
+                                type="number"
+                                id="book-quantity"
+                                min="1"
+                                value="1"
+                                required
                             />
                         </div>
 
@@ -675,6 +677,15 @@
                         </div>
                     </div>
 
+                    <div class="form-group full-width">
+                        <label for="book-isbn">ISBN (Optional)</label>
+                        <input
+                            type="text"
+                            id="book-isbn"
+                            placeholder="Enter ISBN if available"
+                        />
+                    </div>
+
                     <div class="form-group">
                         <label for="book-description">Description*</label>
                         <textarea
@@ -685,7 +696,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label>Book Images* (At least 3, max 5MB each)</label>
+                        <label>Book Images (Max 5MB each)</label>
                         <div class="image-upload">
                             <input
                                 type="file"
@@ -697,10 +708,7 @@
                             <label for="book-images" class="btn btn-secondary"
                                 >Select Images</label
                             >
-                            <p>
-                                Click to select at least 3 images (front cover,
-                                back cover, and condition)
-                            </p>
+                            <p>Click to select one or more images (optional)</p>
 
                             <div class="image-preview" id="image-preview">
                                 <!-- Images will be displayed here after selection -->
@@ -720,13 +728,6 @@
                     </div>
 
                     <div class="form-buttons">
-                        <button
-                            type="button"
-                            id="preview-btn"
-                            class="btn btn-secondary"
-                        >
-                            Preview Listing
-                        </button>
                         <button
                             type="submit"
                             id="publish-btn"
@@ -827,7 +828,7 @@
                     }
                 });
 
-                // Image Upload Preview
+                // Image Upload Preview (optional images; size check only)
                 const bookImagesInput = document.getElementById("book-images");
                 const imagePreview = document.getElementById("image-preview");
 
@@ -835,17 +836,7 @@
                     // Clear previous previews
                     imagePreview.innerHTML = "";
 
-                    // Check file count
-                    if (this.files.length < 3) {
-                        alert("Please select at least 3 images of your book.");
-                        return;
-                    }
-
-                    // Check if more than 5 files are selected
-                    if (this.files.length > 5) {
-                        alert("You can upload a maximum of 5 images.");
-                        return;
-                    }
+                    // Optional: allow any number; enforce max 5MB each
 
                     // Display each selected image
                     for (let i = 0; i < this.files.length; i++) {
@@ -890,23 +881,13 @@
                         previewItem.appendChild(removeBtn);
                         imagePreview.appendChild(previewItem);
 
-                        // In a real implementation, we would use FileReader to show actual image preview
-                        // For now, we're using placeholder for simplicity
+                        // Placeholder preview
                     }
                 });
 
                 // Form Submit and Preview Functionality
                 const sellBookForm = document.getElementById("sell-book-form");
-                const previewBtn = document.getElementById("preview-btn");
                 const publishBtn = document.getElementById("publish-btn");
-
-                previewBtn.addEventListener("click", function () {
-                    // This will be connected to backend later to show a preview
-                    // For now, just show an alert
-                    alert(
-                        "Preview functionality will be implemented with backend integration."
-                    );
-                });
 
                 sellBookForm.addEventListener("submit", function (e) {
                     e.preventDefault();
@@ -952,21 +933,121 @@
                         return;
                     }
 
-                    // Check if enough images are selected
-                    if (imagePreview.children.length < 3) {
-                        showNotification(
-                            "Please upload at least 3 images of your book.",
-                            "warning"
-                        );
-                        return;
-                    }
+                    // Images are optional now
 
-                    // This will be connected to backend later
-                    showNotification(
-                        "Your book listing has been submitted for review!",
-                        "success"
-                    );
+                    publishListing();
                 });
+
+                async function publishListing() {
+                    try {
+                        const user =
+                            window.bookmarketAuth?.getUserId?.() ||
+                            JSON.parse(
+                                localStorage.getItem("bookmarket_user") || "{}"
+                            ).userId ||
+                            JSON.parse(
+                                localStorage.getItem("bookmarket_user") || "{}"
+                            ).id;
+                        if (!user) {
+                            showNotification(
+                                "Please login to publish your listing",
+                                "warning"
+                            );
+                            return;
+                        }
+
+                        const fd = new FormData();
+                        fd.append("action", "add_book");
+                        fd.append(
+                            "title",
+                            document.getElementById("book-title").value.trim()
+                        );
+                        fd.append(
+                            "author",
+                            document.getElementById("book-author").value.trim()
+                        );
+                        fd.append(
+                            "isbn",
+                            document.getElementById("book-isbn").value.trim()
+                        );
+                        fd.append(
+                            "description",
+                            document
+                                .getElementById("book-description")
+                                .value.trim()
+                        );
+                        fd.append(
+                            "price",
+                            document.getElementById("book-price-input").value
+                        );
+                        // Map to backend expected enum case
+                        const condMap = {
+                            new: "New",
+                            excellent: "Excellent",
+                            good: "Good",
+                            fair: "Fair",
+                            poor: "Poor",
+                        };
+                        fd.append(
+                            "book_condition",
+                            condMap[
+                                document.getElementById("book-condition").value
+                            ] || "Good"
+                        );
+                        // Map category to ID (simple map for demo)
+                        const catText =
+                            document.getElementById("book-category").value;
+                        const catMap = {
+                            fiction: 1,
+                            academic: 2,
+                            science: 3,
+                            business: 4,
+                            children: 5,
+                            history: 6,
+                            biography: 1,
+                            "self-help": 7,
+                            art: 1,
+                            travel: 1,
+                            other: 1,
+                        };
+                        fd.append("category_id", catMap[catText] || 1);
+                        fd.append(
+                            "stock_quantity",
+                            document.getElementById("book-quantity").value ||
+                                "1"
+                        );
+                        fd.append("cover_image_path", "");
+                        fd.append("additional_images", "");
+
+                        const apiBase =
+                            window.location.origin +
+                            (window.location.pathname.includes("/BookMarket_/")
+                                ? "/BookMarket_/"
+                                : "/");
+                        const resp = await fetch(
+                            apiBase + "backend/books/book_manager.php",
+                            { method: "POST", body: fd }
+                        );
+                        const data = await resp.json();
+                        if (data.success) {
+                            showNotification(
+                                "Your book listing has been submitted (pending approval).",
+                                "success"
+                            );
+                        } else {
+                            showNotification(
+                                data.message || "Failed to publish listing",
+                                "error"
+                            );
+                        }
+                    } catch (e) {
+                        console.error(e);
+                        showNotification(
+                            "Network error while publishing",
+                            "error"
+                        );
+                    }
+                }
             });
         </script>
     </body>

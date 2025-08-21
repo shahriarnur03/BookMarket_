@@ -20,6 +20,181 @@ class OrderManager {
     
     public function __construct() {
         $this->db = getDB();
+        $this->ensureOrderItemsTable();
+        $this->ensureBookStockColumn();
+    }
+    
+    /**
+     * Generate a unique order number
+     */
+    private function generateOrderNumber(): string {
+        return 'BM-' . date('Ymd') . '-' . strtoupper(substr(uniqid('', true), -6));
+    }
+
+    /** Ensure order_items table exists (idempotent) */
+    private function ensureOrderItemsTable(): void {
+        try {
+            $this->db->execute(
+                "CREATE TABLE IF NOT EXISTS order_items (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    order_id INT NOT NULL,
+                    book_id INT NOT NULL,
+                    quantity INT NOT NULL,
+                    price_per_item DECIMAL(10,2) NOT NULL,
+                    seller_id INT NOT NULL,
+                    FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
+                    FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE CASCADE,
+                    FOREIGN KEY (seller_id) REFERENCES users(id) ON DELETE CASCADE
+                )"
+            );
+        } catch (Exception $e) {
+            error_log('ensureOrderItemsTable error: ' . $e->getMessage());
+        }
+    }
+
+    /** Ensure books.stock_quantity column exists (idempotent) */
+    private function ensureBookStockColumn(): void {
+        try {
+            // MariaDB/MySQL 8 supports IF NOT EXISTS
+            $this->db->execute("ALTER TABLE books ADD COLUMN IF NOT EXISTS stock_quantity INT NOT NULL DEFAULT 1");
+        } catch (Exception $e) {
+            error_log('ensureBookStockColumn error: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Create an order from the user's current cart
+     * - Validates cart
+     * - Inserts order and order_items
+     * - Marks books as sold
+     * - Clears cart
+     */
+    public function createOrderFromCart(int $userId, array $shipping, string $paymentMethod = 'Card') {
+        try {
+            if (!$userId) {
+                return ['success' => false, 'message' => 'User not logged in'];
+            }
+
+            // Load cart items
+            $cartItems = $this->db->select(
+                "SELECT c.quantity, b.id as book_id, b.title, b.price, b.seller_id, COALESCE(b.stock_quantity,1) as stock_quantity, b.status
+                 FROM cart c
+                 JOIN books b ON c.book_id = b.id
+                 WHERE c.user_id = ? AND b.status = 'approved'",
+                [intval($userId)]
+            );
+
+            if (!$cartItems || count($cartItems) === 0) {
+                return ['success' => false, 'message' => 'Your cart is empty'];
+            }
+
+            // Calculate totals
+            $subtotal = 0.0;
+            foreach ($cartItems as $ci) {
+                $subtotal += floatval($ci['price']) * intval($ci['quantity']);
+            }
+            $shippingCost = 10.0; // flat rate
+            $taxRate = 0.03;      // 3%
+            $taxAmount = $subtotal * $taxRate;
+            $totalAmount = $subtotal + $shippingCost + $taxAmount;
+
+            // Prepare shipping fields
+            $address = $shipping['address'] ?? '';
+            $city = $shipping['city'] ?? '';
+            $postal = $shipping['postal_code'] ?? '';
+            $country = $shipping['country'] ?? 'Bangladesh';
+            if (!$address || !$city || !$postal) {
+                return ['success' => false, 'message' => 'Missing shipping information'];
+            }
+
+            // Start transaction
+            $this->db->beginTransaction();
+
+            // Insert order
+            $orderNumber = $this->generateOrderNumber();
+            $orderId = $this->db->insert(
+                "INSERT INTO orders (order_number, user_id, total_amount, shipping_address, shipping_city, shipping_postal_code, shipping_country, order_status, payment_status, payment_method)
+                 VALUES (?, ?, ?, ?, ?, ?, ?, 'Pending', 'Pending', ?)",
+                [
+                    $orderNumber,
+                    intval($userId),
+                    $totalAmount,
+                    $address,
+                    $city,
+                    $postal,
+                    $country,
+                    $paymentMethod
+                ]
+            );
+
+            $orderId = intval($orderId);
+            if ($orderId <= 0) {
+                $this->db->rollback();
+                return ['success' => false, 'message' => 'Failed to create order'];
+            }
+
+            // Insert order items
+            foreach ($cartItems as $ci) {
+                $requestedQty = intval($ci['quantity']);
+                $availableQty = intval($ci['stock_quantity']);
+                if ($requestedQty <= 0) { $requestedQty = 1; }
+                if ($availableQty < $requestedQty) {
+                    $this->db->rollback();
+                    return ['success' => false, 'message' => 'Insufficient stock for ' . $ci['title']];
+                }
+                $this->db->insert(
+                    "INSERT INTO order_items (order_id, book_id, quantity, price_per_item, seller_id)
+                     VALUES (?, ?, ?, ?, ?)",
+                    [
+                        intval($orderId),
+                        intval($ci['book_id']),
+                        $requestedQty,
+                        floatval($ci['price']),
+                        intval($ci['seller_id'])
+                    ]
+                );
+                // Decrement stock and update status when zero
+                $updated = $this->db->execute(
+                    "UPDATE books 
+                     SET stock_quantity = stock_quantity - ?, 
+                         status = CASE WHEN stock_quantity - ? <= 0 THEN 'sold' ELSE status END
+                     WHERE id = ? AND stock_quantity >= ?",
+                    [$requestedQty, $requestedQty, intval($ci['book_id']), $requestedQty]
+                );
+                if ($updated === false) {
+                    $this->db->rollback();
+                    return ['success' => false, 'message' => 'Failed to update stock for ' . $ci['title']];
+                }
+            }
+
+            // Clear cart
+            $this->db->execute("DELETE FROM cart WHERE user_id = ?", [intval($userId)]);
+
+            // Verify order exists before commit
+            $check = $this->db->selectOne("SELECT id FROM orders WHERE id = ?", [$orderId]);
+            if (!$check) {
+                $this->db->rollback();
+                return ['success' => false, 'message' => 'Order could not be verified'];
+            }
+
+            $this->db->commit();
+
+            return [
+                'success' => true,
+                'message' => 'Order placed successfully',
+                'order_id' => intval($orderId),
+                'order_number' => $orderNumber,
+                'subtotal' => $subtotal,
+                'shipping_cost' => $shippingCost,
+                'tax_amount' => $taxAmount,
+                'total_amount' => $totalAmount
+            ];
+
+        } catch (Exception $e) {
+            $this->db->rollback();
+            error_log("Create Order From Cart Error: " . $e->getMessage());
+            return ['success' => false, 'message' => 'Failed to place order'];
+        }
     }
     
     /**
@@ -48,22 +223,27 @@ class OrderManager {
             
             $whereClause = implode(' AND ', $whereConditions);
             
-            // Add limit and offset to params
-            $params[] = $limit;
-            $params[] = $offset;
+            // Compose query with numeric limit/offset to avoid PDO binding issues
+            $limitInt = intval($limit);
+            $offsetInt = intval($offset);
+            $sql = "SELECT o.*, 
+                           COUNT(oi.id) as total_items,
+                           SUM(oi.quantity) as total_quantity
+                    FROM orders o
+                    LEFT JOIN order_items oi ON o.id = oi.order_id
+                    WHERE $whereClause
+                    GROUP BY o.id
+                    ORDER BY o.order_date DESC
+                    LIMIT $limitInt OFFSET $offsetInt";
             
-            $orders = $this->db->select(
-                "SELECT o.*, 
-                        COUNT(oi.id) as total_items,
-                        SUM(oi.quantity) as total_quantity
-                 FROM orders o
-                 LEFT JOIN order_items oi ON o.id = oi.order_id
-                 WHERE $whereClause
-                 GROUP BY o.id
-                 ORDER BY o.order_date DESC
-                 LIMIT ? OFFSET ?",
-                $params
-            );
+            $orders = $this->db->select($sql, $params);
+            if ($orders === false) {
+                // Retry without GROUP BY extras to diagnose
+                $orders = $this->db->select(
+                    "SELECT o.* FROM orders o WHERE $whereClause ORDER BY o.order_date DESC",
+                    $params
+                );
+            }
             
             return $orders;
             
@@ -107,7 +287,7 @@ class OrderManager {
             
             // Get order items
             $orderItems = $this->db->select(
-                                 "SELECT oi.*, b.title, b.author, b.cover_image_path, b.book_condition,
+                "SELECT oi.*, b.title, b.author, b.cover_image_path, b.book_condition, b.isbn,
                         c.name as category_name, u.username as seller_name
                  FROM order_items oi
                  JOIN books b ON oi.book_id = b.id
@@ -117,7 +297,19 @@ class OrderManager {
                  ORDER BY oi.id ASC",
                 [intval($orderId)]
             );
-            
+            if ($orderItems === false) { $orderItems = []; }
+
+            // Compute derived totals
+            $subtotal = 0.0;
+            foreach ($orderItems as $it) {
+                $subtotal += floatval($it['price_per_item']) * intval($it['quantity']);
+            }
+            $shipping = 10.0;
+            $tax = $subtotal * 0.03;
+            $order['subtotal'] = $subtotal;
+            $order['shipping_cost'] = $shipping;
+            $order['tax_amount'] = $tax;
+            $order['total_amount'] = floatval($order['total_amount']);
             $order['items'] = $orderItems;
             
             return $order;
@@ -168,23 +360,21 @@ class OrderManager {
             
             $whereClause = implode(' AND ', $whereConditions);
             
-            // Add limit and offset to params
-            $params[] = $limit;
-            $params[] = $offset;
+            // Compose query with numeric limit/offset to avoid PDO binding issues
+            $limitInt = intval($limit);
+            $offsetInt = intval($offset);
+            $sql = "SELECT o.*, u.username, u.first_name, u.last_name, u.email,
+                           COUNT(oi.id) as total_items,
+                           SUM(oi.quantity) as total_quantity
+                    FROM orders o
+                    JOIN users u ON o.user_id = u.id
+                    LEFT JOIN order_items oi ON o.id = oi.order_id
+                    WHERE $whereClause
+                    GROUP BY o.id
+                    ORDER BY o.order_date DESC
+                    LIMIT $limitInt OFFSET $offsetInt";
             
-            $orders = $this->db->select(
-                "SELECT o.*, u.username, u.first_name, u.last_name, u.email,
-                        COUNT(oi.id) as total_items,
-                        SUM(oi.quantity) as total_quantity
-                 FROM orders o
-                 JOIN users u ON o.user_id = u.id
-                 LEFT JOIN order_items oi ON o.id = oi.order_id
-                 WHERE $whereClause
-                 GROUP BY o.id
-                 ORDER BY o.order_date DESC
-                 LIMIT ? OFFSET ?",
-                $params
-            );
+            $orders = $this->db->select($sql, $params);
             
             return $orders;
             
@@ -503,11 +693,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['action'] ?? '';
     
     switch ($action) {
+        case 'place_order':
+            // Allow user_id from POST or from session
+            $userId = $_POST['user_id'] ?? null;
+            if (!$userId && function_exists('isLoggedIn') && isLoggedIn()) {
+                $userId = getCurrentUserId();
+            }
+            $shipping = [
+                'address' => $_POST['address'] ?? '',
+                'city' => $_POST['city'] ?? '',
+                'postal_code' => $_POST['postal_code'] ?? '',
+                'country' => $_POST['country'] ?? 'Bangladesh'
+            ];
+            $paymentMethod = $_POST['payment_method'] ?? 'Card';
+            $result = $orderManager->createOrderFromCart(intval($userId), $shipping, $paymentMethod);
+            sendJSONResponse($result);
+            break;
         case 'get_user_orders':
-            if (!isLoggedIn()) {
+            // Allow user_id from POST (for localStorage-based auth) or fall back to session
+            $userId = $_POST['user_id'] ?? null;
+            if (!$userId && isLoggedIn()) {
+                $userId = getCurrentUserId();
+            }
+            if (!$userId) {
                 sendErrorResponse('User not logged in', 401);
             }
-            $orders = $orderManager->getUserOrders(getCurrentUserId(), $_POST);
+            $orders = $orderManager->getUserOrders(intval($userId), $_POST);
             if ($orders !== false) {
                 sendSuccessResponse($orders, 'Orders retrieved successfully');
             } else {
@@ -516,12 +727,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             break;
             
         case 'get_order_details':
-            if (!isLoggedIn()) {
-                sendErrorResponse('User not logged in', 401);
-            }
+            // Accept either active session or explicit user_id for frontend that relies on localStorage
             $orderId = $_POST['order_id'] ?? 0;
-            // Allow admin to view any order, or user to view their own orders
-            $userId = isAdmin() ? null : getCurrentUserId();
+            $userId = $_POST['user_id'] ?? null;
+            if (!$userId && isLoggedIn()) {
+                $userId = getCurrentUserId();
+            }
+            // Admin can view any order
+            if ($userId && isAdmin()) {
+                $userId = null;
+            }
             $orderDetails = $orderManager->getOrderDetails($orderId, $userId);
             if ($orderDetails) {
                 sendSuccessResponse($orderDetails, 'Order details retrieved successfully');

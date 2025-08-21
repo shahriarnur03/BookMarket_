@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Browse Books - BanglaBook</title>
+        <title>Browse Books - BookMarket</title>
         <link rel="stylesheet" href="../css/styles.css" />
         <!-- Additional CSS for Browse page -->
         <style>
@@ -14,7 +14,6 @@
                 padding: 1rem;
             }
 
-            /* BanglaBook Branding */
             .bangla-brand {
                 font-family: "Courier New", monospace;
                 font-weight: bold;
@@ -621,9 +620,6 @@
 
         <!-- Browse Books Content -->
         <div class="browse-container">
-            <!-- BanglaBook Branding -->
-            <div class="bangla-brand">BanglaBook</div>
-
             <!-- New Responsive Layout -->
             <div class="browse-layout">
                 <!-- Search Section - Full Width -->
@@ -638,6 +634,20 @@
                             <i class="fas fa-search"></i>
                         </button>
                     </div>
+                    <button
+                        onclick="testBrowseAuth()"
+                        style="
+                            background: #28a745;
+                            color: white;
+                            border: none;
+                            padding: 10px 20px;
+                            border-radius: 4px;
+                            cursor: pointer;
+                            margin-top: 10px;
+                        "
+                    >
+                        🧪 Test: Check Browse Authentication
+                    </button>
                 </div>
 
                 <!-- Filters Section - Full Width -->
@@ -754,7 +764,7 @@
             <div class="footer-container">
                 <div class="footer-top">
                     <div class="footer-column">
-                        <h3>BanglaBook</h3>
+                        <h3>BookMarket</h3>
                         <p>
                             Your one-stop destination for buying and selling
                             books online. Find your next favorite book or give
@@ -799,13 +809,13 @@
                             </li>
                             <li>
                                 <i class="fas fa-envelope"></i>
-                                support@banglabook.com
+                                support@bookmarket.com
                             </li>
                         </ul>
                     </div>
                 </div>
                 <div class="footer-bottom">
-                    <p>&copy; 2023 BanglaBook. All Rights Reserved.</p>
+                    <p>&copy; 2023 BookMarket. All Rights Reserved.</p>
                 </div>
             </div>
         </footer>
@@ -1240,11 +1250,89 @@
 
             // Add to cart function
             function addToCart(bookId) {
-                // Check if user is logged in
-                const user = JSON.parse(
-                    localStorage.getItem("bookmarket_user") || "{}"
-                );
-                if (!user.userId) {
+                console.log("=== ADD TO CART FUNCTION CALLED ===");
+                console.log("addToCart called for bookId:", bookId);
+                console.log("window.bookmarketAuth:", window.bookmarketAuth);
+
+                // Check multiple sources for user authentication
+                let userId = null;
+                let authSource = "";
+
+                // Method 1: Check localStorage bookmarket_user
+                const bookmarketUser = localStorage.getItem("bookmarket_user");
+                console.log("localStorage bookmarket_user:", bookmarketUser);
+
+                if (bookmarketUser) {
+                    try {
+                        const userData = JSON.parse(bookmarketUser);
+                        console.log("Parsed user data:", userData);
+
+                        if (userData.userId) {
+                            userId = userData.userId;
+                            authSource = "localStorage bookmarket_user";
+                            console.log(
+                                "✅ Found userId in localStorage bookmarket_user:",
+                                userId
+                            );
+                        } else if (userData.id) {
+                            userId = userData.id;
+                            authSource = "localStorage bookmarket_user (id)";
+                            console.log(
+                                "✅ Found userId in localStorage bookmarket_user (id):",
+                                userId
+                            );
+                        }
+                    } catch (e) {
+                        console.error(
+                            "❌ Error parsing localStorage bookmarket_user:",
+                            e
+                        );
+                    }
+                }
+
+                // Method 2: Check localStorage user_id directly
+                if (!userId) {
+                    const directUserId = localStorage.getItem("user_id");
+                    console.log("localStorage user_id:", directUserId);
+                    if (directUserId) {
+                        userId = directUserId;
+                        authSource = "localStorage user_id";
+                        console.log(
+                            "✅ Found userId in localStorage user_id:",
+                            userId
+                        );
+                    }
+                }
+
+                // Method 3: Check authentication system
+                if (!userId && window.bookmarketAuth) {
+                    console.log("Checking window.bookmarketAuth...");
+                    console.log(
+                        "isLoggedIn():",
+                        window.bookmarketAuth.isLoggedIn()
+                    );
+                    console.log(
+                        "getUserId():",
+                        window.bookmarketAuth.getUserId()
+                    );
+
+                    if (window.bookmarketAuth.isLoggedIn()) {
+                        userId = window.bookmarketAuth.getUserId();
+                        authSource = "window.bookmarketAuth";
+                        console.log(
+                            "✅ Found userId in window.bookmarketAuth:",
+                            userId
+                        );
+                    }
+                }
+
+                // If still no userId, user is not authenticated
+                if (!userId) {
+                    console.log("❌ No userId found from any source");
+                    console.log(
+                        "Available localStorage keys:",
+                        Object.keys(localStorage)
+                    );
                     showNotification(
                         "Please login to add items to cart",
                         "warning"
@@ -1255,10 +1343,14 @@
                     return;
                 }
 
+                console.log(
+                    `✅ Authentication successful! Using userId: ${userId} (Source: ${authSource})`
+                );
+
                 // Add to cart via API
                 const form = new FormData();
                 form.append("action", "add_to_cart");
-                form.append("user_id", user.userId);
+                form.append("user_id", userId);
                 form.append("book_id", bookId);
                 form.append("quantity", 1);
 
@@ -1291,14 +1383,47 @@
 
             // Update cart count in navbar
             function updateCartCountInNavbar() {
-                const user = JSON.parse(
-                    localStorage.getItem("bookmarket_user") || "{}"
-                );
-                if (!user.userId) return;
+                // Check multiple sources for user authentication
+                let userId = null;
+
+                // Method 1: Check localStorage bookmarket_user
+                const bookmarketUser = localStorage.getItem("bookmarket_user");
+                if (bookmarketUser) {
+                    try {
+                        const userData = JSON.parse(bookmarketUser);
+                        if (userData.userId) {
+                            userId = userData.userId;
+                        } else if (userData.id) {
+                            userId = userData.id;
+                        }
+                    } catch (e) {
+                        console.error("Error parsing localStorage data:", e);
+                    }
+                }
+
+                // Method 2: Check localStorage user_id directly
+                if (!userId) {
+                    const directUserId = localStorage.getItem("user_id");
+                    if (directUserId) {
+                        userId = directUserId;
+                    }
+                }
+
+                // Method 3: Check authentication system
+                if (
+                    !userId &&
+                    window.bookmarketAuth &&
+                    window.bookmarketAuth.isLoggedIn()
+                ) {
+                    userId = window.bookmarketAuth.getUserId();
+                }
+
+                // If no userId, user is not authenticated
+                if (!userId) return;
 
                 const form = new FormData();
                 form.append("action", "get_cart_count");
-                form.append("user_id", user.userId);
+                form.append("user_id", userId);
 
                 fetch("../backend/cart/cart_manager.php", {
                     method: "POST",
@@ -1317,6 +1442,115 @@
                     .catch((error) => {
                         console.error("Failed to update cart count:", error);
                     });
+            }
+
+            // Test function to check browse authentication
+            function testBrowseAuth() {
+                console.log("=== TESTING BROWSE AUTHENTICATION ===");
+
+                // Check all localStorage keys
+                console.log(
+                    "All localStorage keys:",
+                    Object.keys(localStorage)
+                );
+
+                // Check localStorage bookmarket_user
+                const bookmarketUser = localStorage.getItem("bookmarket_user");
+                console.log("localStorage bookmarket_user:", bookmarketUser);
+
+                if (bookmarketUser) {
+                    try {
+                        const userData = JSON.parse(bookmarketUser);
+                        console.log("Parsed user data:", userData);
+                        console.log("userData.userId:", userData.userId);
+                        console.log("userData.id:", userData.id);
+                        console.log("userData.username:", userData.username);
+                        console.log("userData.userType:", userData.userType);
+                    } catch (e) {
+                        console.error("❌ Error parsing localStorage data:", e);
+                    }
+                }
+
+                // Check localStorage user_id directly
+                const directUserId = localStorage.getItem("user_id");
+                console.log("localStorage user_id:", directUserId);
+
+                // Check authentication system
+                console.log("window.bookmarketAuth:", window.bookmarketAuth);
+                if (window.bookmarketAuth) {
+                    console.log(
+                        "isLoggedIn():",
+                        window.bookmarketAuth.isLoggedIn()
+                    );
+                    console.log(
+                        "getUserId():",
+                        window.bookmarketAuth.getUserId()
+                    );
+                    console.log(
+                        "getUsername():",
+                        window.bookmarketAuth.getUsername()
+                    );
+                    console.log(
+                        "getUserType():",
+                        window.bookmarketAuth.getUserType()
+                    );
+                }
+
+                // Test authentication logic
+                console.log("=== TESTING AUTHENTICATION LOGIC ===");
+                let testUserId = null;
+                let testAuthSource = "";
+
+                // Test Method 1: localStorage bookmarket_user
+                if (bookmarketUser) {
+                    try {
+                        const userData = JSON.parse(bookmarketUser);
+                        if (userData.userId) {
+                            testUserId = userData.userId;
+                            testAuthSource = "localStorage bookmarket_user";
+                        } else if (userData.id) {
+                            testUserId = userData.id;
+                            testAuthSource =
+                                "localStorage bookmarket_user (id)";
+                        }
+                    } catch (e) {
+                        console.error("Test parsing failed:", e);
+                    }
+                }
+
+                // Test Method 2: localStorage user_id
+                if (!testUserId && directUserId) {
+                    testUserId = directUserId;
+                    testAuthSource = "localStorage user_id";
+                }
+
+                // Test Method 3: window.bookmarketAuth
+                if (
+                    !testUserId &&
+                    window.bookmarketAuth &&
+                    window.bookmarketAuth.isLoggedIn()
+                ) {
+                    testUserId = window.bookmarketAuth.getUserId();
+                    testAuthSource = "window.bookmarketAuth";
+                }
+
+                console.log("=== AUTHENTICATION TEST RESULTS ===");
+                if (testUserId) {
+                    console.log("✅ Authentication successful!");
+                    console.log("User ID:", testUserId);
+                    console.log("Source:", testAuthSource);
+                    showNotification(
+                        `✅ Authentication working! User ID: ${testUserId}`,
+                        "success"
+                    );
+                } else {
+                    console.log("❌ Authentication failed!");
+                    console.log("No user ID found from any source");
+                    showNotification(
+                        "❌ Authentication failed! Please login first.",
+                        "error"
+                    );
+                }
             }
         </script>
     </body>

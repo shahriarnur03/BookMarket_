@@ -115,6 +115,74 @@
                 border: 1px solid #d1e6ff;
             }
 
+            /* New table-styled items and summary (inspired by sample) */
+            .items-table {
+                width: 100%;
+                border-collapse: collapse;
+                background: #fff;
+                border-radius: 8px;
+                overflow: hidden;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            }
+            .items-table thead {
+                background: #3a5a80;
+                color: #fff;
+            }
+            .items-table th,
+            .items-table td {
+                padding: 12px 16px;
+                border-bottom: 1px solid #eee;
+                text-align: left;
+            }
+            .items-table th:nth-child(3),
+            .items-table td:nth-child(3) {
+                text-align: center;
+            }
+            .items-table th:nth-child(4),
+            .items-table td:nth-child(4) {
+                text-align: right;
+            }
+            .product-cell {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            }
+            .product-cell img {
+                width: 48px;
+                height: 48px;
+                object-fit: cover;
+                border-radius: 6px;
+                background: #f5f5f5;
+            }
+            .order-summary-card {
+                max-width: 360px;
+                margin-left: auto;
+                background: #fff;
+                border-radius: 8px;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+                padding: 16px;
+            }
+            .order-summary-card .row {
+                display: flex;
+                justify-content: space-between;
+                margin: 8px 0;
+                color: #555;
+            }
+            .order-summary-card .row.total {
+                font-weight: 700;
+                font-size: 18px;
+                color: #222;
+                border-top: 1px solid #eee;
+                padding-top: 10px;
+            }
+            .items-count-badge {
+                background: #eee;
+                color: #333;
+                padding: 4px 10px;
+                border-radius: 999px;
+                font-size: 12px;
+            }
+
             .tracking-header {
                 display: flex;
                 align-items: center;
@@ -313,14 +381,6 @@
                             <span class="status-badge"></span>
                         </div>
                     </div>
-                    <div class="order-info-item">
-                        <div class="order-info-label">Total</div>
-                        <div class="order-info-value"></div>
-                    </div>
-                    <div class="order-info-item">
-                        <div class="order-info-label">Items</div>
-                        <div class="order-info-value"></div>
-                    </div>
                 </div>
             </div>
 
@@ -335,7 +395,9 @@
                         <div class="tracking-info-value"></div>
                     </div>
                     <div class="tracking-info-item">
-                        <div class="tracking-info-label">Estimated Delivery</div>
+                        <div class="tracking-info-label">
+                            Estimated Delivery
+                        </div>
                         <div class="tracking-info-value"></div>
                     </div>
                     <div class="tracking-info-item">
@@ -350,33 +412,51 @@
                 </div>
             </div>
 
-            <!-- Order Items -->
+            <!-- Order Items Table -->
             <div class="order-items">
-                <div class="order-items-header">
-                    <h3>Order Items</h3>
+                <div
+                    class="order-items-header"
+                    style="
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                    "
+                >
+                    <h3>
+                        Order Items
+                        <span id="items-count" class="items-count-badge"></span>
+                    </h3>
                 </div>
                 <div class="order-items-list">
-                    <!-- Order items will be loaded dynamically -->
+                    <table class="items-table">
+                        <thead>
+                            <tr>
+                                <th>Product Name</th>
+                                <th>Product Code</th>
+                                <th>Quantity</th>
+                                <th>Price</th>
+                            </tr>
+                        </thead>
+                        <tbody id="items-tbody"></tbody>
+                    </table>
                 </div>
             </div>
 
-            <!-- Order Total -->
-            <div class="order-total">
-                <div class="total-row">
-                    <div class="total-label">Subtotal</div>
-                    <div class="total-value"></div>
+            <!-- Order Summary Card -->
+            <div class="order-summary-card">
+                <div class="row">
+                    <span>Subtotal</span
+                    ><span id="summary-subtotal">৳0.00</span>
                 </div>
-                <div class="total-row">
-                    <div class="total-label">Shipping</div>
-                    <div class="total-value"></div>
+                <div class="row">
+                    <span>Shipping</span
+                    ><span id="summary-shipping">৳0.00</span>
                 </div>
-                <div class="total-row">
-                    <div class="total-label">Tax</div>
-                    <div class="total-value"></div>
+                <div class="row">
+                    <span>Tax</span><span id="summary-tax">৳0.00</span>
                 </div>
-                <div class="total-row">
-                    <div class="total-label">Total</div>
-                    <div class="total-value"></div>
+                <div class="row total">
+                    <span>Total</span><span id="summary-total">৳0.00</span>
                 </div>
             </div>
 
@@ -460,65 +540,92 @@
         <script src="../../js/auth.js"></script>
         <script src="../../js/customer-navbar.js"></script>
         <script>
-            document.addEventListener('DOMContentLoaded', function() {
+            function getBaseApiUrl() {
+                const siteRootPart = window.location.pathname.includes(
+                    "/BookMarket_/"
+                )
+                    ? "/BookMarket_/"
+                    : "/";
+                return window.location.origin + siteRootPart;
+            }
+            document.addEventListener("DOMContentLoaded", function () {
                 const urlParams = new URLSearchParams(window.location.search);
-                const orderId = urlParams.get('order_id');
+                let orderId = urlParams.get("order_id");
+                if (!orderId) {
+                    // Try hash style: order_id=123 in hash
+                    const h = new URLSearchParams(
+                        window.location.hash.replace(/^#/, "")
+                    );
+                    orderId = h.get("order_id");
+                }
 
                 if (!orderId) {
-                    showNotification('Order ID not found in URL.', 'error');
+                    showNotification("Order ID not found in URL.", "error");
                     return;
                 }
 
                 fetchOrderDetails(orderId);
 
                 // Logout functionality (existing)
-                const logoutBtn = document.getElementById('logout-btn');
-                const sidebarLogout = document.getElementById('sidebar-logout');
-                
+                const logoutBtn = document.getElementById("logout-btn");
+                const sidebarLogout = document.getElementById("sidebar-logout");
+
                 if (logoutBtn) {
-                    logoutBtn.addEventListener('click', function(e) {
+                    logoutBtn.addEventListener("click", function (e) {
                         e.preventDefault();
-                        showNotification('Logged out successfully!', 'success');
+                        showNotification("Logged out successfully!", "success");
                         setTimeout(() => {
-                            window.location.href = '../../index.html';
+                            window.location.href = "../../index.html";
                         }, 1500);
                     });
                 }
-                
+
                 if (sidebarLogout) {
-                    sidebarLogout.addEventListener('click', function(e) {
+                    sidebarLogout.addEventListener("click", function (e) {
                         e.preventDefault();
-                        showNotification('Logged out successfully!', 'success');
+                        showNotification("Logged out successfully!", "success");
                         setTimeout(() => {
-                            window.location.href = '../../index.html';
+                            window.location.href = "../../index.html";
                         }, 1500);
                     });
                 }
 
                 // Track package button (existing)
-                const trackButton = document.querySelector('.tracking-actions .btn');
+                const trackButton = document.querySelector(
+                    ".tracking-actions .btn"
+                );
                 if (trackButton) {
-                    trackButton.addEventListener('click', function(e) {
+                    trackButton.addEventListener("click", function (e) {
                         e.preventDefault();
-                        showNotification('Tracking information opened in a new tab', 'info');
+                        showNotification(
+                            "Tracking information opened in a new tab",
+                            "info"
+                        );
                     });
                 }
 
                 // Download invoice button (existing)
-                const downloadButton = document.querySelector('.action-buttons .btn-primary');
+                const downloadButton = document.querySelector(
+                    ".action-buttons .btn-primary"
+                );
                 if (downloadButton) {
-                    downloadButton.addEventListener('click', function(e) {
+                    downloadButton.addEventListener("click", function (e) {
                         e.preventDefault();
-                        showNotification('Invoice downloaded successfully', 'success');
+                        showNotification(
+                            "Invoice downloaded successfully",
+                            "success"
+                        );
                     });
                 }
 
                 // Contact support button (existing)
-                const supportButton = document.querySelector('.action-buttons .btn-secondary');
+                const supportButton = document.querySelector(
+                    ".action-buttons .btn-secondary"
+                );
                 if (supportButton) {
-                    supportButton.addEventListener('click', function(e) {
+                    supportButton.addEventListener("click", function (e) {
                         e.preventDefault();
-                        showNotification('Support request sent', 'success');
+                        showNotification("Support request sent", "success");
                     });
                 }
             });
@@ -526,72 +633,158 @@
             async function fetchOrderDetails(orderId) {
                 try {
                     const formData = new FormData();
-                    formData.append('action', 'get_order_details');
-                    formData.append('order_id', orderId);
+                    formData.append("action", "get_order_details");
+                    formData.append("order_id", orderId);
+                    // Also include user_id from localStorage if present (for session-less flows)
+                    try {
+                        const raw = localStorage.getItem("bookmarket_user");
+                        if (raw) {
+                            const u = JSON.parse(raw);
+                            const uid =
+                                u && (u.userId || u.id)
+                                    ? u.userId || u.id
+                                    : null;
+                            if (uid) formData.append("user_id", uid);
+                        }
+                    } catch (e) {}
 
-                    const response = await fetch('../../backend/orders/order_manager.php', {
-                        method: 'POST',
-                        body: formData
+                    const apiUrl =
+                        getBaseApiUrl() + "backend/orders/order_manager.php";
+                    const response = await fetch(apiUrl, {
+                        method: "POST",
+                        body: formData,
                     });
+                    if (!response.ok) {
+                        throw new Error("HTTP " + response.status);
+                    }
                     const data = await response.json();
 
                     if (data.success && data.data) {
                         displayOrderDetails(data.data);
                     } else {
-                        showNotification(data.message || 'Failed to load order details.', 'error');
+                        showNotification(
+                            data.message || "Failed to load order details.",
+                            "error"
+                        );
                     }
                 } catch (error) {
-                    console.error('Error fetching order details:', error);
-                    showNotification('An error occurred while loading order details.', 'error');
+                    console.error("Error fetching order details:", error);
+                    showNotification(
+                        "An error occurred while loading order details.",
+                        "error"
+                    );
                 }
             }
 
             function displayOrderDetails(order) {
                 // Order Summary
-                document.querySelector('.order-info-value:nth-child(2)').textContent = order.order_id;
-                document.querySelector('.order-info-value:nth-child(4)').textContent = new Date(order.order_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-                
-                const statusBadge = document.querySelector('.status-badge');
-                statusBadge.textContent = order.status;
-                statusBadge.className = 'status-badge status-' + order.status.toLowerCase().replace(' ', '-'); // Apply dynamic class
-                
-                document.querySelector('.order-info-value:nth-child(8)').textContent = '৳' + parseFloat(order.total_amount).toFixed(2);
-                document.querySelector('.order-info-value:nth-child(10)').textContent = order.items.length + ' item(s)';
+                const values = document.querySelectorAll(
+                    ".order-info-item .order-info-value"
+                );
+                const idEl = values[0];
+                const placedEl = values[1];
+                // removed Total and Items blocks from header
+                const idText = order.order_number || order.id || "";
+                if (idEl) idEl.textContent = idText;
+                if (placedEl)
+                    placedEl.textContent = new Date(
+                        order.order_date
+                    ).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                    });
+
+                const statusBadge = document.querySelector(".status-badge");
+                const statusText =
+                    order.order_status || order.status || "Pending";
+                statusBadge.textContent = statusText;
+                statusBadge.className =
+                    "status-badge status-" +
+                    String(statusText).toLowerCase().replace(/\s+/g, "-");
+
+                const itemsArr = Array.isArray(order.items) ? order.items : [];
+                // totals now shown in summary card only
 
                 // Tracking Information (if available)
                 if (order.tracking_number) {
-                    document.querySelector('.tracking-info-value:nth-child(2)').textContent = order.tracking_number;
-                    document.querySelector('.tracking-info-value:nth-child(4)').textContent = new Date(order.estimated_delivery).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-                    document.querySelector('.tracking-info-value:nth-child(6)').textContent = order.carrier;
+                    document.querySelector(
+                        ".tracking-info-value:nth-child(2)"
+                    ).textContent = order.tracking_number;
+                    document.querySelector(
+                        ".tracking-info-value:nth-child(4)"
+                    ).textContent = new Date(
+                        order.estimated_delivery
+                    ).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                    });
+                    document.querySelector(
+                        ".tracking-info-value:nth-child(6)"
+                    ).textContent = order.carrier;
                 } else {
-                    document.querySelector('.tracking-section').style.display = 'none';
+                    document.querySelector(".tracking-section").style.display =
+                        "none";
                 }
 
                 // Order Items
-                const orderItemsList = document.querySelector('.order-items-list');
-                orderItemsList.innerHTML = ''; // Clear existing items
-
-                order.items.forEach(item => {
-                    const itemHtml = `
-                        <div class="order-item">
-                            <div class="item-image">
-                                <img src="../../${item.cover_image_path || 'images/placeholder-book.png'}" alt="${item.title}" onerror="this.src='https://via.placeholder.com/80x120?text=Book Cover'; this.onerror='';">
+                const tbody = document.getElementById("items-tbody");
+                tbody.innerHTML = "";
+                document.getElementById(
+                    "items-count"
+                ).textContent = `(${itemsArr.length})`;
+                itemsArr.forEach((item) => {
+                    const tr = document.createElement("tr");
+                    tr.innerHTML = `
+                        <td>
+                            <div class="product-cell">
+                                <img src="../../${
+                                    item.cover_image_path ||
+                                    "images/placeholder-book.png"
+                                }" onerror="this.src='https://via.placeholder.com/48x48?text=Book';this.onerror='';" alt="${
+                        item.title
+                    }" />
+                                <div>
+                                    <div style="font-weight:600;color:#333;">${
+                                        item.title
+                                    }</div>
+                                    <div style="color:#777;font-size:12px;">by ${
+                                        item.author
+                                    }</div>
+                                </div>
                             </div>
-                            <div class="item-details">
-                                <div class="item-title">${item.title}</div>
-                                <div class="item-author">by ${item.author}</div>
-                                <div class="item-price">৳${parseFloat(item.price).toFixed(2)} × ${item.quantity}</div>
-                            </div>
-                        </div>
+                        </td>
+                        <td>${item.isbn || "-"}</td>
+                        <td>x${item.quantity}</td>
+                        <td>৳${parseFloat(
+                            item.price_per_item || item.price || 0
+                        ).toFixed(2)}</td>
                     `;
-                    orderItemsList.insertAdjacentHTML('beforeend', itemHtml);
+                    tbody.appendChild(tr);
                 });
 
                 // Order Total
-                document.querySelector('.order-total .total-row:nth-child(1) .total-value').textContent = '৳' + parseFloat(order.subtotal).toFixed(2);
-                document.querySelector('.order-total .total-row:nth-child(2) .total-value').textContent = '৳' + parseFloat(order.shipping_cost).toFixed(2);
-                document.querySelector('.order-total .total-row:nth-child(3) .total-value').textContent = '৳' + parseFloat(order.tax_amount).toFixed(2);
-                document.querySelector('.order-total .total-row:nth-child(4) .total-value').textContent = '৳' + parseFloat(order.total_amount).toFixed(2);
+                document.getElementById(
+                    "summary-subtotal"
+                ).textContent = `৳${parseFloat(order.subtotal || 0).toFixed(
+                    2
+                )}`;
+                document.getElementById(
+                    "summary-shipping"
+                ).textContent = `৳${parseFloat(
+                    order.shipping_cost || 0
+                ).toFixed(2)}`;
+                document.getElementById(
+                    "summary-tax"
+                ).textContent = `৳${parseFloat(order.tax_amount || 0).toFixed(
+                    2
+                )}`;
+                document.getElementById(
+                    "summary-total"
+                ).textContent = `৳${parseFloat(order.total_amount || 0).toFixed(
+                    2
+                )}`;
             }
         </script>
     </body>

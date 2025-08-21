@@ -1,53 +1,73 @@
 // Authentication utilities for BookMarket
-document.addEventListener("DOMContentLoaded", function () {
-    // Check if user is logged in
-    function isLoggedIn() {
-        return localStorage.getItem("bookmarket_user") !== null;
-    }
 
-    // Get logged in user type (admin or customer)
-    function getUserType() {
-        const user = localStorage.getItem("bookmarket_user");
-        return user ? JSON.parse(user).userType : null;
-    }
+// Check if user is logged in
+function isLoggedIn() {
+    return localStorage.getItem("bookmarket_user") !== null;
+}
 
-    // Get logged in username
-    function getUsername() {
-        const user = localStorage.getItem("bookmarket_user");
-        return user ? JSON.parse(user).username : "Guest";
-    }
+// Get logged in user type (admin or customer)
+function getUserType() {
+    const user = localStorage.getItem("bookmarket_user");
+    return user ? JSON.parse(user).userType : null;
+}
 
-    // Login user
-    function loginUser(username, userType) {
-        const user = {
-            username: username,
-            userType: userType,
-            loginTime: new Date().toISOString(),
-        };
-        localStorage.setItem("bookmarket_user", JSON.stringify(user));
-    }
+// Get logged in username
+function getUsername() {
+    const user = localStorage.getItem("bookmarket_user");
+    return user ? JSON.parse(user).username : "Guest";
+}
 
-    // Logout user
-    function logoutUser() {
-        localStorage.removeItem("bookmarket_user");
-        window.location.href = getBasePath() + "index.html";
-    }
-
-    // Get base path based on current page depth
-    function getBasePath() {
-        const path = window.location.pathname;
-        if (
-            path.includes("/pages/customer/") ||
-            path.includes("/pages/admin/")
-        ) {
-            return "../../";
-        } else if (path.includes("/pages/")) {
-            return "../";
-        } else {
-            return "./";
+// Get logged in user ID
+function getUserId() {
+    const user = localStorage.getItem("bookmarket_user");
+    console.log("Retrieved user data from localStorage:", user);
+    if (user) {
+        try {
+            const userData = JSON.parse(user);
+            // Check for both userId and id fields
+            if (userData.userId) {
+                return userData.userId;
+            } else if (userData.id) {
+                return userData.id;
+            }
+        } catch (e) {
+            console.error("Error parsing user data:", e);
         }
     }
+    return null;
+}
 
+// Login user
+function loginUser(username, userType, userId) {
+    const user = {
+        username: username,
+        userType: userType,
+        userId: userId,
+        loginTime: new Date().toISOString(),
+    };
+    console.log("Storing user data in localStorage:", user);
+    localStorage.setItem("bookmarket_user", JSON.stringify(user));
+}
+
+// Get base path based on current page depth
+function getBasePath() {
+    const path = window.location.pathname;
+    if (path.includes("/pages/customer/") || path.includes("/pages/admin/")) {
+        return "../../";
+    } else if (path.includes("/pages/")) {
+        return "../";
+    } else {
+        return "./";
+    }
+}
+
+// Logout user
+function logoutUser() {
+    localStorage.removeItem("bookmarket_user");
+    window.location.href = getBasePath() + "index.html";
+}
+
+document.addEventListener("DOMContentLoaded", function () {
     // Update UI based on login state
     function updateUIForAuthState() {
         const isUserLoggedIn = isLoggedIn();
@@ -228,6 +248,7 @@ document.addEventListener("DOMContentLoaded", function () {
         isLoggedIn,
         getUserType,
         getUsername,
+        getUserId,
         loginUser,
         logoutUser,
         updateUIForAuthState,

@@ -641,11 +641,10 @@
                     <li><a href="../../index.html">Home</a></li>
                     <li>
                         <a href="order-management.html" class="active"
-                            >Order Management</a
+                            >Management</a
                         >
                     </li>
-                    <li><a href="book-management.html">Book Management</a></li>
-                    <li><a href="user-management.html">User Management</a></li>
+                    <li><a href="book-upload.html">Book Upload</a></li>
                     <li><a href="book-approval.html">Book Approval</a></li>
                 </ul>
                 <div class="navbar-buttons">
@@ -670,20 +669,10 @@
 
         <!-- Dashboard Content -->
         <div class="dashboard-container">
-            <div class="dashboard-header">
-                <div class="welcome-message">
-                    <h1>Order Management</h1>
-                    <p>Manage all orders in the BookMarket platform</p>
-                </div>
-            </div>
-
             <div class="dashboard-layout">
-                <!-- Dashboard Sidebar -->
+                <!-- Dashboard Sidebar (Management only) -->
                 <div class="dashboard-sidebar">
                     <div class="sidebar-menu">
-                        <a href="dashboard.html" class="sidebar-menu-item">
-                            <i class="fas fa-chart-line"></i> Dashboard
-                        </a>
                         <a
                             href="order-management.html"
                             class="sidebar-menu-item active"
@@ -701,19 +690,6 @@
                             class="sidebar-menu-item"
                         >
                             <i class="fas fa-users"></i> User Management
-                        </a>
-                        <a href="book-approval.html" class="sidebar-menu-item">
-                            <i class="fas fa-check-circle"></i> Book Approval
-                        </a>
-                        <a href="book-upload.html" class="sidebar-menu-item">
-                            <i class="fas fa-upload"></i> Book Upload
-                        </a>
-                        <a
-                            href="#"
-                            class="sidebar-menu-item"
-                            id="sidebar-logout"
-                        >
-                            <i class="fas fa-sign-out-alt"></i> Logout
                         </a>
                     </div>
                 </div>
@@ -982,6 +958,44 @@
                     return new Date(dateString).toLocaleDateString();
                 }
 
+                // Robust helpers to handle varying backend field names
+                function getCustomerName(order) {
+                    if (order.customer_name) return order.customer_name;
+                    const fullName = [order.first_name, order.last_name]
+                        .filter(Boolean)
+                        .join(" ")
+                        .trim();
+                    if (fullName) return fullName;
+                    if (order.username) return order.username;
+                    if (order.email) return order.email;
+                    return "N/A";
+                }
+
+                function getOrderDateDisplay(order) {
+                    const raw =
+                        order.order_date ||
+                        order.created_at ||
+                        order.date ||
+                        order.orderDate;
+                    if (!raw) return "N/A";
+                    const dt = new Date(raw);
+                    if (!isNaN(dt.getTime())) return dt.toLocaleDateString();
+                    // Fallback for non-ISO strings
+                    const parts = String(raw).split(" ")[0];
+                    return parts || "N/A";
+                }
+
+                function getItemsCount(order) {
+                    const count =
+                        order.items_count ??
+                        order.item_count ??
+                        order.itemsTotal ??
+                        order.total_items ??
+                        order.itemsCount ??
+                        0;
+                    return parseInt(count || 0, 10);
+                }
+
                 function getStatusBadge(status) {
                     const statusMap = {
                         Pending: "status-pending",
@@ -1052,15 +1066,15 @@
                                             </div>
                                         </div>
                                         <div class="order-details">
-                                            <p><strong>Customer:</strong> ${
-                                                order.customer_name || "N/A"
-                                            }</p>
-                                            <p><strong>Date:</strong> ${formatDate(
-                                                order.created_at
+                                            <p><strong>Customer:</strong> ${getCustomerName(
+                                                order
                                             )}</p>
-                                            <p><strong>Items:</strong> ${
-                                                order.items_count || 0
-                                            } item(s)</p>
+                                            <p><strong>Date:</strong> ${getOrderDateDisplay(
+                                                order
+                                            )}</p>
+                                            <p><strong>Items:</strong> ${getItemsCount(
+                                                order
+                                            )} item(s)</p>
                                         </div>
                                         <div class="order-actions">
                                             <div class="status-update">

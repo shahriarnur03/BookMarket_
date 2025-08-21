@@ -612,6 +612,7 @@ class AdminBookUpload {
             price: document.getElementById("price").value,
             book_condition: document.getElementById("book_condition").value,
             category_id: document.getElementById("category_id").value,
+            stock_quantity: document.getElementById("stock_quantity").value,
         };
     }
 

@@ -58,10 +58,13 @@ class BookManager {
                 return ['success' => false, 'message' => 'Invalid category'];
             }
             
+            // Ensure stock column exists
+            $this->db->execute("ALTER TABLE books ADD COLUMN IF NOT EXISTS stock_quantity INT NOT NULL DEFAULT 1");
+
             // Insert new book
             $bookId = $this->db->insert(
-                                                  "INSERT INTO books (title, author, isbn, description, price, book_condition, cover_image_path, additional_images, seller_id, category_id) 
-                  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                                                  "INSERT INTO books (title, author, isbn, description, price, book_condition, cover_image_path, additional_images, seller_id, category_id, stock_quantity) 
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                  [
                     cleanInput($bookData['title']),
                     cleanInput($bookData['author']),
@@ -72,7 +75,8 @@ class BookManager {
                     cleanInput($bookData['cover_image_path'] ?? ''),
                     cleanInput($bookData['additional_images'] ?? ''),
                     intval($sellerId),
-                    intval($bookData['category_id'])
+                    intval($bookData['category_id']),
+                    intval($bookData['stock_quantity'] ?? 1)
                 ]
             );
             

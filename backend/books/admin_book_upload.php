@@ -63,9 +63,12 @@ class AdminBookUploadManager {
             // Insert new book with admin seller ID (you can set this to a default admin user or create one)
             $adminSellerId = $this->getAdminSellerId();
             
+            // Ensure books table has stock_quantity column (idempotent)
+            $this->db->execute("ALTER TABLE books ADD COLUMN IF NOT EXISTS stock_quantity INT NOT NULL DEFAULT 1");
+
             $bookId = $this->db->insert(
-                "INSERT INTO books (title, author, isbn, description, price, book_condition, cover_image_path, additional_images, seller_id, category_id, status) 
-                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'approved')",
+                "INSERT INTO books (title, author, isbn, description, price, book_condition, cover_image_path, additional_images, seller_id, category_id, status, stock_quantity) 
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'approved', ?)",
                 [
                     cleanInput($bookData['title']),
                     cleanInput($bookData['author']),
@@ -76,7 +79,8 @@ class AdminBookUploadManager {
                     cleanInput($bookData['cover_image_path'] ?? ''),
                     cleanInput($bookData['additional_images'] ?? ''),
                     intval($adminSellerId),
-                    intval($bookData['category_id'])
+                    intval($bookData['category_id']),
+                    intval($bookData['stock_quantity'] ?? 1)
                 ]
             );
             

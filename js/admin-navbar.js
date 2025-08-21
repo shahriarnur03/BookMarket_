@@ -11,8 +11,13 @@ document.addEventListener("DOMContentLoaded", function () {
             .pop()
             .replace(".html", "");
 
-        // If on dashboard page, set Order Management as active by default
-        const isDashboard = currentPage === "dashboard";
+        // Identify pages that fall under Management umbrella
+        const managementPages = new Set([
+            "management",
+            "order-management",
+            "book-management",
+            "user-management",
+        ]);
 
         // Determine the correct path based on current page
         const path = window.location.pathname;
@@ -38,14 +43,11 @@ document.addEventListener("DOMContentLoaded", function () {
 				</div>
                 <ul class="navbar-menu">
                     <li><a href="${basePath}order-management.html" class="${
-            currentPage === "order-management" || isDashboard ? "active" : ""
-        }">Order Management</a></li>
-                    <li><a href="${basePath}book-management.html" class="${
-            currentPage === "book-management" ? "active" : ""
-        }">Book Management</a></li>
-                    <li><a href="${basePath}user-management.html" class="${
-            currentPage === "user-management" ? "active" : ""
-        }">User Management</a></li>
+            managementPages.has(currentPage) ? "active" : ""
+        }">Management</a></li>
+                    <li><a href="${basePath}book-upload.html" class="${
+            currentPage === "book-upload" ? "active" : ""
+        }">Book Upload</a></li>
                     <li><a href="${basePath}book-approval.html" class="${
             currentPage === "book-approval" ? "active" : ""
         }">Book Approval</a></li>
@@ -81,9 +83,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 padding: 0.5rem 1rem;
             }
             
-            .navbar-menu .active:hover {
-                background-color: rgba(52, 128, 90, 0.2);
-            }
+            .navbar-menu .active:hover { background-color: rgba(58, 90, 128, 0.15); }
 
             .dropdown-content.show {
                 display: block;

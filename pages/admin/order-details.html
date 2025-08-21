@@ -214,11 +214,11 @@
                 .order-basic-info {
                     grid-template-columns: 1fr;
                 }
-                
+
                 .order-actions {
                     flex-direction: column;
                 }
-                
+
                 .action-button {
                     justify-content: center;
                 }
@@ -247,7 +247,11 @@
                 <div id="order-basic-info" class="order-basic-info">
                     <div class="loading">Loading order information...</div>
                 </div>
-                <div id="order-actions" class="order-actions" style="display: none;">
+                <div
+                    id="order-actions"
+                    class="order-actions"
+                    style="display: none"
+                >
                     <!-- Action buttons will be populated here -->
                 </div>
             </div>
@@ -274,16 +278,23 @@
         <script src="../../js/main.js"></script>
         <script src="../../js/auth.js"></script>
         <script src="../../js/admin-navbar.js"></script>
-        
+
         <script>
             document.addEventListener("DOMContentLoaded", function () {
                 // Check authentication first
                 checkAdminAuth();
-                
+
                 // Get order ID from URL parameter
                 const urlParams = new URLSearchParams(window.location.search);
-                const orderId = urlParams.get('id');
-                
+                let orderId = urlParams.get("id") || urlParams.get("order_id");
+                // Fallback: try reading from hash like #id=123
+                if (!orderId && window.location.hash) {
+                    const h = new URLSearchParams(
+                        window.location.hash.replace("#", "")
+                    );
+                    orderId = h.get("id") || h.get("order_id");
+                }
+
                 if (!orderId) {
                     showNotification("No order ID provided", "error");
                     return;
@@ -293,43 +304,68 @@
                 function checkAdminAuth() {
                     const form = new FormData();
                     form.append("action", "check_admin_auth");
-                    
+
                     fetch("../../backend/auth/user_auth.php", {
                         method: "POST",
                         body: form,
                     })
-                    .then((r) => r.json())
-                    .then((d) => {
-                        if (!d.success) {
-                            showNotification("Access denied. Please login as admin.", "error");
+                        .then((r) => r.json())
+                        .then((d) => {
+                            if (!d.success) {
+                                showNotification(
+                                    "Access denied. Please login as admin.",
+                                    "error"
+                                );
+                                setTimeout(() => {
+                                    window.location.href =
+                                        "../../pages/login.html";
+                                }, 2000);
+                                return;
+                            }
+                            // User is authenticated, continue loading order details
+                            loadOrderDetails(orderId);
+                        })
+                        .catch((error) => {
+                            console.error("Auth check error:", error);
+                            showNotification(
+                                "Authentication failed. Please login again.",
+                                "error"
+                            );
                             setTimeout(() => {
                                 window.location.href = "../../pages/login.html";
                             }, 2000);
-                            return;
-                        }
-                        // User is authenticated, continue loading order details
-                        loadOrderDetails(orderId);
-                    })
-                    .catch((error) => {
-                        console.error("Auth check error:", error);
-                        showNotification("Authentication failed. Please login again.", "error");
-                        setTimeout(() => {
-                            window.location.href = "../../pages/login.html";
-                        }, 2000);
-                    });
+                        });
                 }
 
                 // Event delegation for action buttons
-                document.addEventListener("click", function(e) {
+                document.addEventListener("click", function (e) {
                     if (e.target.classList.contains("btn-update")) {
-                        const newStatus = prompt("Enter new order status (Pending, Processing, Shipped, Delivered, Cancelled):");
-                        if (newStatus && ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'].includes(newStatus)) {
+                        const newStatus = prompt(
+                            "Enter new order status (Pending, Processing, Shipped, Delivered, Cancelled):"
+                        );
+                        if (
+                            newStatus &&
+                            [
+                                "Pending",
+                                "Processing",
+                                "Shipped",
+                                "Delivered",
+                                "Cancelled",
+                            ].includes(newStatus)
+                        ) {
                             updateOrderStatus(orderId, newStatus);
                         } else if (newStatus !== null) {
-                            showNotification("Invalid status. Please use: Pending, Processing, Shipped, Delivered, or Cancelled", "error");
+                            showNotification(
+                                "Invalid status. Please use: Pending, Processing, Shipped, Delivered, or Cancelled",
+                                "error"
+                            );
                         }
                     } else if (e.target.classList.contains("btn-cancel")) {
-                        if (confirm("Are you sure you want to cancel this order?")) {
+                        if (
+                            confirm(
+                                "Are you sure you want to cancel this order?"
+                            )
+                        ) {
                             updateOrderStatus(orderId, "Cancelled");
                         }
                     }
@@ -340,7 +376,17 @@
                 const form = new FormData();
                 form.append("action", "get_order_details");
                 form.append("order_id", orderId);
-                
+                // Pass user_id for session-less fetch; backend ignores for admin
+                const user =
+                    window.bookmarketAuth?.getUserId?.() ||
+                    JSON.parse(localStorage.getItem("bookmarket_user") || "{}")
+                        .userId ||
+                    JSON.parse(localStorage.getItem("bookmarket_user") || "{}")
+                        .id;
+                if (user) {
+                    form.append("user_id", user);
+                }
+
                 fetch("../../backend/orders/order_manager.php", {
                     method: "POST",
                     body: form,
@@ -351,19 +397,25 @@
                             displayOrderInfo(d.data);
                             displayOrderItems(d.data.items || []);
                         } else {
-                            showNotification("Failed to load order details", "error");
+                            showNotification(
+                                "Failed to load order details",
+                                "error"
+                            );
                         }
                     })
                     .catch((error) => {
                         console.error("Load order details error:", error);
-                        showNotification("Failed to load order details", "error");
+                        showNotification(
+                            "Failed to load order details",
+                            "error"
+                        );
                     });
             }
 
             function displayOrderInfo(order) {
                 const basicInfo = document.getElementById("order-basic-info");
                 const actions = document.getElementById("order-actions");
-                
+
                 basicInfo.innerHTML = `
                     <div class="info-group">
                         <div class="info-label">Order Number</div>
@@ -371,19 +423,23 @@
                     </div>
                     <div class="info-group">
                         <div class="info-label">Customer</div>
-                        <div class="info-value">${order.first_name || ''} ${order.last_name || ''} (${order.username})</div>
+                        <div class="info-value">${order.first_name || ""} ${
+                    order.last_name || ""
+                } (${order.username})</div>
                     </div>
                     <div class="info-group">
                         <div class="info-label">Email</div>
-                        <div class="info-value">${order.email || 'N/A'}</div>
+                        <div class="info-value">${order.email || "N/A"}</div>
                     </div>
                     <div class="info-group">
                         <div class="info-label">Phone</div>
-                        <div class="info-value">${order.phone || 'N/A'}</div>
+                        <div class="info-value">${order.phone || "N/A"}</div>
                     </div>
                     <div class="info-group">
                         <div class="info-label">Order Date</div>
-                        <div class="info-value">${new Date(order.order_date).toLocaleDateString()}</div>
+                        <div class="info-value">${new Date(
+                            order.order_date
+                        ).toLocaleDateString()}</div>
                     </div>
                     <div class="info-group">
                         <div class="info-label">Order Status</div>
@@ -399,25 +455,33 @@
                     </div>
                     <div class="info-group">
                         <div class="info-label">Payment Method</div>
-                        <div class="info-value">${order.payment_method || 'N/A'}</div>
+                        <div class="info-value">${
+                            order.payment_method || "N/A"
+                        }</div>
                     </div>
                     <div class="info-group">
                         <div class="info-label">Shipping Address</div>
-                        <div class="info-value">${order.shipping_address || 'N/A'}</div>
+                        <div class="info-value">${
+                            order.shipping_address || "N/A"
+                        }</div>
                     </div>
                     <div class="info-group">
                         <div class="info-label">Shipping City</div>
-                        <div class="info-value">${order.shipping_city || 'N/A'}</div>
+                        <div class="info-value">${
+                            order.shipping_city || "N/A"
+                        }</div>
                     </div>
                     <div class="info-group">
                         <div class="info-label">Total Amount</div>
-                        <div class="info-value" style="font-weight: 600; color: var(--primary-color);">৳${order.total_amount}</div>
+                        <div class="info-value" style="font-weight: 600; color: var(--primary-color);">৳${
+                            order.total_amount
+                        }</div>
                     </div>
                 `;
 
                 // Show action buttons for non-delivered/cancelled orders
-                if (!['Delivered', 'Cancelled'].includes(order.order_status)) {
-                    actions.style.display = 'flex';
+                if (!["Delivered", "Cancelled"].includes(order.order_status)) {
+                    actions.style.display = "flex";
                     actions.innerHTML = `
                         <button class="action-button btn-update">
                             <i class="fas fa-edit"></i> Update Status
@@ -432,21 +496,26 @@
             function displayOrderItems(items) {
                 const content = document.getElementById("order-items-content");
                 if (!items || items.length === 0) {
-                    content.innerHTML = '<div class="no-data">No order items found</div>';
+                    content.innerHTML =
+                        '<div class="no-data">No order items found</div>';
                     return;
                 }
 
-                let html = '<div class="table-responsive"><table class="admin-table">';
-                html += '<thead><tr><th>Book Title</th><th>Author</th><th>Category</th><th>Condition</th><th>Price</th><th>Quantity</th><th>Seller</th></tr></thead><tbody>';
-                
+                let html =
+                    '<div class="table-responsive"><table class="admin-table">';
+                html +=
+                    "<thead><tr><th>Book Title</th><th>Author</th><th>Category</th><th>Condition</th><th>Price</th><th>Quantity</th><th>Seller</th></tr></thead><tbody>";
+
                 let totalAmount = 0;
-                items.forEach(item => {
-                    totalAmount += parseFloat(item.price_per_item) * parseInt(item.quantity);
+                items.forEach((item) => {
+                    totalAmount +=
+                        parseFloat(item.price_per_item) *
+                        parseInt(item.quantity);
                     html += `
                         <tr>
                             <td>${item.title}</td>
                             <td>${item.author}</td>
-                            <td>${item.category_name || 'N/A'}</td>
+                            <td>${item.category_name || "N/A"}</td>
                             <td>${item.book_condition}</td>
                             <td>৳${item.price_per_item}</td>
                             <td>${item.quantity}</td>
@@ -454,9 +523,11 @@
                         </tr>
                     `;
                 });
-                
-                html += '</tbody></table></div>';
-                html += `<div class="order-total">Total: ৳${totalAmount.toFixed(2)}</div>`;
+
+                html += "</tbody></table></div>";
+                html += `<div class="order-total">Total: ৳${totalAmount.toFixed(
+                    2
+                )}</div>`;
                 content.innerHTML = html;
             }
 
@@ -466,7 +537,7 @@
                 form.append("order_id", orderId);
                 form.append("status", newStatus);
                 form.append("notes", `Status updated to ${newStatus} by admin`);
-                
+
                 fetch("../../backend/orders/order_manager.php", {
                     method: "POST",
                     body: form,
@@ -474,15 +545,25 @@
                     .then((r) => r.json())
                     .then((d) => {
                         if (d.success) {
-                            showNotification("Order status updated successfully", "success");
+                            showNotification(
+                                "Order status updated successfully",
+                                "success"
+                            );
                             loadOrderDetails(orderId); // Reload order info
                         } else {
-                            showNotification("Failed to update order status: " + (d.message || "Unknown error"), "error");
+                            showNotification(
+                                "Failed to update order status: " +
+                                    (d.message || "Unknown error"),
+                                "error"
+                            );
                         }
                     })
                     .catch((error) => {
                         console.error("Update order status error:", error);
-                        showNotification("Failed to update order status. Please try again.", "error");
+                        showNotification(
+                            "Failed to update order status. Please try again.",
+                            "error"
+                        );
                     });
             }
         </script>

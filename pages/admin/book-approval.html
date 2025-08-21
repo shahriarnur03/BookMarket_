@@ -394,52 +394,8 @@
             </div>
 
             <div class="dashboard-layout">
-                <!-- Dashboard Sidebar -->
-                <div class="dashboard-sidebar">
-                    <div class="sidebar-menu">
-                        <a href="dashboard.html" class="sidebar-menu-item">
-                            <i class="fas fa-chart-line"></i> Dashboard
-                        </a>
-                        <a
-                            href="order-management.html"
-                            class="sidebar-menu-item"
-                        >
-                            <i class="fas fa-shopping-bag"></i> Order Management
-                        </a>
-                        <a
-                            href="book-management.html"
-                            class="sidebar-menu-item"
-                        >
-                            <i class="fas fa-book"></i> Book Management
-                        </a>
-                        <a
-                            href="user-management.html"
-                            class="sidebar-menu-item"
-                        >
-                            <i class="fas fa-users"></i> User Management
-                        </a>
-                        <a
-                            href="book-approval.html"
-                            class="sidebar-menu-item active"
-                        >
-                            <i class="fas fa-check-circle"></i> Book Approval
-                        </a>
-                        <a href="book-upload.html" class="sidebar-menu-item">
-                            <i class="fas fa-upload"></i> Book Upload
-                        </a>
-
-                        <a
-                            href="#"
-                            class="sidebar-menu-item"
-                            id="sidebar-logout"
-                        >
-                            <i class="fas fa-sign-out-alt"></i> Logout
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Dashboard Main Content -->
-                <div class="dashboard-content">
+                <!-- Dashboard Main Content (no sidebar for this page) -->
+                <div class="dashboard-content" style="width: 100%">
                     <div class="section-card">
                         <div class="section-header">
                             <h3 class="section-title">
@@ -770,6 +726,13 @@
                                                 <p><span class="label">Price:</span> ${formatCurrency(
                                                     book.price
                                                 )}</p>
+                                                <p><span class="label">Quantity:</span> ${
+                                                    typeof book.stock_quantity !==
+                                                        "undefined" &&
+                                                    book.stock_quantity !== null
+                                                        ? book.stock_quantity
+                                                        : book.quantity || 1
+                                                }</p>
                                                 <p><span class="label">Seller:</span> ${
                                                     book.seller_name
                                                 }</p>

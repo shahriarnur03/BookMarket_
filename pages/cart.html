@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Shopping Cart - BanglaBook</title>
+        <title>Shopping Cart - BookMarket</title>
         <link rel="stylesheet" href="../css/styles.css" />
         <!-- Additional CSS for Cart page -->
         <style>
@@ -344,98 +344,9 @@
                             <span id="cart-items-count">0 items</span>
                         </div>
 
-                        <div class="cart-item">
-                            <div class="cart-item-image">
-                                <img
-                                    src="../images/b_cover3.png"
-                                    alt="1984"
-                                    onerror="this.src='https://via.placeholder.com/100x150?text=Book Cover'; this.onerror='';"
-                                />
-                            </div>
-                            <div class="cart-item-details">
-                                <div class="cart-item-title">1984</div>
-                                <div class="cart-item-author">
-                                    by George Orwell
-                                </div>
-                                <div class="cart-item-condition">Excellent</div>
-                                <div class="cart-item-seller">
-                                    Sold by: BookLover123
-                                </div>
-                                <div class="cart-item-price" data-price="18.99">
-                                    ৳18.99
-                                </div>
-                                <div class="cart-item-actions">
-                                    <div class="cart-item-quantity">
-                                        <button
-                                            class="quantity-btn decrease-btn"
-                                        >
-                                            -
-                                        </button>
-                                        <input
-                                            type="text"
-                                            class="quantity-input"
-                                            value="1"
-                                            readonly
-                                        />
-                                        <button
-                                            class="quantity-btn increase-btn"
-                                        >
-                                            +
-                                        </button>
-                                    </div>
-                                    <button class="remove-btn">
-                                        <i class="fas fa-trash-alt"></i> Remove
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="cart-item">
-                            <div class="cart-item-image">
-                                <img
-                                    src="../images/b_cover1.jpg"
-                                    alt="The Great Gatsby"
-                                    onerror="this.src='https://via.placeholder.com/100x150?text=Book Cover'; this.onerror='';"
-                                />
-                            </div>
-                            <div class="cart-item-details">
-                                <div class="cart-item-title">
-                                    The Great Gatsby
-                                </div>
-                                <div class="cart-item-author">
-                                    by F. Scott Fitzgerald
-                                </div>
-                                <div class="cart-item-condition">Good</div>
-                                <div class="cart-item-seller">
-                                    Sold by: ClassicBooks
-                                </div>
-                                <div class="cart-item-price" data-price="15.99">
-                                    ৳15.99
-                                </div>
-                                <div class="cart-item-actions">
-                                    <div class="cart-item-quantity">
-                                        <button
-                                            class="quantity-btn decrease-btn"
-                                        >
-                                            -
-                                        </button>
-                                        <input
-                                            type="text"
-                                            class="quantity-input"
-                                            value="1"
-                                            readonly
-                                        />
-                                        <button
-                                            class="quantity-btn increase-btn"
-                                        >
-                                            +
-                                        </button>
-                                    </div>
-                                    <button class="remove-btn">
-                                        <i class="fas fa-trash-alt"></i> Remove
-                                    </button>
-                                </div>
-                            </div>
+                        <!-- Cart items will be loaded dynamically from backend -->
+                        <div id="cart-items-container">
+                            <!-- Dynamic content will be inserted here -->
                         </div>
                     </div>
 
@@ -454,7 +365,7 @@
                             <div class="summary-row">
                                 <div class="summary-label">Subtotal</div>
                                 <div class="summary-value" id="subtotal">
-                                    ৳34.98
+                                    ৳0.00
                                 </div>
                             </div>
                             <div class="summary-row">
@@ -465,12 +376,12 @@
                             </div>
                             <div class="summary-row">
                                 <div class="summary-label">Tax</div>
-                                <div class="summary-value" id="tax">৳1.00</div>
+                                <div class="summary-value" id="tax">৳0.00</div>
                             </div>
                             <div class="summary-row">
                                 <div class="summary-label">Total</div>
                                 <div class="summary-value" id="total">
-                                    ৳45.98
+                                    ৳10.00
                                 </div>
                             </div>
 
@@ -510,7 +421,7 @@
             <div class="footer-container">
                 <div class="footer-top">
                     <div class="footer-column">
-                        <h3>BanglaBook</h3>
+                        <h3>BookMarket</h3>
                         <p>
                             Your one-stop destination for buying and selling
                             books online. Find your next favorite book or give
@@ -555,13 +466,13 @@
                             </li>
                             <li>
                                 <i class="fas fa-envelope"></i>
-                                support@banglabook.com
+                                support@bookmarket.com
                             </li>
                         </ul>
                     </div>
                 </div>
                 <div class="footer-bottom">
-                    <p>&copy; 2023 BanglaBook. All Rights Reserved.</p>
+                    <p>&copy; 2023 BookMarket. All Rights Reserved.</p>
                 </div>
             </div>
         </footer>
@@ -574,9 +485,752 @@
         <script src="../js/auth.js"></script>
         <script src="../js/customer-navbar.js"></script>
         <script>
-            document.addEventListener("DOMContentLoaded", function () {
+            // Global functions accessible from onclick
+            function showNotification(message, type = "info") {
+                const container = document.getElementById(
+                    "notification-container"
+                );
+                const notification = document.createElement("div");
+                notification.className = `notification ${type}`;
+                notification.textContent = message;
+                container.appendChild(notification);
+
+                setTimeout(() => {
+                    notification.remove();
+                }, 5000);
+            }
+
+            function checkAuthenticationAndLoadCart() {
+                console.log("=== CART AUTHENTICATION CHECK START ===");
+                console.log("Checking authentication...");
+
+                // Determine userId using robust multi-source lookup
+                let userId = null;
+                // Method 1: localStorage.bookmarket_user (userId or id)
+                const raw = localStorage.getItem("bookmarket_user");
+                if (raw) {
+                    try {
+                        const u = JSON.parse(raw);
+                        if (u && (u.userId || u.id)) {
+                            userId = u.userId || u.id;
+                            console.log(
+                                "✅ userId from localStorage.bookmarket_user:",
+                                userId
+                            );
+                        }
+                    } catch (e) {
+                        console.warn("Failed to parse bookmarket_user:", e);
+                    }
+                }
+                // Method 2: localStorage.user_id
+                if (!userId) {
+                    const direct = localStorage.getItem("user_id");
+                    if (direct) {
+                        userId = direct;
+                        console.log(
+                            "✅ userId from localStorage.user_id:",
+                            userId
+                        );
+                    }
+                }
+                // Method 3: window.bookmarketAuth
+                if (
+                    !userId &&
+                    window.bookmarketAuth &&
+                    window.bookmarketAuth.isLoggedIn()
+                ) {
+                    userId = window.bookmarketAuth.getUserId();
+                    console.log(
+                        "✅ userId from window.bookmarketAuth:",
+                        userId
+                    );
+                }
+
+                // Check if user is logged in
+                if (!userId) {
+                    console.log("❌ User not logged in, redirecting to login");
+                    showNotification(
+                        "Please login to view your cart",
+                        "warning"
+                    );
+                    setTimeout(() => {
+                        window.location.href = "login.html";
+                    }, 1500);
+                    return;
+                }
+
+                console.log("✅ User is logged in, loading cart for:", userId);
+
                 // Initialize cart display
                 updateCartCount();
+
+                // Load cart data from database
+                loadCartFromDatabase();
+            }
+
+            function loadCartFromDatabase() {
+                console.log("=== LOADING CART FROM DATABASE ===");
+                // Re-resolve userId (same logic) to be safe
+                let uid = null;
+                const raw = localStorage.getItem("bookmarket_user");
+                if (raw) {
+                    try {
+                        const u = JSON.parse(raw);
+                        uid = u && (u.userId || u.id) ? u.userId || u.id : null;
+                    } catch (e) {}
+                }
+                if (!uid) {
+                    const d = localStorage.getItem("user_id");
+                    if (d) uid = d;
+                }
+                if (
+                    !uid &&
+                    window.bookmarketAuth &&
+                    window.bookmarketAuth.isLoggedIn()
+                ) {
+                    uid = window.bookmarketAuth.getUserId();
+                }
+                if (!uid) {
+                    console.error("No userId available");
+                    displayEmptyCart();
+                    return;
+                }
+
+                console.log("Proceeding to fetch cart data for user:", uid);
+
+                // Build absolute API URL to work both from file:// and http:// origins
+                const siteRootPart = window.location.pathname.includes(
+                    "/BookMarket_/"
+                )
+                    ? "/BookMarket_/"
+                    : "/";
+                const apiUrl =
+                    window.location.origin +
+                    siteRootPart +
+                    "backend/cart/cart_manager.php";
+                console.log("Using API URL:", apiUrl);
+
+                const form = new FormData();
+                form.append("action", "get_cart");
+                form.append("user_id", uid);
+
+                console.log("🚀 Making fetch request to:", apiUrl);
+                console.log("📤 Request payload:", {
+                    action: "get_cart",
+                    user_id: uid,
+                });
+
+                fetch(apiUrl, {
+                    method: "POST",
+                    body: form,
+                })
+                    .then((response) => {
+                        console.log("📥 Raw response received:", response);
+                        console.log("📥 Response status:", response.status);
+                        console.log("📥 Response ok:", response.ok);
+                        return response.json();
+                    })
+                    .then((data) => {
+                        console.log("=== CART API RESPONSE ===");
+                        console.log("Response data:", data);
+                        console.log("Success:", data.success);
+                        console.log("Data:", data.data);
+                        console.log(
+                            "Data length:",
+                            data.data ? data.data.length : "undefined"
+                        );
+
+                        if (data.success) {
+                            console.log(
+                                "✅ API call successful, displaying cart items..."
+                            );
+                            displayCartItems(data.data);
+                            updateCartCount();
+                            updateCartTotal();
+                        } else {
+                            console.log("❌ API call failed:", data.message);
+                            showNotification(
+                                data.message || "Failed to load cart",
+                                "error"
+                            );
+                            displayEmptyCart();
+                        }
+                    })
+                    .catch((error) => {
+                        console.error("❌ Fetch error:", error);
+                        showNotification(
+                            "Failed to load cart. Please try again.",
+                            "error"
+                        );
+                        displayEmptyCart();
+                    });
+            }
+
+            function displayCartItems(cartItems) {
+                console.log("=== DISPLAYING CART ITEMS ===");
+                console.log("Cart items received:", cartItems);
+                console.log("Cart items type:", typeof cartItems);
+                console.log(
+                    "Cart items length:",
+                    cartItems ? cartItems.length : "undefined"
+                );
+
+                const cartLayout = document.querySelector(".cart-layout");
+                const cartEmpty = document.querySelector(".cart-empty");
+                const cartItemsContainer = document.getElementById(
+                    "cart-items-container"
+                );
+                const basePath = window.location.pathname.includes(
+                    "/BookMarket_/"
+                )
+                    ? "/BookMarket_/"
+                    : "/";
+                console.log("Base path for assets:", basePath);
+
+                console.log("Cart layout element:", cartLayout);
+                console.log("Cart empty element:", cartEmpty);
+                console.log("Cart items container:", cartItemsContainer);
+
+                if (!cartItems || cartItems.length === 0) {
+                    console.log(
+                        "❌ No cart items to display, showing empty cart"
+                    );
+                    displayEmptyCart();
+                    return;
+                }
+
+                console.log(
+                    `✅ Found ${cartItems.length} cart items, displaying them...`
+                );
+
+                // Show cart layout, hide empty message
+                cartLayout.style.display = "flex";
+                cartEmpty.style.display = "none";
+
+                // Clear existing items
+                cartItemsContainer.innerHTML = "";
+                console.log("Cleared cart items container");
+
+                // Add each cart item
+                cartItems.forEach((item, index) => {
+                    console.log(`Processing item ${index + 1}:`, item);
+
+                    const cartItemHTML = `
+                        <div class="cart-item" data-book-id="${item.book_id}">
+                            <div class="cart-item-image">
+                                <img src="${basePath}${
+                        item.cover_image_path || "images/b_cover1.jpg"
+                    }" alt="${
+                        item.title
+                    }" onerror="this.src='https://via.placeholder.com/100x150?text=Book Cover'; this.onerror='';" />
+                            </div>
+                            <div class="cart-item-details">
+                                <div class="cart-item-title">${item.title}</div>
+                                <div class="cart-item-author">by ${
+                                    item.author
+                                }</div>
+                                <div class="cart-item-condition">${
+                                    item.book_condition
+                                }</div>
+                                <div class="cart-item-price" data-price="${
+                                    item.price
+                                }">৳${parseFloat(item.price).toFixed(2)}</div>
+                                <div class="cart-item-actions">
+                                    <div class="cart-item-quantity">
+                                        <button class="quantity-btn decrease-btn">-</button>
+                                        <input type="number" class="quantity-input" value="${
+                                            item.quantity
+                                        }" min="1" max="99" />
+                                        <button class="quantity-btn increase-btn">+</button>
+                                    </div>
+                                    <button class="remove-btn" onclick="removeFromCart(${
+                                        item.book_id
+                                    })">
+                                        <i class="fas fa-trash-alt"></i> Remove
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+
+                    console.log(`Adding item ${index + 1} HTML to container`);
+                    cartItemsContainer.innerHTML += cartItemHTML;
+                });
+
+                console.log("✅ All cart items added to container");
+                console.log(
+                    "Final container HTML length:",
+                    cartItemsContainer.innerHTML.length
+                );
+
+                // Re-attach event listeners
+                attachCartEventListeners();
+
+                // Update cart totals
+                updateCartTotal();
+            }
+
+            function displayEmptyCart() {
+                const cartLayout = document.querySelector(".cart-layout");
+                const cartEmpty = document.querySelector(".cart-empty");
+
+                cartLayout.style.display = "none";
+                cartEmpty.style.display = "block";
+            }
+
+            function removeFromCart(bookId) {
+                // Get userId from the main authentication check
+                let userId = null;
+
+                // First try to get userId from localStorage
+                const bookmarketUser = localStorage.getItem("bookmarket_user");
+                if (bookmarketUser) {
+                    try {
+                        const userData = JSON.parse(bookmarketUser);
+                        if (userData.userId) {
+                            userId = userData.userId;
+                        }
+                    } catch (e) {
+                        console.error("Error parsing localStorage data:", e);
+                    }
+                }
+
+                // If no userId from localStorage, try authentication system
+                if (!userId) {
+                    if (
+                        window.bookmarketAuth &&
+                        window.bookmarketAuth.isLoggedIn()
+                    ) {
+                        userId = window.bookmarketAuth.getUserId();
+                    }
+                }
+
+                // If still no userId, show error
+                if (!userId) {
+                    showNotification(
+                        "Authentication error. Please login again.",
+                        "error"
+                    );
+                    return;
+                }
+
+                const form = new FormData();
+                form.append("action", "remove_from_cart");
+                form.append("user_id", userId);
+                form.append("book_id", bookId);
+
+                const siteRootPart = window.location.pathname.includes(
+                    "/BookMarket_/"
+                )
+                    ? "/BookMarket_/"
+                    : "/";
+                const apiUrl =
+                    window.location.origin +
+                    siteRootPart +
+                    "backend/cart/cart_manager.php";
+                fetch(apiUrl, {
+                    method: "POST",
+                    body: form,
+                })
+                    .then((response) => response.json())
+                    .then((data) => {
+                        if (data.success) {
+                            showNotification(
+                                "Item removed from cart",
+                                "success"
+                            );
+                            loadCartFromDatabase(); // Reload cart
+                        } else {
+                            showNotification(
+                                data.message || "Failed to remove item",
+                                "error"
+                            );
+                        }
+                    })
+                    .catch((error) => {
+                        console.error("Failed to remove item:", error);
+                        showNotification(
+                            "Failed to remove item. Please try again.",
+                            "error"
+                        );
+                    });
+            }
+
+            function updateCartCount() {
+                const cartItems = document.querySelectorAll(".cart-item");
+                const cartCount = document.querySelector(".cart-count");
+                if (cartCount) {
+                    cartCount.textContent = cartItems.length;
+                }
+
+                // Update cart header
+                const cartHeader = document.querySelector("#cart-header-count");
+                if (cartHeader) {
+                    cartHeader.textContent = `You have ${
+                        cartItems.length
+                    } item${cartItems.length !== 1 ? "s" : ""} in your cart`;
+                }
+
+                // Update cart items count in header
+                const cartItemsCount =
+                    document.querySelector("#cart-items-count");
+                if (cartItemsCount) {
+                    cartItemsCount.textContent = `${cartItems.length} item${
+                        cartItems.length !== 1 ? "s" : ""
+                    }`;
+                }
+            }
+
+            function attachCartEventListeners() {
+                // Quantity buttons
+                const quantityBtns = document.querySelectorAll(".quantity-btn");
+                quantityBtns.forEach((btn) => {
+                    btn.addEventListener("click", function () {
+                        const cartItem = this.closest(".cart-item");
+                        const quantityInput =
+                            cartItem.querySelector(".quantity-input");
+                        let value = parseInt(quantityInput.value);
+
+                        if (this.classList.contains("decrease-btn")) {
+                            value = Math.max(1, value - 1);
+                        } else {
+                            value = Math.min(99, value + 1);
+                        }
+
+                        quantityInput.value = value;
+                        updateItemPrice(cartItem);
+                        updateCartTotal();
+
+                        // Update quantity in database
+                        const bookId = cartItem.dataset.bookId;
+                        updateCartItemQuantity(bookId, value);
+                    });
+                });
+
+                // Remove buttons
+                const removeBtns = document.querySelectorAll(".remove-btn");
+                removeBtns.forEach((btn) => {
+                    btn.addEventListener("click", function () {
+                        const cartItem = this.closest(".cart-item");
+                        const bookId = cartItem.dataset.bookId;
+                        removeFromCart(bookId);
+                    });
+                });
+            }
+
+            function updateCartItemQuantity(bookId, quantity) {
+                // Get userId from the main authentication check
+                let userId = null;
+
+                // First try to get userId from localStorage
+                const bookmarketUser = localStorage.getItem("bookmarket_user");
+                if (bookmarketUser) {
+                    try {
+                        const userData = JSON.parse(bookmarketUser);
+                        if (userData.userId) {
+                            userId = userData.userId;
+                        }
+                    } catch (e) {
+                        console.error("Error parsing localStorage data:", e);
+                    }
+                }
+
+                // If no userId from localStorage, try authentication system
+                if (!userId) {
+                    if (
+                        window.bookmarketAuth &&
+                        window.bookmarketAuth.isLoggedIn()
+                    ) {
+                        userId = window.bookmarketAuth.getUserId();
+                    }
+                }
+
+                // If still no userId, return silently (this shouldn't happen)
+                if (!userId) return;
+
+                const form = new FormData();
+                form.append("action", "update_cart_item");
+                form.append("user_id", userId);
+                form.append("book_id", bookId);
+                form.append("quantity", quantity);
+
+                const siteRootPart = window.location.pathname.includes(
+                    "/BookMarket_/"
+                )
+                    ? "/BookMarket_/"
+                    : "/";
+                const apiUrl =
+                    window.location.origin +
+                    siteRootPart +
+                    "backend/cart/cart_manager.php";
+                fetch(apiUrl, {
+                    method: "POST",
+                    body: form,
+                })
+                    .then((response) => response.json())
+                    .then((data) => {
+                        if (data.success) {
+                            // Quantity updated successfully
+                        } else {
+                            console.error(
+                                "Failed to update quantity:",
+                                data.message
+                            );
+                        }
+                    })
+                    .catch((error) => {
+                        console.error("Failed to update quantity:", error);
+                    });
+            }
+
+            function updateItemPrice(cartItem) {
+                const priceElement = cartItem.querySelector(".cart-item-price");
+                const quantityInput = cartItem.querySelector(".quantity-input");
+                const basePrice = parseFloat(
+                    priceElement.getAttribute("data-price")
+                );
+                const quantity = parseInt(quantityInput.value);
+
+                const totalItemPrice = basePrice * quantity;
+                priceElement.textContent = `৳${totalItemPrice.toFixed(2)}`;
+            }
+
+            function updateCartTotal() {
+                // Calculate subtotal from all items
+                let subtotal = 0;
+                const cartItems = document.querySelectorAll(".cart-item");
+
+                console.log(
+                    "Updating cart total, found items:",
+                    cartItems.length
+                );
+
+                cartItems.forEach((item) => {
+                    const priceElement = item.querySelector(".cart-item-price");
+                    const quantityInput = item.querySelector(".quantity-input");
+
+                    if (priceElement && quantityInput) {
+                        const basePrice = parseFloat(
+                            priceElement.getAttribute("data-price")
+                        );
+                        const quantity = parseInt(quantityInput.value);
+
+                        console.log(
+                            `Item: ${basePrice} x ${quantity} = ${
+                                basePrice * quantity
+                            }`
+                        );
+                        subtotal += basePrice * quantity;
+                    }
+                });
+
+                console.log("Total subtotal:", subtotal);
+
+                // Fixed shipping and tax rates
+                const shipping = 10.0;
+                const taxRate = 0.03; // 3% tax
+                const tax = subtotal * taxRate;
+                const total = subtotal + shipping + tax;
+
+                // Update the summary display
+                const subtotalElement = document.getElementById("subtotal");
+                const shippingElement = document.getElementById("shipping");
+                const taxElement = document.getElementById("tax");
+                const totalElement = document.getElementById("total");
+
+                if (subtotalElement)
+                    subtotalElement.textContent = `৳${subtotal.toFixed(2)}`;
+                if (shippingElement)
+                    shippingElement.textContent = `৳${shipping.toFixed(2)}`;
+                if (taxElement) taxElement.textContent = `৳${tax.toFixed(2)}`;
+                if (totalElement)
+                    totalElement.textContent = `৳${total.toFixed(2)}`;
+
+                console.log("Cart totals updated:", {
+                    subtotal,
+                    shipping,
+                    tax,
+                    total,
+                });
+            }
+
+            // Test function to add items to cart
+            function testAddToCart() {
+                console.log("Testing add to cart...");
+
+                // Get userId from the main authentication check
+                let userId = null;
+
+                // First try to get userId from localStorage
+                const bookmarketUser = localStorage.getItem("bookmarket_user");
+                if (bookmarketUser) {
+                    try {
+                        const userData = JSON.parse(bookmarketUser);
+                        if (userData.userId) {
+                            userId = userData.userId;
+                        }
+                    } catch (e) {
+                        console.error("Error parsing localStorage data:", e);
+                    }
+                }
+
+                // If no userId from localStorage, try authentication system
+                if (!userId) {
+                    if (
+                        window.bookmarketAuth &&
+                        window.bookmarketAuth.isLoggedIn()
+                    ) {
+                        userId = window.bookmarketAuth.getUserId();
+                    }
+                }
+
+                if (!userId) {
+                    showNotification(
+                        "Please login first to test cart functionality",
+                        "warning"
+                    );
+                    return;
+                }
+
+                // Add a test book to cart
+                const formData = new FormData();
+                formData.append("action", "add_to_cart");
+                formData.append("user_id", userId);
+                formData.append("book_id", "1"); // The Great Gatsby
+                formData.append("quantity", "1");
+
+                const siteRootPart = window.location.pathname.includes(
+                    "/BookMarket_/"
+                )
+                    ? "/BookMarket_/"
+                    : "/";
+                const apiUrl =
+                    window.location.origin +
+                    siteRootPart +
+                    "backend/cart/cart_manager.php";
+                fetch(apiUrl, {
+                    method: "POST",
+                    body: formData,
+                })
+                    .then((response) => response.json())
+                    .then((data) => {
+                        if (data.success) {
+                            showNotification(
+                                "Test item added to cart!",
+                                "success"
+                            );
+                            // Reload cart data
+                            loadCartFromDatabase();
+                        } else {
+                            showNotification(
+                                "Failed to add test item: " + data.message,
+                                "error"
+                            );
+                        }
+                    })
+                    .catch((error) => {
+                        console.error("Error adding test item:", error);
+                        showNotification("Error adding test item", "error");
+                    });
+            }
+
+            // Test direct API call to debug the issue
+            function testDirectAPI() {
+                console.log("🧪 Testing direct API call...");
+
+                const siteRootPart = window.location.pathname.includes(
+                    "/BookMarket_/"
+                )
+                    ? "/BookMarket_/"
+                    : "/";
+                const apiUrl =
+                    window.location.origin +
+                    siteRootPart +
+                    "backend/cart/cart_manager.php";
+
+                console.log("🔗 API URL:", apiUrl);
+                console.log("📤 Testing with user_id: 2");
+
+                // Test POST method
+                const formData = new FormData();
+                formData.append("action", "get_cart");
+                formData.append("user_id", "2");
+
+                fetch(apiUrl, {
+                    method: "POST",
+                    body: formData,
+                })
+                    .then((response) => {
+                        console.log(
+                            "📥 POST Response status:",
+                            response.status
+                        );
+                        return response.json();
+                    })
+                    .then((data) => {
+                        console.log("📥 POST Response data:", data);
+                        if (data.success) {
+                            showNotification(
+                                `✅ POST API working! Found ${data.data.length} items`,
+                                "success"
+                            );
+                            // Try to display the items
+                            displayCartItems(data.data);
+                            updateCartCount();
+                            updateCartTotal();
+                        } else {
+                            showNotification(
+                                `❌ POST API failed: ${data.message}`,
+                                "error"
+                            );
+                        }
+                    })
+                    .catch((error) => {
+                        console.error("❌ POST API error:", error);
+                        showNotification(
+                            "❌ POST API error: " + error.message,
+                            "error"
+                        );
+                    });
+
+                // Also test GET method
+                const getUrl = apiUrl + "?action=get_cart&user_id=2";
+                console.log("🔗 GET URL:", getUrl);
+
+                fetch(getUrl)
+                    .then((response) => {
+                        console.log("📥 GET Response status:", response.status);
+                        return response.json();
+                    })
+                    .then((data) => {
+                        console.log("📥 GET Response data:", data);
+                        if (data.success) {
+                            showNotification(
+                                `✅ GET API working! Found ${data.data.length} items`,
+                                "success"
+                            );
+                        } else {
+                            showNotification(
+                                `❌ GET API failed: ${data.message}`,
+                                "error"
+                            );
+                        }
+                    })
+                    .catch((error) => {
+                        console.error("❌ GET API error:", error);
+                        showNotification(
+                            "❌ GET API error: " + error.message,
+                            "error"
+                        );
+                    });
+            }
+
+            // Event listeners for cart functionality
+            document.addEventListener("DOMContentLoaded", function () {
+                // Start after a short delay to ensure auth.js has initialized
+                setTimeout(() => {
+                    checkAuthenticationAndLoadCart();
+                }, 300);
 
                 // Quantity buttons functionality
                 const decreaseBtns = document.querySelectorAll(".decrease-btn");
@@ -670,336 +1324,6 @@
                             window.location.href = "payment.html";
                         }, 1000);
                     });
-                }
-
-                // Load cart data when page loads
-                loadCartFromDatabase();
-
-                // Load cart data from database
-                function loadCartFromDatabase() {
-                    const user = JSON.parse(
-                        localStorage.getItem("bookmarket_user") || "{}"
-                    );
-                    if (!user.userId) {
-                        showNotification(
-                            "Please login to view your cart",
-                            "warning"
-                        );
-                        setTimeout(() => {
-                            window.location.href = "login.html";
-                        }, 1500);
-                        return;
-                    }
-
-                    const form = new FormData();
-                    form.append("action", "get_cart");
-                    form.append("user_id", user.userId);
-
-                    fetch("../backend/cart/cart_manager.php", {
-                        method: "POST",
-                        body: form,
-                    })
-                        .then((response) => response.json())
-                        .then((data) => {
-                            if (data.success) {
-                                displayCartItems(data.data);
-                                updateCartCount();
-                                updateCartTotal();
-                            } else {
-                                showNotification(
-                                    data.message || "Failed to load cart",
-                                    "error"
-                                );
-                                displayEmptyCart();
-                            }
-                        })
-                        .catch((error) => {
-                            console.error("Failed to load cart:", error);
-                            showNotification(
-                                "Failed to load cart. Please try again.",
-                                "error"
-                            );
-                            displayEmptyCart();
-                        });
-                }
-
-                // Display cart items
-                function displayCartItems(cartItems) {
-                    const cartLayout = document.querySelector(".cart-layout");
-                    const cartEmpty = document.querySelector(".cart-empty");
-                    const cartItemsContainer =
-                        document.querySelector(".cart-items");
-
-                    if (!cartItems || cartItems.length === 0) {
-                        displayEmptyCart();
-                        return;
-                    }
-
-                    // Show cart layout, hide empty message
-                    cartLayout.style.display = "flex";
-                    cartEmpty.style.display = "none";
-
-                    // Clear existing items
-                    cartItemsContainer.innerHTML = "";
-
-                    // Add each cart item
-                    cartItems.forEach((item) => {
-                        const cartItemHTML = `
-                        <div class="cart-card">
-                            <div class="cart-item" data-book-id="${
-                                item.book_id
-                            }">
-                                <div class="cart-item-image">
-                                    <img src="../${
-                                        item.cover_image_path ||
-                                        "images/b_cover1.jpg"
-                                    }" alt="${item.title}" />
-                                </div>
-                                <div class="cart-item-details">
-                                    <h4>${item.title}</h4>
-                                    <p>by ${item.author}</p>
-                                    <div class="cart-item-condition">${
-                                        item.book_condition
-                                    }</div>
-                                </div>
-                                <div class="cart-item-quantity">
-                                    <button class="quantity-btn minus">-</button>
-                                    <input type="number" class="quantity-input" value="${
-                                        item.quantity
-                                    }" min="1" max="99" />
-                                    <button class="quantity-btn plus">+</button>
-                                </div>
-                                <div class="cart-item-price" data-price="${
-                                    item.price
-                                }">৳${(item.price * item.quantity).toFixed(
-                            2
-                        )}</div>
-                                <button class="remove-btn" onclick="removeFromCart(${
-                                    item.book_id
-                                })">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
-                        </div>
-                    `;
-                        cartItemsContainer.innerHTML += cartItemHTML;
-                    });
-
-                    // Re-attach event listeners
-                    attachCartEventListeners();
-                }
-
-                // Display empty cart
-                function displayEmptyCart() {
-                    const cartLayout = document.querySelector(".cart-layout");
-                    const cartEmpty = document.querySelector(".cart-empty");
-
-                    cartLayout.style.display = "none";
-                    cartEmpty.style.display = "block";
-                }
-
-                // Remove item from cart
-                function removeFromCart(bookId) {
-                    const user = JSON.parse(
-                        localStorage.getItem("bookmarket_user") || "{}"
-                    );
-                    if (!user.userId) {
-                        showNotification(
-                            "Please login to manage your cart",
-                            "warning"
-                        );
-                        return;
-                    }
-
-                    const form = new FormData();
-                    form.append("action", "remove_from_cart");
-                    form.append("user_id", user.userId);
-                    form.append("book_id", bookId);
-
-                    fetch("../backend/cart/cart_manager.php", {
-                        method: "POST",
-                        body: form,
-                    })
-                        .then((response) => response.json())
-                        .then((data) => {
-                            if (data.success) {
-                                showNotification(
-                                    "Item removed from cart",
-                                    "success"
-                                );
-                                loadCartFromDatabase(); // Reload cart
-                            } else {
-                                showNotification(
-                                    data.message || "Failed to remove item",
-                                    "error"
-                                );
-                            }
-                        })
-                        .catch((error) => {
-                            console.error("Failed to remove item:", error);
-                            showNotification(
-                                "Failed to remove item. Please try again.",
-                                "error"
-                            );
-                        });
-                }
-
-                // Helper functions
-                function updateCartCount() {
-                    const cartItems = document.querySelectorAll(".cart-item");
-                    const cartCount = document.querySelector(".cart-count");
-                    if (cartCount) {
-                        cartCount.textContent = cartItems.length;
-                    }
-
-                    // Update cart header
-                    const cartHeader =
-                        document.querySelector("#cart-header-count");
-                    if (cartHeader) {
-                        cartHeader.textContent = `You have ${
-                            cartItems.length
-                        } item${
-                            cartItems.length !== 1 ? "s" : ""
-                        } in your cart`;
-                    }
-
-                    // Update cart items count in header
-                    const cartItemsCount =
-                        document.querySelector("#cart-items-count");
-                    if (cartItemsCount) {
-                        cartItemsCount.textContent = `${cartItems.length} item${
-                            cartItems.length !== 1 ? "s" : ""
-                        }`;
-                    }
-                }
-
-                // Attach cart event listeners
-                function attachCartEventListeners() {
-                    // Quantity buttons
-                    const quantityBtns =
-                        document.querySelectorAll(".quantity-btn");
-                    quantityBtns.forEach((btn) => {
-                        btn.addEventListener("click", function () {
-                            const cartItem = this.closest(".cart-item");
-                            const quantityInput =
-                                cartItem.querySelector(".quantity-input");
-                            let value = parseInt(quantityInput.value);
-
-                            if (this.classList.contains("minus")) {
-                                value = Math.max(1, value - 1);
-                            } else {
-                                value = Math.min(99, value + 1);
-                            }
-
-                            quantityInput.value = value;
-                            updateItemPrice(cartItem);
-                            updateCartTotal();
-
-                            // Update quantity in database
-                            const bookId = cartItem.dataset.bookId;
-                            updateCartItemQuantity(bookId, value);
-                        });
-                    });
-
-                    // Remove buttons
-                    const removeBtns = document.querySelectorAll(".remove-btn");
-                    removeBtns.forEach((btn) => {
-                        btn.addEventListener("click", function () {
-                            const cartItem = this.closest(".cart-item");
-                            const bookId = cartItem.dataset.bookId;
-                            removeFromCart(bookId);
-                        });
-                    });
-                }
-
-                // Update cart item quantity in database
-                function updateCartItemQuantity(bookId, quantity) {
-                    const user = JSON.parse(
-                        localStorage.getItem("bookmarket_user") || "{}"
-                    );
-                    if (!user.userId) return;
-
-                    const form = new FormData();
-                    form.append("action", "update_cart_item");
-                    form.append("user_id", user.userId);
-                    form.append("book_id", bookId);
-                    form.append("quantity", quantity);
-
-                    fetch("../backend/cart/cart_manager.php", {
-                        method: "POST",
-                        body: form,
-                    })
-                        .then((response) => response.json())
-                        .then((data) => {
-                            if (data.success) {
-                                // Quantity updated successfully
-                            } else {
-                                console.error(
-                                    "Failed to update quantity:",
-                                    data.message
-                                );
-                            }
-                        })
-                        .catch((error) => {
-                            console.error("Failed to update quantity:", error);
-                        });
-                }
-
-                // Update the price for a single item based on quantity
-                function updateItemPrice(cartItem) {
-                    const priceElement =
-                        cartItem.querySelector(".cart-item-price");
-                    const quantityInput =
-                        cartItem.querySelector(".quantity-input");
-                    const basePrice = parseFloat(
-                        priceElement.getAttribute("data-price")
-                    );
-                    const quantity = parseInt(quantityInput.value);
-
-                    const totalItemPrice = basePrice * quantity;
-                    priceElement.textContent = `৳${totalItemPrice.toFixed(2)}`;
-                }
-
-                // Calculate and update the cart totals
-                function updateCartTotal() {
-                    // Calculate subtotal from all items
-                    let subtotal = 0;
-                    const cartItems = document.querySelectorAll(".cart-item");
-
-                    cartItems.forEach((item) => {
-                        const priceElement =
-                            item.querySelector(".cart-item-price");
-                        const quantityInput =
-                            item.querySelector(".quantity-input");
-                        const basePrice = parseFloat(
-                            priceElement.getAttribute("data-price")
-                        );
-                        const quantity = parseInt(quantityInput.value);
-
-                        subtotal += basePrice * quantity;
-                    });
-
-                    // Fixed shipping and tax rates
-                    const shipping = 10.0;
-                    const taxRate = 0.03; // 3% tax
-                    const tax = subtotal * taxRate;
-                    const total = subtotal + shipping + tax;
-
-                    // Update the summary display
-                    document.getElementById(
-                        "subtotal"
-                    ).textContent = `৳${subtotal.toFixed(2)}`;
-                    document.getElementById(
-                        "shipping"
-                    ).textContent = `৳${shipping.toFixed(2)}`;
-                    document.getElementById(
-                        "tax"
-                    ).textContent = `৳${tax.toFixed(2)}`;
-                    document.getElementById(
-                        "total"
-                    ).textContent = `৳${total.toFixed(2)}`;
-
-                    showNotification("Cart updated", "info");
                 }
             });
         </script>

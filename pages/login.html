@@ -419,7 +419,8 @@
                                     const user = data.user;
                                     window.bookmarketAuth.loginUser(
                                         user.username,
-                                        user.user_type
+                                        user.user_type,
+                                        user.id
                                     );
                                     showNotification(data.message, "success");
                                     setTimeout(() => {

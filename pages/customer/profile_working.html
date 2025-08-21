@@ -324,7 +324,10 @@
                         <a href="sales-reports.html" class="sidebar-menu-item">
                             <i class="fas fa-dollar-sign"></i> Sales Reports
                         </a>
-                        <a href="profile.html" class="sidebar-menu-item active">
+                        <a
+                            href="profile_working.html"
+                            class="sidebar-menu-item active"
+                        >
                             <i class="fas fa-user"></i> My Profile
                         </a>
                         <a
@@ -793,87 +796,13 @@
 
         <!-- JavaScript -->
         <script src="../../js/main.js"></script>
-        <script src="../../js/auth.js"></script>
         <script src="../../js/customer-navbar.js"></script>
         <!-- Dashboard specific JavaScript -->
         <script>
             document.addEventListener("DOMContentLoaded", function () {
-                console.log("DOM Content Loaded - Profile Page");
+                console.log("DOM Content Loaded - Working Profile Page");
 
-                // TEMPORARY: Skip authentication check and use default user ID
-                const userId = "2"; // abid@gmail.com - for testing
-                console.log("Using default userId:", userId);
-
-                // TODO: Re-enable authentication check once fixed
-                /*
-                // Check if user is logged in (try both methods)
-                let isUserLoggedIn = false;
-                let userId = null;
-                
-                // Method 1: Try window.bookmarketAuth
-                if (
-                    window.bookmarketAuth &&
-                    window.bookmarketAuth.isLoggedIn()
-                ) {
-                    isUserLoggedIn = true;
-                    userId = window.bookmarketAuth.getUserId();
-                    console.log(
-                        "User logged in via window.bookmarketAuth, userId:",
-                        userId
-                    );
-                }
-                
-                // Method 2: Try global functions
-                if (
-                    !isUserLoggedIn &&
-                    typeof isLoggedIn === "function" &&
-                    isLoggedIn()
-                ) {
-                    isUserLoggedIn = true;
-                    userId = getUserId();
-                    console.log(
-                        "User logged in via global functions, userId:",
-                        userId
-                    );
-                }
-                
-                // Method 3: Check localStorage directly
-                if (!isUserLoggedIn) {
-                    const bookmarketUser =
-                        localStorage.getItem("bookmarket_user");
-                    if (bookmarketUser) {
-                        try {
-                            const userData = JSON.parse(bookmarketUser);
-                            if (userData.userId) {
-                                isUserLoggedIn = true;
-                                userId = userData.userId;
-                                console.log(
-                                    "User logged in via localStorage, userId:",
-                                    userId
-                                );
-                            }
-                        } catch (e) {
-                            console.error(
-                                "Error parsing localStorage data:",
-                                e
-                            );
-                        }
-                    }
-                }
-                
-                if (!isUserLoggedIn || !userId) {
-                    console.log(
-                        "User not logged in or no userId, redirecting to login"
-                    );
-                    window.location.href = "../login.html";
-                    return;
-                }
-                */
-
-                // Load profile data
-                console.log(
-                    "About to call loadProfileData with default userId: 2"
-                );
+                // Load profile data directly without authentication check
                 loadProfileData();
 
                 // Logout functionality
@@ -882,18 +811,9 @@
                     document.getElementById("sidebar-logout");
 
                 function handleLogout() {
-                    if (
-                        window.bookmarketAuth &&
-                        typeof window.bookmarketAuth.logoutUser === "function"
-                    ) {
-                        window.bookmarketAuth.logoutUser();
-                    } else if (typeof logoutUser === "function") {
-                        logoutUser();
-                    } else {
-                        // Fallback logout
-                        localStorage.removeItem("bookmarket_user");
-                        window.location.href = "../../index.html";
-                    }
+                    // Simple logout - clear localStorage and redirect
+                    localStorage.removeItem("bookmarket_user");
+                    window.location.href = "../../index.html";
                 }
 
                 if (logoutBtn) {
@@ -937,15 +857,16 @@
 
                 // Load profile data from backend
                 function loadProfileData() {
-                    console.log(
-                        "loadProfileData called with default userId: 2"
-                    );
+                    console.log("Loading profile data...");
+
+                    // Use a default user ID for testing
+                    const userId = "2"; // abid@gmail.com
 
                     const form = new FormData();
                     form.append("action", "get_profile");
-                    form.append("user_id", "2"); // Use default user ID for testing
+                    form.append("user_id", userId);
 
-                    console.log("Sending request to backend with user_id: 2");
+                    console.log("Sending request to backend with user_id:", userId);
 
                     fetch("../../backend/api/customer_profile.php", {
                         method: "POST",
@@ -1013,35 +934,19 @@
                                     data.message
                                 );
                                 // Show error message to user
-                                document.getElementById(
-                                    "profile-name"
-                                ).textContent = "Error loading profile";
-                                document.getElementById(
-                                    "profile-email"
-                                ).textContent = "Error loading profile";
-                                document.getElementById(
-                                    "profile-phone"
-                                ).textContent = "Error loading profile";
-                                document.getElementById(
-                                    "profile-joined"
-                                ).textContent = "Error loading profile";
+                                document.getElementById("profile-name").textContent = "Error loading profile";
+                                document.getElementById("profile-email").textContent = "Error loading profile";
+                                document.getElementById("profile-phone").textContent = "Error loading profile";
+                                document.getElementById("profile-joined").textContent = "Error loading profile";
                             }
                         })
                         .catch((error) => {
                             console.error("Error loading profile:", error);
                             // Show error message to user
-                            document.getElementById(
-                                "profile-name"
-                            ).textContent = "Error loading profile";
-                            document.getElementById(
-                                "profile-email"
-                            ).textContent = "Error loading profile";
-                            document.getElementById(
-                                "profile-phone"
-                            ).textContent = "Error loading profile";
-                            document.getElementById(
-                                "profile-joined"
-                            ).textContent = "Error loading profile";
+                            document.getElementById("profile-name").textContent = "Error loading profile";
+                            document.getElementById("profile-email").textContent = "Error loading profile";
+                            document.getElementById("profile-phone").textContent = "Error loading profile";
+                            document.getElementById("profile-joined").textContent = "Error loading profile";
                         });
                 }
 
@@ -1062,7 +967,7 @@
 
                         const formData = new FormData();
                         formData.append("action", "update_profile");
-                        formData.append("user_id", "2"); // Use default user ID for testing
+                        formData.append("user_id", "2"); // Use default user ID
                         formData.append(
                             "first_name",
                             document.getElementById("first-name").value
@@ -1124,7 +1029,7 @@
 
                         const formData = new FormData();
                         formData.append("action", "update_profile");
-                        formData.append("user_id", "2"); // Use default user ID for testing
+                        formData.append("user_id", "2"); // Use default user ID
                         formData.append(
                             "first_name",
                             document.getElementById("first-name").value
@@ -1205,7 +1110,7 @@
 
                         const formData = new FormData();
                         formData.append("action", "change_password");
-                        formData.append("user_id", "2"); // Use default user ID for testing
+                        formData.append("user_id", "2"); // Use default user ID
                         formData.append("current_password", currentPassword);
                         formData.append("new_password", newPassword);
 
@@ -1242,6 +1147,7 @@
                                 alert(
                                     "Error changing password. Please try again."
                                 );
+                                );
                             });
                     });
                 }
@@ -1274,7 +1180,7 @@
                             if (password) {
                                 const formData = new FormData();
                                 formData.append("action", "delete_account");
-                                formData.append("user_id", "2"); // Use default user ID for testing
+                                formData.append("user_id", "2"); // Use default user ID
                                 formData.append("password", password);
 
                                 fetch(

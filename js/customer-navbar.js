@@ -37,8 +37,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     <img src="${homePath.replace(
                         "index.html",
                         ""
-                    )}images/bookmarket-logo.png" alt="BanglaBook" onerror="this.src='https://via.placeholder.com/30x30?text=BB'; this.onerror='';">
-                    <a href="${homePath}">BanglaBook</a>
+                    )}images/bookmarket-logo.png" alt="BookMarket" onerror="this.src='https://via.placeholder.com/30x30?text=BM'; this.onerror='';">
+                    <a href="${homePath}">BookMarket</a>
                 </div>
                 <ul class="navbar-menu">
                     <li><a href="${homePath}">Home</a></li>

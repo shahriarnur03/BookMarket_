@@ -280,8 +280,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             break;
 
         case 'get_cart':
+            // Try to read user_id from POST, then from active session
             $userId = $_POST['user_id'] ?? null;
-            
+            if (!$userId && function_exists('isLoggedIn') && isLoggedIn()) {
+                $userId = getCurrentUserId();
+            }
+
             if (!$userId) {
                 echo json_encode([
                     'success' => false,
@@ -289,7 +293,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ]);
                 exit;
             }
-            
+
             $result = $cartManager->getUserCart($userId);
             echo json_encode($result);
             break;
@@ -329,12 +333,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         case 'get_cart_count':
             $userId = $_POST['user_id'] ?? null;
-            
+            if (!$userId && function_exists('isLoggedIn') && isLoggedIn()) {
+                $userId = getCurrentUserId();
+            }
+
             if (!$userId) {
                 echo json_encode(['count' => 0]);
                 exit;
             }
-            
+
             $count = $cartManager->getCartCount($userId);
             echo json_encode(['count' => $count]);
             break;
@@ -361,10 +368,49 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ]);
             break;
     }
+} elseif ($_SERVER['REQUEST_METHOD'] === 'GET') {
+    // Provide simple GET access for read-only actions (useful for debugging)
+    $action = $_GET['action'] ?? '';
+    $cartManager = new CartManager();
+
+    switch ($action) {
+        case 'get_cart':
+            $userId = $_GET['user_id'] ?? null;
+            if (!$userId && function_exists('isLoggedIn') && isLoggedIn()) {
+                $userId = getCurrentUserId();
+            }
+
+            if (!$userId) {
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'User not logged in'
+                ]);
+                exit;
+            }
+
+            echo json_encode($cartManager->getUserCart($userId));
+            break;
+
+        case 'get_cart_count':
+            $userId = $_GET['user_id'] ?? null;
+            if (!$userId && function_exists('isLoggedIn') && isLoggedIn()) {
+                $userId = getCurrentUserId();
+            }
+            $count = $userId ? $cartManager->getCartCount($userId) : 0;
+            echo json_encode(['count' => $count]);
+            break;
+
+        default:
+            echo json_encode([
+                'success' => false,
+                'message' => 'Invalid action'
+            ]);
+            break;
+    }
 } else {
     echo json_encode([
         'success' => false,
-        'message' => 'Only POST method allowed'
+        'message' => 'Only POST/GET methods allowed'
     ]);
 }
 ?>

@@ -192,4 +192,6 @@ CREATE INDEX idx_books_seller ON books(seller_id);
 CREATE INDEX idx_books_price ON books(price);
 CREATE INDEX idx_orders_user ON orders(user_id);
 CREATE INDEX idx_orders_status ON orders(order_status);
-CREATE INDEX idx_cart_user ON cart_items(user_id);
+CREATE INDEX idx_cart_items_cart ON cart_items(cart_id);
+CREATE INDEX idx_cart_items_book ON cart_items(book_id);
+CREATE INDEX idx_cart_user ON cart(user_id);

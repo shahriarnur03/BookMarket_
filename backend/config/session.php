@@ -1,7 +1,7 @@
 <?php
 /**
- * Session Management and Helper Functions
- * This file contains session management functions and utility functions
+ * Session Management and Authentication
+ * Handles user sessions, authentication checks, and user data retrieval
  * 
  * @author BookMarket Team
  * @version 1.0
@@ -13,11 +13,19 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 /**
- * Check if user is logged in
+ * Check if user is currently logged in
  * @return bool True if user is logged in, false otherwise
  */
 function isLoggedIn() {
     return isset($_SESSION['user_id']) && !empty($_SESSION['user_id']);
+}
+
+/**
+ * Check if current user is an admin
+ * @return bool True if user is admin, false otherwise
+ */
+function isAdmin() {
+    return isLoggedIn() && isset($_SESSION['user_type']) && $_SESSION['user_type'] === 'admin';
 }
 
 /**
@@ -37,11 +45,22 @@ function getCurrentUserType() {
 }
 
 /**
- * Check if current user is admin
- * @return bool True if user is admin, false otherwise
+ * Get current user data from session
+ * @return array|null User data array or null if not logged in
  */
-function isAdmin() {
-    return getCurrentUserType() === 'admin';
+function getCurrentUser() {
+    if (!isLoggedIn()) {
+        return null;
+    }
+    
+    return [
+        'id' => $_SESSION['user_id'],
+        'username' => $_SESSION['username'] ?? '',
+        'email' => $_SESSION['email'] ?? '',
+        'user_type' => $_SESSION['user_type'] ?? '',
+        'first_name' => $_SESSION['first_name'] ?? '',
+        'last_name' => $_SESSION['last_name'] ?? ''
+    ];
 }
 
 /**
@@ -59,33 +78,12 @@ function loginUser($userId, $username, $userType) {
 }
 
 /**
- * Logout user and clear session
- * @return void
- */
-function logoutUser() {
-    session_unset();
-    session_destroy();
-}
-
-/**
- * Clean and sanitize input data
+ * Clean and sanitize input data (alias for sanitizeInput for compatibility)
  * @param string $data Input data to clean
  * @return string Cleaned data
  */
 function cleanInput($data) {
-    $data = trim($data);
-    $data = stripslashes($data);
-    $data = htmlspecialchars($data, ENT_QUOTES, 'UTF-8');
-    return $data;
-}
-
-/**
- * Validate email format
- * @param string $email Email to validate
- * @return bool True if valid, false otherwise
- */
-function isValidEmail($email) {
-    return filter_var($email, FILTER_VALIDATE_EMAIL) !== false;
+    return sanitizeInput($data);
 }
 
 /**
@@ -99,42 +97,100 @@ function isValidPhone($phone) {
 }
 
 /**
- * Send JSON response
- * @param array $data Response data
- * @return void
+ * Logout current user
  */
-function sendJSONResponse($data) {
-    header('Content-Type: application/json');
-    echo json_encode($data);
-    exit;
+function logoutUser() {
+    // Clear all session variables
+    $_SESSION = array();
+    
+    // Destroy the session
+    if (ini_get("session.use_cookies")) {
+        $params = session_get_cookie_params();
+        setcookie(session_name(), '', time() - 42000,
+            $params["path"], $params["domain"],
+            $params["secure"], $params["httponly"]
+        );
+    }
+    
+    session_destroy();
 }
 
 /**
- * Send success response
- * @param array $data Response data
+ * Send JSON success response
+ * @param mixed $data Response data
  * @param string $message Success message
- * @return void
+ * @param int $statusCode HTTP status code
  */
-function sendSuccessResponse($data, $message = 'Success') {
-    sendJSONResponse([
+function sendSuccessResponse($data, $message = 'Success', $statusCode = 200) {
+    http_response_code($statusCode);
+    header('Content-Type: application/json');
+    echo json_encode([
         'success' => true,
         'message' => $message,
         'data' => $data
     ]);
+    exit;
 }
 
 /**
- * Send error response
+ * Send JSON error response
  * @param string $message Error message
- * @param int $code HTTP status code
- * @return void
+ * @param int $statusCode HTTP status code
  */
-function sendErrorResponse($message, $code = 400) {
-    http_response_code($code);
-    sendJSONResponse([
+function sendErrorResponse($message = 'Error occurred', $statusCode = 400) {
+    http_response_code($statusCode);
+    header('Content-Type: application/json');
+    echo json_encode([
         'success' => false,
-        'message' => $message
+        'message' => $message,
+        'data' => null
     ]);
+    exit;
+}
+
+/**
+ * Send JSON response (legacy function for compatibility)
+ * @param array $result Result array
+ */
+function sendJSONResponse($result) {
+    header('Content-Type: application/json');
+    echo json_encode($result);
+    exit;
+}
+
+/**
+ * Format currency for display
+ * @param float $amount Amount to format
+ * @param string $currency Currency symbol
+ * @return string Formatted currency string
+ */
+function formatCurrency($amount, $currency = '৳') {
+    return $currency . number_format($amount, 2);
+}
+
+/**
+ * Sanitize input data
+ * @param mixed $data Data to sanitize
+ * @return mixed Sanitized data
+ */
+function sanitizeInput($data) {
+    if (is_array($data)) {
+        foreach ($data as $key => $value) {
+            $data[$key] = sanitizeInput($value);
+        }
+    } else {
+        $data = htmlspecialchars(trim($data), ENT_QUOTES, 'UTF-8');
+    }
+    return $data;
+}
+
+/**
+ * Validate email format
+ * @param string $email Email to validate
+ * @return bool True if valid email, false otherwise
+ */
+function isValidEmail($email) {
+    return filter_var($email, FILTER_VALIDATE_EMAIL) !== false;
 }
 
 /**
@@ -149,16 +205,5 @@ function generateRandomString($length = 10) {
         $randomString .= $characters[rand(0, strlen($characters) - 1)];
     }
     return $randomString;
-}
-
-/**
- * Generate order number
- * @return string Unique order number
- */
-function generateOrderNumber() {
-    $prefix = 'BM';
-    $timestamp = date('YmdHis');
-    $random = generateRandomString(4);
-    return $prefix . $timestamp . $random;
 }
 ?>
