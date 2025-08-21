@@ -590,10 +590,7 @@
 
         <script>
             document.addEventListener("DOMContentLoaded", function () {
-                // Check authentication first
-                checkAdminAuth();
-
-                // Get user ID from URL parameter
+                // Get user ID from URL parameter first
                 const urlParams = new URLSearchParams(window.location.search);
                 const userId = urlParams.get("id");
 
@@ -640,6 +637,9 @@
                             }, 2000);
                         });
                 }
+
+                // Now check authentication after userId is defined
+                checkAdminAuth();
 
                 // Load user details after authentication
                 // loadUserDetails(userId);
@@ -765,7 +765,7 @@
                 if (user.user_type !== "admin") {
                     actions.style.display = "flex";
                     actions.innerHTML = `
-                        <button class="action-button btn-edit" onclick="editUser(${userId})">
+                        <button class="action-button btn-edit" onclick="editUser(${user.id})">
                             <i class="fas fa-edit"></i> Edit User
                         </button>
 

@@ -353,6 +353,15 @@
                 height: 100%;
                 object-fit: cover;
                 transition: transform 0.2s ease;
+                display: block;
+            }
+
+            .book-image img.loading {
+                opacity: 0.7;
+            }
+
+            .book-image img.error {
+                display: none;
             }
 
             .book-card:hover .book-image img {
@@ -362,12 +371,31 @@
             .book-image .placeholder-image {
                 width: 100%;
                 height: 100%;
-                display: flex;
+                display: none;
+                flex-direction: column;
                 align-items: center;
                 justify-content: center;
                 background-color: #f0f0f0;
                 color: #777;
                 font-size: 0.9rem;
+                text-align: center;
+                padding: 1rem;
+            }
+
+            .book-image .placeholder-image.show {
+                display: flex;
+            }
+
+            .book-image .placeholder-image i {
+                font-size: 2rem;
+                margin-bottom: 0.5rem;
+                color: #999;
+            }
+
+            .book-image .placeholder-image span {
+                font-size: 0.8rem;
+                line-height: 1.2;
+                word-break: break-word;
             }
 
             .book-details {
@@ -634,20 +662,6 @@
                             <i class="fas fa-search"></i>
                         </button>
                     </div>
-                    <button
-                        onclick="testBrowseAuth()"
-                        style="
-                            background: #28a745;
-                            color: white;
-                            border: none;
-                            padding: 10px 20px;
-                            border-radius: 4px;
-                            cursor: pointer;
-                            margin-top: 10px;
-                        "
-                    >
-                        🧪 Test: Check Browse Authentication
-                    </button>
                 </div>
 
                 <!-- Filters Section - Full Width -->
@@ -1088,16 +1102,55 @@
                 const card = document.createElement("div");
                 card.className = "book-card";
 
-                const imagePath = book.cover_image_path
-                    ? `../${book.cover_image_path}`
-                    : "../images/b_cover1.jpg"; // Default image
+                // Handle image path - check multiple sources and provide fallbacks
+                let imagePath = "../images/b_cover1.jpg"; // Default fallback
+
+                if (
+                    book.cover_image_path &&
+                    book.cover_image_path.trim() !== ""
+                ) {
+                    // If cover_image_path exists and is not empty, use it
+                    if (book.cover_image_path.startsWith("uploads/")) {
+                        imagePath = `../${book.cover_image_path}`;
+                    } else if (
+                        book.cover_image_path.startsWith("../uploads/")
+                    ) {
+                        imagePath = book.cover_image_path;
+                    } else if (book.cover_image_path.startsWith("images/")) {
+                        // Handle images from the images directory
+                        imagePath = `../${book.cover_image_path}`;
+                    } else {
+                        imagePath = `../uploads/books/${book.cover_image_path}`;
+                    }
+                } else {
+                    // Use a rotating set of default images based on book ID
+                    const defaultImages = [
+                        "../images/b_cover1.jpg",
+                        "../images/b_cover2.jpg",
+                        "../images/b_cover3.png",
+                        "../images/b_cover4.webp",
+                    ];
+                    const imageIndex = (book.id - 1) % defaultImages.length;
+                    imagePath = defaultImages[imageIndex];
+                }
+
+                // Add error handling for images
+                const imageHTML = `
+                    <div class="book-image">
+                        <img src="${imagePath}" 
+                             alt="${book.title}" 
+                             class="book-cover loading"
+                             onerror="this.classList.add('error'); this.nextElementSibling.classList.add('show');"
+                             onload="this.classList.remove('loading'); this.nextElementSibling.classList.remove('show');" />
+                        <div class="placeholder-image">
+                            <i class="fas fa-book"></i>
+                            <span>${book.title}</span>
+                        </div>
+                    </div>
+                `;
 
                 card.innerHTML = `
-                    <div class="book-image">
-                        <img src="${imagePath}" alt="${
-                    book.title
-                }" class="book-cover" />
-                    </div>
+                    ${imageHTML}
                     <div class="book-details">
                         <div class="book-info">
                             <h3>${book.title}</h3>
@@ -1442,115 +1495,6 @@
                     .catch((error) => {
                         console.error("Failed to update cart count:", error);
                     });
-            }
-
-            // Test function to check browse authentication
-            function testBrowseAuth() {
-                console.log("=== TESTING BROWSE AUTHENTICATION ===");
-
-                // Check all localStorage keys
-                console.log(
-                    "All localStorage keys:",
-                    Object.keys(localStorage)
-                );
-
-                // Check localStorage bookmarket_user
-                const bookmarketUser = localStorage.getItem("bookmarket_user");
-                console.log("localStorage bookmarket_user:", bookmarketUser);
-
-                if (bookmarketUser) {
-                    try {
-                        const userData = JSON.parse(bookmarketUser);
-                        console.log("Parsed user data:", userData);
-                        console.log("userData.userId:", userData.userId);
-                        console.log("userData.id:", userData.id);
-                        console.log("userData.username:", userData.username);
-                        console.log("userData.userType:", userData.userType);
-                    } catch (e) {
-                        console.error("❌ Error parsing localStorage data:", e);
-                    }
-                }
-
-                // Check localStorage user_id directly
-                const directUserId = localStorage.getItem("user_id");
-                console.log("localStorage user_id:", directUserId);
-
-                // Check authentication system
-                console.log("window.bookmarketAuth:", window.bookmarketAuth);
-                if (window.bookmarketAuth) {
-                    console.log(
-                        "isLoggedIn():",
-                        window.bookmarketAuth.isLoggedIn()
-                    );
-                    console.log(
-                        "getUserId():",
-                        window.bookmarketAuth.getUserId()
-                    );
-                    console.log(
-                        "getUsername():",
-                        window.bookmarketAuth.getUsername()
-                    );
-                    console.log(
-                        "getUserType():",
-                        window.bookmarketAuth.getUserType()
-                    );
-                }
-
-                // Test authentication logic
-                console.log("=== TESTING AUTHENTICATION LOGIC ===");
-                let testUserId = null;
-                let testAuthSource = "";
-
-                // Test Method 1: localStorage bookmarket_user
-                if (bookmarketUser) {
-                    try {
-                        const userData = JSON.parse(bookmarketUser);
-                        if (userData.userId) {
-                            testUserId = userData.userId;
-                            testAuthSource = "localStorage bookmarket_user";
-                        } else if (userData.id) {
-                            testUserId = userData.id;
-                            testAuthSource =
-                                "localStorage bookmarket_user (id)";
-                        }
-                    } catch (e) {
-                        console.error("Test parsing failed:", e);
-                    }
-                }
-
-                // Test Method 2: localStorage user_id
-                if (!testUserId && directUserId) {
-                    testUserId = directUserId;
-                    testAuthSource = "localStorage user_id";
-                }
-
-                // Test Method 3: window.bookmarketAuth
-                if (
-                    !testUserId &&
-                    window.bookmarketAuth &&
-                    window.bookmarketAuth.isLoggedIn()
-                ) {
-                    testUserId = window.bookmarketAuth.getUserId();
-                    testAuthSource = "window.bookmarketAuth";
-                }
-
-                console.log("=== AUTHENTICATION TEST RESULTS ===");
-                if (testUserId) {
-                    console.log("✅ Authentication successful!");
-                    console.log("User ID:", testUserId);
-                    console.log("Source:", testAuthSource);
-                    showNotification(
-                        `✅ Authentication working! User ID: ${testUserId}`,
-                        "success"
-                    );
-                } else {
-                    console.log("❌ Authentication failed!");
-                    console.log("No user ID found from any source");
-                    showNotification(
-                        "❌ Authentication failed! Please login first.",
-                        "error"
-                    );
-                }
             }
         </script>
     </body>

@@ -8,13 +8,13 @@
         <!-- Additional CSS for My Books page -->
         <style>
             /* My Books Page Specific Styles */
-            .my-books-container {
+            .dashboard-container {
                 max-width: var(--container-width);
                 margin: 2rem auto;
                 padding: 0 1rem;
             }
 
-            .my-books-header {
+            .dashboard-header {
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
@@ -32,22 +32,22 @@
                 color: #666;
             }
 
-            .my-books-actions {
+            .dashboard-actions {
                 display: flex;
                 gap: 1rem;
             }
 
-            .my-books-layout {
+            .dashboard-layout {
                 display: flex;
                 gap: 2rem;
             }
 
-            .my-books-sidebar {
+            .dashboard-sidebar {
                 width: 250px;
                 flex-shrink: 0;
             }
 
-            .my-books-content {
+            .dashboard-content {
                 flex-grow: 1;
             }
 
@@ -102,6 +102,12 @@
                 margin: 0;
                 color: var(--dark-color);
                 font-size: 1.2rem;
+            }
+
+            .book-count {
+                font-size: 0.9rem;
+                color: #666;
+                font-weight: normal;
             }
 
             .section-action {
@@ -176,6 +182,19 @@
                 color: #666;
                 font-size: 0.9rem;
                 margin-bottom: 0.5rem;
+            }
+
+            .book-category {
+                color: #666;
+                font-size: 0.9rem;
+                margin-bottom: 0.5rem;
+                font-style: italic;
+            }
+
+            .book-condition {
+                color: #666;
+                font-size: 0.9rem;
+                margin-bottom: 0.8rem;
             }
 
             .book-price {
@@ -318,12 +337,29 @@
                 margin-right: auto;
             }
 
+            .loading-state {
+                text-align: center;
+                padding: 3rem 1rem;
+                color: #666;
+            }
+
+            .loading-state i {
+                font-size: 2rem;
+                color: var(--primary-color);
+                margin-bottom: 1rem;
+            }
+
+            .loading-state p {
+                margin: 0;
+                font-size: 1.1rem;
+            }
+
             @media screen and (max-width: 992px) {
-                .my-books-layout {
+                .dashboard-layout {
                     flex-direction: column;
                 }
 
-                .my-books-sidebar {
+                .dashboard-sidebar {
                     width: 100%;
                 }
             }
@@ -333,7 +369,7 @@
                     grid-template-columns: 1fr;
                 }
 
-                .my-books-header {
+                .dashboard-header {
                     flex-direction: column;
                     align-items: flex-start;
                 }
@@ -352,23 +388,30 @@
         </nav>
 
         <!-- My Books Content -->
-        <div class="my-books-container">
-            <div class="my-books-header">
+        <div class="dashboard-container">
+            <div class="dashboard-header">
                 <div class="welcome-message">
                     <h1>My Books</h1>
                     <p>Manage your book listings and track approval status</p>
                 </div>
 
-                <div class="my-books-actions">
+                <div class="dashboard-actions">
+                    <button
+                        id="refresh-books"
+                        class="btn btn-secondary"
+                        style="margin-right: 1rem"
+                    >
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
                     <a href="../sell.html" class="btn btn-primary"
                         ><i class="fas fa-plus"></i> Add New Book</a
                     >
                 </div>
             </div>
 
-            <div class="my-books-layout">
-                <!-- My Books Sidebar -->
-                <div class="my-books-sidebar">
+            <div class="dashboard-layout">
+                <!-- Dashboard Sidebar -->
+                <div class="dashboard-sidebar">
                     <div class="sidebar-menu">
                         <a href="dashboard.html" class="sidebar-menu-item">
                             <i class="fas fa-chart-line"></i> Dashboard
@@ -382,6 +425,7 @@
                         >
                             <i class="fas fa-book"></i> My Books
                         </a>
+
                         <a href="sales-reports.html" class="sidebar-menu-item">
                             <i class="fas fa-dollar-sign"></i> Sales Reports
                         </a>
@@ -398,11 +442,14 @@
                     </div>
                 </div>
 
-                <!-- My Books Main Content -->
-                <div class="my-books-content">
+                <!-- Dashboard Main Content -->
+                <div class="dashboard-content">
                     <div class="section-card">
                         <div class="section-header">
-                            <h3 class="section-title">My Book Listings</h3>
+                            <h3 class="section-title">
+                                My Book Listings
+                                <span class="book-count">(0 books)</span>
+                            </h3>
                         </div>
 
                         <div class="filter-tabs">
@@ -425,268 +472,11 @@
 
                         <div class="section-content">
                             <div class="books-grid" id="all-books">
-                                <!-- Book Card - Approved -->
-                                <div class="book-card" data-status="approved">
-                                    <div class="book-image">
-                                        <img
-                                            src="../../images/b_cover1.jpg"
-                                            alt="The Art of Programming"
-                                            class="book-cover"
-                                            onerror="this.src='https://via.placeholder.com/200x250/4A90E2/FFFFFF?text=Book+Cover'; this.onerror='';"
-                                        />
-                                    </div>
-                                    <div class="book-info">
-                                        <h4 class="book-title">
-                                            The Art of Programming
-                                        </h4>
-                                        <div class="book-author">
-                                            by John Smith
-                                        </div>
-                                        <div class="book-price">৳450</div>
-                                        <div class="book-status">
-                                            Status:
-                                            <span
-                                                class="status-badge status-approved"
-                                                >Approved</span
-                                            >
-                                        </div>
-                                        <div class="book-actions">
-                                            <a
-                                                href="../book-details.html"
-                                                class="book-btn view-btn"
-                                                >View</a
-                                            >
-                                            <a
-                                                href="#"
-                                                class="book-btn delete-btn"
-                                                >Delete</a
-                                            >
-                                        </div>
-                                    </div>
+                                <!-- Books will be loaded dynamically from the database -->
+                                <div class="loading-state">
+                                    <i class="fas fa-spinner fa-spin"></i>
+                                    <p>Loading your books...</p>
                                 </div>
-
-                                <!-- Book Card - Pending -->
-                                <div class="book-card" data-status="pending">
-                                    <div class="book-image">
-                                        <img
-                                            src="../../images/b_cover2.jpg"
-                                            alt="Data Structures and Algorithms"
-                                            class="book-cover"
-                                            onerror="this.src='https://via.placeholder.com/200x250/27AE60/FFFFFF?text=Book+Cover'; this.onerror='';"
-                                        />
-                                    </div>
-                                    <div class="book-info">
-                                        <h4 class="book-title">
-                                            Data Structures and Algorithms
-                                        </h4>
-                                        <div class="book-author">
-                                            by Jane Doe
-                                        </div>
-                                        <div class="book-price">৳380</div>
-                                        <div class="book-status">
-                                            Status:
-                                            <span
-                                                class="status-badge status-pending"
-                                                >Pending Approval</span
-                                            >
-                                        </div>
-                                        <div class="book-actions">
-                                            <a
-                                                href="../book-details.html"
-                                                class="book-btn view-btn"
-                                                >View</a
-                                            >
-                                            <a
-                                                href="../sell.html"
-                                                class="book-btn edit-btn"
-                                                >Edit</a
-                                            >
-                                            <a
-                                                href="#"
-                                                class="book-btn delete-btn"
-                                                >Delete</a
-                                            >
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Book Card - Rejected -->
-                                <div class="book-card" data-status="rejected">
-                                    <div class="book-image">
-                                        <img
-                                            src="../../images/b_cover3.png"
-                                            alt="Web Development Basics"
-                                            class="book-cover"
-                                            onerror="this.src='https://via.placeholder.com/200x250/E74C3C/FFFFFF?text=Book+Cover'; this.onerror='';"
-                                        />
-                                    </div>
-                                    <div class="book-info">
-                                        <h4 class="book-title">
-                                            Web Development Basics
-                                        </h4>
-                                        <div class="book-author">
-                                            by Mike Johnson
-                                        </div>
-                                        <div class="book-price">৳300</div>
-                                        <div class="book-status">
-                                            Status:
-                                            <span
-                                                class="status-badge status-rejected"
-                                                >Rejected</span
-                                            >
-                                        </div>
-                                        <div class="book-actions">
-                                            <a
-                                                href="../book-details.html"
-                                                class="book-btn view-btn"
-                                                >View</a
-                                            >
-                                            <a
-                                                href="../sell.html"
-                                                class="book-btn edit-btn"
-                                                >Edit</a
-                                            >
-                                            <a
-                                                href="#"
-                                                class="book-btn delete-btn"
-                                                >Delete</a
-                                            >
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Book Card - Sold -->
-                                <div class="book-card" data-status="sold">
-                                    <div class="book-image">
-                                        <img
-                                            src="../../images/b_cover4.webp"
-                                            alt="Introduction to AI"
-                                            class="book-cover"
-                                            onerror="this.src='https://via.placeholder.com/200x250/9B59B6/FFFFFF?text=Book+Cover'; this.onerror='';"
-                                        />
-                                    </div>
-                                    <div class="book-info">
-                                        <h4 class="book-title">
-                                            Introduction to AI
-                                        </h4>
-                                        <div class="book-author">
-                                            by Sarah Williams
-                                        </div>
-                                        <div class="book-price">৳520</div>
-                                        <div class="book-status">
-                                            Status:
-                                            <span
-                                                class="status-badge status-sold"
-                                                >Sold</span
-                                            >
-                                        </div>
-                                        <div class="book-actions">
-                                            <a
-                                                href="../book-details.html"
-                                                class="book-btn view-btn"
-                                                >View</a
-                                            >
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Book Card - Approved -->
-                                <div class="book-card" data-status="approved">
-                                    <div class="book-image">
-                                        <img
-                                            src="../../images/b_cover1.jpg"
-                                            alt="Machine Learning Fundamentals"
-                                            class="book-cover"
-                                            onerror="this.src='https://via.placeholder.com/200x250/4A90E2/FFFFFF?text=Book+Cover'; this.onerror='';"
-                                        />
-                                    </div>
-                                    <div class="book-info">
-                                        <h4 class="book-title">
-                                            Machine Learning Fundamentals
-                                        </h4>
-                                        <div class="book-author">
-                                            by Robert Brown
-                                        </div>
-                                        <div class="book-price">৳480</div>
-                                        <div class="book-status">
-                                            Status:
-                                            <span
-                                                class="status-badge status-approved"
-                                                >Approved</span
-                                            >
-                                        </div>
-                                        <div class="book-actions">
-                                            <a
-                                                href="../book-details.html"
-                                                class="book-btn view-btn"
-                                                >View</a
-                                            >
-                                            <a
-                                                href="#"
-                                                class="book-btn delete-btn"
-                                                >Delete</a
-                                            >
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Book Card - Pending -->
-                                <div class="book-card" data-status="pending">
-                                    <div class="book-image">
-                                        <img
-                                            src="../../images/b_cover2.jpg"
-                                            alt="Cloud Computing Essentials"
-                                            class="book-cover"
-                                            onerror="this.src='https://via.placeholder.com/200x250/27AE60/FFFFFF?text=Book+Cover'; this.onerror='';"
-                                        />
-                                    </div>
-                                    <div class="book-info">
-                                        <h4 class="book-title">
-                                            Cloud Computing Essentials
-                                        </h4>
-                                        <div class="book-author">
-                                            by Emily Clark
-                                        </div>
-                                        <div class="book-price">৳420</div>
-                                        <div class="book-status">
-                                            Status:
-                                            <span
-                                                class="status-badge status-pending"
-                                                >Pending Approval</span
-                                            >
-                                        </div>
-                                        <div class="book-actions">
-                                            <a
-                                                href="../book-details.html"
-                                                class="book-btn view-btn"
-                                                >View</a
-                                            >
-                                            <a
-                                                href="../sell.html"
-                                                class="book-btn edit-btn"
-                                                >Edit</a
-                                            >
-                                            <a
-                                                href="#"
-                                                class="book-btn delete-btn"
-                                                >Delete</a
-                                            >
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Empty State (Hidden by default) -->
-                            <div class="empty-state" style="display: none">
-                                <i class="fas fa-book"></i>
-                                <h3>No books found</h3>
-                                <p>
-                                    You don't have any books in this category
-                                    yet.
-                                </p>
-                                <a href="../sell.html" class="btn btn-primary"
-                                    >Add a Book</a
-                                >
                             </div>
                         </div>
                     </div>
@@ -762,31 +552,32 @@
         <script src="../../js/main.js"></script>
         <script src="../../js/auth.js"></script>
         <script src="../../js/customer-navbar.js"></script>
+        <script src="../../js/my-books.js"></script>
+        <!-- My Books specific JavaScript -->
         <script>
             document.addEventListener("DOMContentLoaded", function () {
-                // Logout functionality
-                const logoutBtn = document.getElementById("logout-btn");
+                // Handle sidebar logout
                 const sidebarLogout = document.getElementById("sidebar-logout");
-
-                if (logoutBtn) {
-                    logoutBtn.addEventListener("click", function (e) {
-                        e.preventDefault();
-                        showNotification("Logged out successfully!", "success");
-                        setTimeout(() => {
-                            window.location.href = "../../index.html";
-                        }, 1500);
-                    });
-                }
-
                 if (sidebarLogout) {
                     sidebarLogout.addEventListener("click", function (e) {
                         e.preventDefault();
-                        showNotification("Logged out successfully!", "success");
-                        setTimeout(() => {
-                            window.location.href = "../../index.html";
-                        }, 1500);
+                        if (
+                            window.bookmarketAuth &&
+                            window.bookmarketAuth.logoutUser
+                        ) {
+                            window.bookmarketAuth.logoutUser();
+                        } else {
+                            // Fallback logout
+                            localStorage.removeItem("bookmarket_user");
+                            window.location.href = "../login.html";
+                        }
                     });
                 }
+            });
+        </script>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                // Filter tabs functionality
 
                 // Filter tabs functionality
                 const filterTabs = document.querySelectorAll(".filter-tab");

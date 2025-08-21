@@ -90,31 +90,43 @@
 
             .stats-cards {
                 display: grid;
-                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-                gap: 1.5rem;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 2rem;
                 margin-bottom: 2rem;
+                max-width: 1200px;
+                margin-left: auto;
+                margin-right: auto;
             }
 
             .stat-card {
                 background-color: white;
-                border-radius: 8px;
-                padding: 1.5rem;
-                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+                border-radius: 12px;
+                padding: 2rem 1.5rem;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
                 display: flex;
                 flex-direction: column;
                 align-items: center;
                 text-align: center;
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
+                min-height: 180px;
+                justify-content: center;
+            }
+
+            .stat-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
             }
 
             .stat-icon {
-                width: 60px;
-                height: 60px;
+                width: 70px;
+                height: 70px;
                 border-radius: 50%;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                font-size: 1.5rem;
-                margin-bottom: 1rem;
+                font-size: 1.8rem;
+                margin-bottom: 1.5rem;
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             }
 
             .stat-icon.purchases {
@@ -132,21 +144,19 @@
                 color: var(--secondary-color);
             }
 
-            .stat-icon.rating {
-                background-color: rgba(243, 156, 18, 0.1);
-                color: var(--warning-color);
-            }
-
             .stat-value {
-                font-size: 1.8rem;
+                font-size: 2.2rem;
                 font-weight: 700;
-                margin-bottom: 0.5rem;
+                margin-bottom: 0.8rem;
                 color: var(--dark-color);
+                line-height: 1.2;
             }
 
             .stat-label {
-                font-size: 0.9rem;
+                font-size: 1rem;
                 color: #666;
+                font-weight: 500;
+                letter-spacing: 0.5px;
             }
 
             .section-card {
@@ -354,6 +364,70 @@
                 align-items: center;
                 justify-content: center;
                 color: #777;
+                position: relative;
+            }
+
+            .charts-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+                gap: 1.5rem;
+                margin-bottom: 2rem;
+            }
+
+            .chart-card {
+                min-height: 400px;
+            }
+
+            .chart-container canvas {
+                max-width: 100%;
+                height: auto !important;
+            }
+
+            /* Enhanced chart styling */
+            .chart-container {
+                position: relative;
+            }
+
+            /* Custom tooltip styling for better readability */
+            .chartjs-tooltip {
+                background: rgba(0, 0, 0, 0.9) !important;
+                border-radius: 8px !important;
+                padding: 12px !important;
+                font-size: 14px !important;
+                line-height: 1.4 !important;
+            }
+
+            /* Chart card enhancements */
+            .chart-card {
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
+            }
+
+            .chart-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            }
+
+            /* Chart loading states */
+            .chart-container .empty-state {
+                text-align: center;
+                padding: 2rem 0;
+                color: #777;
+            }
+
+            .chart-container .empty-state i {
+                font-size: 3rem;
+                color: #ddd;
+                margin-bottom: 1rem;
+            }
+
+            .chart-container .empty-state h3 {
+                margin-bottom: 0.5rem;
+                color: var(--dark-color);
+            }
+
+            .chart-container .empty-state p {
+                color: #666;
+                font-size: 0.9rem;
             }
 
             .empty-state {
@@ -370,6 +444,23 @@
 
             .empty-state p {
                 margin-bottom: 1.5rem;
+            }
+
+            .loading-state {
+                text-align: center;
+                padding: 2rem 0;
+                color: #777;
+            }
+
+            .loading-state i {
+                font-size: 2rem;
+                color: var(--primary-color);
+                margin-bottom: 1rem;
+            }
+
+            .loading-state p {
+                margin: 0;
+                font-size: 1rem;
             }
 
             .table-responsive {
@@ -390,6 +481,30 @@
             @media screen and (max-width: 768px) {
                 .stats-cards {
                     grid-template-columns: repeat(2, 1fr);
+                    gap: 1.5rem;
+                    max-width: 600px;
+                }
+
+                .stat-card:last-child {
+                    grid-column: 1 / -1;
+                    max-width: 280px;
+                    margin: 0 auto;
+                }
+
+                .stat-card {
+                    min-height: 160px;
+                    padding: 1.5rem;
+                }
+
+                .stat-icon {
+                    width: 60px;
+                    height: 60px;
+                    font-size: 1.5rem;
+                    margin-bottom: 1rem;
+                }
+
+                .stat-value {
+                    font-size: 2rem;
                 }
 
                 .books-grid {
@@ -405,6 +520,28 @@
             @media screen and (max-width: 576px) {
                 .stats-cards {
                     grid-template-columns: 1fr;
+                    gap: 1.5rem;
+                    max-width: 320px;
+                }
+
+                .stat-card {
+                    min-height: 140px;
+                    padding: 1.5rem 1rem;
+                }
+
+                .stat-icon {
+                    width: 55px;
+                    height: 55px;
+                    font-size: 1.3rem;
+                    margin-bottom: 0.8rem;
+                }
+
+                .stat-value {
+                    font-size: 1.8rem;
+                }
+
+                .stat-label {
+                    font-size: 0.9rem;
                 }
 
                 .books-grid {
@@ -422,6 +559,8 @@
             rel="stylesheet"
             href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
         />
+        <!-- Chart.js for beautiful charts -->
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     </head>
     <body>
         <!-- Navbar (Common Customer Navbar) -->
@@ -433,17 +572,8 @@
         <div class="dashboard-container">
             <div class="dashboard-header">
                 <div class="welcome-message">
-                    <h1>Welcome, Customer Name</h1>
+                    <h1>Welcome, <span id="customer-name">Customer</span></h1>
                     <p>Here's an overview of your activity on BookMarket</p>
-                </div>
-
-                <div class="dashboard-actions">
-                    <a href="../sell.html" class="btn btn-primary"
-                        ><i class="fas fa-plus"></i> Add New Book</a
-                    >
-                    <a href="../browse.html" class="btn btn-secondary"
-                        ><i class="fas fa-book"></i> Browse Books</a
-                    >
                 </div>
             </div>
 
@@ -459,6 +589,9 @@
                         </a>
                         <a href="my-orders.html" class="sidebar-menu-item">
                             <i class="fas fa-shopping-bag"></i> My Orders
+                        </a>
+                        <a href="my-books.html" class="sidebar-menu-item">
+                            <i class="fas fa-book"></i> My Books
                         </a>
 
                         <a href="sales-reports.html" class="sidebar-menu-item">
@@ -485,7 +618,9 @@
                             <div class="stat-icon purchases">
                                 <i class="fas fa-shopping-bag"></i>
                             </div>
-                            <div class="stat-value">15</div>
+                            <div class="stat-value" id="purchases-stat">
+                                <i class="fas fa-spinner fa-spin"></i>
+                            </div>
                             <div class="stat-label">Total Purchases</div>
                         </div>
 
@@ -493,7 +628,9 @@
                             <div class="stat-icon earnings">
                                 <i class="fas fa-dollar-sign"></i>
                             </div>
-                            <div class="stat-value">৳5,250</div>
+                            <div class="stat-value" id="earnings-stat">
+                                <i class="fas fa-spinner fa-spin"></i>
+                            </div>
                             <div class="stat-label">Total Earnings</div>
                         </div>
 
@@ -501,34 +638,85 @@
                             <div class="stat-icon books">
                                 <i class="fas fa-book"></i>
                             </div>
-                            <div class="stat-value">8</div>
-                            <div class="stat-label">Books Listed</div>
-                        </div>
-
-                        <div class="stat-card">
-                            <div class="stat-icon rating">
-                                <i class="fas fa-star"></i>
+                            <div class="stat-value" id="books-stat">
+                                <i class="fas fa-spinner fa-spin"></i>
                             </div>
-                            <div class="stat-value">4.8</div>
-                            <div class="stat-label">Seller Rating</div>
+                            <div class="stat-label">Books Listed</div>
                         </div>
                     </div>
 
-                    <!-- Sales Overview Chart -->
-                    <div class="section-card">
-                        <div class="section-header">
-                            <h3 class="section-title">Sales Overview</h3>
-                            <a href="sales-reports.html" class="section-action"
-                                >Detailed Report</a
-                            >
+                    <!-- Charts Section -->
+                    <div class="charts-grid">
+                        <!-- Sales Trend Chart -->
+                        <div class="section-card chart-card">
+                            <div class="section-header">
+                                <h3 class="section-title">Sales Trend</h3>
+                                <a
+                                    href="sales-reports.html"
+                                    class="section-action"
+                                    >Detailed Report</a
+                                >
+                            </div>
+                            <div class="section-content">
+                                <div class="chart-container">
+                                    <canvas id="salesTrendChart"></canvas>
+                                </div>
+                            </div>
                         </div>
 
-                        <div class="section-content">
-                            <div class="chart-container">
-                                <!-- Chart will be loaded here with backend integration -->
-                                <div>
-                                    Sales chart will be displayed here with
-                                    backend integration
+                        <!-- Book Status Distribution -->
+                        <div class="section-card chart-card">
+                            <div class="section-header">
+                                <h3 class="section-title">
+                                    Book Status Distribution
+                                </h3>
+                                <a href="my-books.html" class="section-action"
+                                    >View All Books</a
+                                >
+                            </div>
+                            <div class="section-content">
+                                <div class="chart-container">
+                                    <canvas id="bookStatusChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Monthly Performance -->
+                        <div class="section-card chart-card">
+                            <div class="section-header">
+                                <h3 class="section-title">
+                                    Monthly Performance
+                                </h3>
+                                <a
+                                    href="sales-reports.html"
+                                    class="section-action"
+                                    >View Report</a
+                                >
+                            </div>
+                            <div class="section-content">
+                                <div class="chart-container">
+                                    <canvas
+                                        id="monthlyPerformanceChart"
+                                    ></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Category Performance -->
+                        <div class="section-card chart-card">
+                            <div class="section-header">
+                                <h3 class="section-title">
+                                    Top Categories by Value
+                                </h3>
+                                <a href="my-books.html" class="section-action"
+                                    >View Books</a
+                                >
+                            </div>
+                            <div class="section-content">
+                                <div class="chart-container">
+                                    <canvas
+                                        id="categoryPerformanceChart"
+                                    ></canvas>
                                 </div>
                             </div>
                         </div>
@@ -602,69 +790,27 @@
         <script src="../../js/main.js"></script>
         <script src="../../js/auth.js"></script>
         <script src="../../js/customer-navbar.js"></script>
+        <script src="../../js/customer-dashboard.js"></script>
         <!-- Dashboard specific JavaScript -->
         <script>
             document.addEventListener("DOMContentLoaded", function () {
-                // Logout functionality
-                const logoutBtn = document.getElementById("logout-btn");
-                const sidebarLogoutBtn =
-                    document.getElementById("sidebar-logout");
-
-                function handleLogout() {
-                    // This will be connected to backend later
-                    alert(
-                        "Logout functionality will be implemented with the backend."
-                    );
-                    // Redirect to home page
-                    // window.location.href = '../../index.html';
-                }
-
-                if (logoutBtn) {
-                    logoutBtn.addEventListener("click", function (e) {
+                // Handle sidebar logout
+                const sidebarLogout = document.getElementById("sidebar-logout");
+                if (sidebarLogout) {
+                    sidebarLogout.addEventListener("click", function (e) {
                         e.preventDefault();
-                        handleLogout();
+                        if (
+                            window.bookmarketAuth &&
+                            window.bookmarketAuth.logoutUser
+                        ) {
+                            window.bookmarketAuth.logoutUser();
+                        } else {
+                            // Fallback logout
+                            localStorage.removeItem("bookmarket_user");
+                            window.location.href = "../login.html";
+                        }
                     });
                 }
-
-                if (sidebarLogoutBtn) {
-                    sidebarLogoutBtn.addEventListener("click", function (e) {
-                        e.preventDefault();
-                        handleLogout();
-                    });
-                }
-
-                // Book action buttons (only need delete button handling now)
-                const deleteButtons = document.querySelectorAll(".delete-btn");
-
-                deleteButtons.forEach((button) => {
-                    if (!button.disabled) {
-                        button.addEventListener("click", function () {
-                            // This will be connected to backend later
-                            const confirmDelete = confirm(
-                                "Are you sure you want to delete this book?"
-                            );
-
-                            if (confirmDelete) {
-                                alert(
-                                    "Delete functionality will be implemented with the backend."
-                                );
-                            }
-                        });
-                    }
-                });
-
-                // Order view buttons
-                const actionButtons =
-                    document.querySelectorAll(".action-button");
-
-                actionButtons.forEach((button) => {
-                    button.addEventListener("click", function () {
-                        // This will be connected to backend later
-                        alert(
-                            "View details functionality will be implemented with the backend."
-                        );
-                    });
-                });
             });
         </script>
     </body>

@@ -216,6 +216,29 @@
                 border-color: var(--primary-color);
             }
 
+            .pagination-button:disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+            }
+
+            .pagination-button:disabled:hover {
+                background-color: #f5f5f5;
+                color: #666;
+            }
+
+            .pagination-info {
+                margin-left: 1rem;
+                color: #666;
+                font-size: 0.9rem;
+                display: flex;
+                align-items: center;
+            }
+
+            .fa-spinner {
+                color: var(--primary-color);
+                font-size: 1.5rem;
+            }
+
             /* Responsive styles */
             @media screen and (max-width: 992px) {
                 .dashboard-layout {
@@ -271,12 +294,7 @@
                         <a href="my-books.html" class="sidebar-menu-item">
                             <i class="fas fa-book"></i> My Books
                         </a>
-                        <a
-                            href="pending-approvals.html"
-                            class="sidebar-menu-item"
-                        >
-                            <i class="fas fa-clock"></i> Pending Approvals
-                        </a>
+
                         <a href="sales-reports.html" class="sidebar-menu-item">
                             <i class="fas fa-dollar-sign"></i> Sales Reports
                         </a>
@@ -320,18 +338,8 @@
                             </div>
 
                             <!-- Pagination -->
-                            <div class="pagination">
-                                <button class="pagination-button">
-                                    <i class="fas fa-chevron-left"></i>
-                                </button>
-                                <button class="pagination-button active">
-                                    1
-                                </button>
-                                <button class="pagination-button">2</button>
-                                <button class="pagination-button">3</button>
-                                <button class="pagination-button">
-                                    <i class="fas fa-chevron-right"></i>
-                                </button>
+                            <div class="pagination" style="display: none">
+                                <!-- Pagination will be dynamically generated here -->
                             </div>
                         </div>
                     </div>
@@ -404,6 +412,28 @@
         <script src="../../js/main.js"></script>
         <script src="../../js/auth.js"></script>
         <script src="../../js/customer-navbar.js"></script>
+        <!-- My Orders specific JavaScript -->
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                // Handle sidebar logout
+                const sidebarLogout = document.getElementById("sidebar-logout");
+                if (sidebarLogout) {
+                    sidebarLogout.addEventListener("click", function (e) {
+                        e.preventDefault();
+                        if (
+                            window.bookmarketAuth &&
+                            window.bookmarketAuth.logoutUser
+                        ) {
+                            window.bookmarketAuth.logoutUser();
+                        } else {
+                            // Fallback logout
+                            localStorage.removeItem("bookmarket_user");
+                            window.location.href = "../login.html";
+                        }
+                    });
+                }
+            });
+        </script>
         <!-- Dashboard specific JavaScript -->
         <script>
             function getBaseApiUrl() {
@@ -415,7 +445,10 @@
                 return window.location.origin + siteRootPart;
             }
 
-            async function loadOrders() {
+            let currentPage = 1;
+            const ordersPerPage = 5;
+
+            async function loadOrders(page = 1) {
                 // Resolve user id
                 let userId = null;
                 try {
@@ -439,9 +472,14 @@
                     return;
                 }
 
+                currentPage = page;
+                const offset = (page - 1) * ordersPerPage;
+
                 const form = new FormData();
                 form.append("action", "get_user_orders");
                 form.append("user_id", userId);
+                form.append("limit", ordersPerPage);
+                form.append("offset", offset);
 
                 const apiUrl =
                     getBaseApiUrl() + "backend/orders/order_manager.php";
@@ -453,22 +491,32 @@
                     const data = await res.json();
                     if (data.success) {
                         renderOrders(data.data || []);
+                        updatePagination(data.total_count || 0, page);
                     } else {
                         renderOrders([]);
+                        updatePagination(0, 1);
                     }
                 } catch (e) {
                     renderOrders([]);
+                    updatePagination(0, 1);
                 }
             }
 
             function renderOrders(orders) {
                 const tbody = document.getElementById("orders-tbody");
                 tbody.innerHTML = "";
+
                 if (!orders || orders.length === 0) {
-                    tbody.innerHTML =
-                        '<tr><td colspan="6">No orders yet.</td></tr>';
+                    if (currentPage === 1) {
+                        tbody.innerHTML =
+                            '<tr><td colspan="6">No orders yet.</td></tr>';
+                    } else {
+                        tbody.innerHTML =
+                            '<tr><td colspan="6">No more orders on this page.</td></tr>';
+                    }
                     return;
                 }
+
                 orders.forEach((o) => {
                     const date = new Date(o.order_date).toLocaleDateString(
                         "en-US",
@@ -502,8 +550,106 @@
                 });
             }
 
+            function updatePagination(totalCount, currentPage) {
+                const pagination = document.querySelector(".pagination");
+
+                // For now, show pagination if we're not on page 1 or if we have orders
+                const hasOrders = document.querySelector(
+                    "#orders-tbody tr:not([colspan])"
+                );
+                if (!totalCount || totalCount === 0) {
+                    if (currentPage === 1 && !hasOrders) {
+                        pagination.style.display = "none";
+                        return;
+                    }
+                    // Estimate total count for pagination display
+                    totalCount = Math.max(
+                        currentPage * ordersPerPage,
+                        ordersPerPage
+                    );
+                }
+
+                const totalPages = Math.ceil(totalCount / ordersPerPage);
+
+                if (totalPages <= 1) {
+                    pagination.style.display = "none";
+                    return;
+                }
+
+                pagination.style.display = "flex";
+
+                // Clear existing pagination
+                pagination.innerHTML = "";
+
+                // Previous button
+                const prevBtn = document.createElement("button");
+                prevBtn.className = "pagination-button";
+                prevBtn.innerHTML = '<i class="fas fa-chevron-left"></i>';
+                prevBtn.disabled = currentPage === 1;
+                prevBtn.addEventListener("click", () => {
+                    if (currentPage > 1) {
+                        loadOrders(currentPage - 1);
+                    }
+                });
+                pagination.appendChild(prevBtn);
+
+                // Page numbers
+                const maxVisiblePages = 5;
+                let startPage = Math.max(
+                    1,
+                    currentPage - Math.floor(maxVisiblePages / 2)
+                );
+                let endPage = Math.min(
+                    totalPages,
+                    startPage + maxVisiblePages - 1
+                );
+
+                // Adjust start page if we're near the end
+                if (endPage - startPage + 1 < maxVisiblePages) {
+                    startPage = Math.max(1, endPage - maxVisiblePages + 1);
+                }
+
+                for (let i = startPage; i <= endPage; i++) {
+                    const pageBtn = document.createElement("button");
+                    pageBtn.className = `pagination-button ${
+                        i === currentPage ? "active" : ""
+                    }`;
+                    pageBtn.textContent = i;
+                    pageBtn.addEventListener("click", () => {
+                        loadOrders(i);
+                    });
+                    pagination.appendChild(pageBtn);
+                }
+
+                // Next button
+                const nextBtn = document.createElement("button");
+                nextBtn.className = "pagination-button";
+                nextBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
+                nextBtn.disabled = currentPage === totalPages;
+                nextBtn.addEventListener("click", () => {
+                    if (currentPage < totalPages) {
+                        loadOrders(currentPage + 1);
+                    }
+                });
+                pagination.appendChild(nextBtn);
+
+                // Add page info
+                const pageInfo = document.createElement("div");
+                pageInfo.className = "pagination-info";
+                pageInfo.style.cssText =
+                    "margin-left: 1rem; color: #666; font-size: 0.9rem; display: flex; align-items: center;";
+                pageInfo.innerHTML = `Page ${currentPage} of ${totalPages}`;
+                pagination.appendChild(pageInfo);
+            }
+
             document.addEventListener("DOMContentLoaded", function () {
-                loadOrders();
+                // Show loading state
+                const tbody = document.getElementById("orders-tbody");
+                tbody.innerHTML =
+                    '<tr><td colspan="6" style="text-align: center; padding: 2rem;"><i class="fas fa-spinner fa-spin"></i> Loading orders...</td></tr>';
+
+                // Load first page
+                loadOrders(1);
             });
         </script>
     </body>

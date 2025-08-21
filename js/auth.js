@@ -61,6 +61,17 @@ function getBasePath() {
     }
 }
 
+// Get base API URL for backend calls
+function getBaseApiUrl() {
+    // Always return the correct base URL for the BookMarket_ project
+    const baseUrl = window.location.origin + "/BookMarket_/";
+    console.log("🔧 getBaseApiUrl() called:");
+    console.log("  - window.location.origin:", window.location.origin);
+    console.log("  - window.location.pathname:", window.location.pathname);
+    console.log("  - baseUrl:", baseUrl);
+    return baseUrl;
+}
+
 // Logout user
 function logoutUser() {
     localStorage.removeItem("bookmarket_user");
@@ -221,7 +232,14 @@ document.addEventListener("DOMContentLoaded", function () {
         form.append("action", "get_cart_count");
         form.append("user_id", user.userId);
 
-        fetch("../backend/cart/cart_manager.php", {
+        const apiUrl = getBaseApiUrl() + "backend/cart/cart_manager.php";
+
+        console.log("🔗 Cart API URL:", apiUrl);
+        console.log("📍 Current location:", window.location.href);
+        console.log("🌐 Base API URL:", getBaseApiUrl());
+        console.log("🔧 Auth.js version: 2.1 - Simplified cart API paths");
+
+        fetch(apiUrl, {
             method: "POST",
             body: form,
         })

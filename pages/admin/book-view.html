@@ -105,22 +105,163 @@
 
             .image-grid {
                 display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-                gap: 1rem;
+                grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+                gap: 2rem;
                 margin-top: 1rem;
             }
 
             .book-image {
+                position: relative;
                 width: 100%;
-                height: 200px;
-                background-color: #f0f0f0;
-                border-radius: 8px;
+                height: 400px;
+                background-color: #f8f9fa;
+                border-radius: 12px;
+                overflow: visible;
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+                transition: all 0.3s ease;
+                border: 1px solid #e9ecef;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                color: #666;
-                font-weight: bold;
-                border: 2px dashed #ddd;
+                padding: 15px;
+            }
+
+            .book-image:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            }
+
+            .book-image img {
+                width: 100%;
+                height: 100%;
+                object-fit: contain;
+                border-radius: 12px;
+                transition: transform 0.3s ease;
+                background-color: #f8f9fa;
+                padding: 10px;
+            }
+
+            .book-image:hover img {
+                transform: scale(1.1);
+                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            }
+
+            .book-image:hover {
+                transform: translateY(-8px);
+                box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+                z-index: 10;
+            }
+
+            .book-image.cover-image {
+                grid-column: span 1;
+                height: 450px;
+                border: 3px solid var(--primary-color);
+                box-shadow: 0 6px 20px rgba(74, 111, 165, 0.2);
+                background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            }
+
+            .book-image.cover-image::before {
+                content: "Cover Image";
+                position: absolute;
+                top: 10px;
+                left: 10px;
+                background: rgba(74, 111, 165, 0.9);
+                color: white;
+                padding: 4px 8px;
+                border-radius: 4px;
+                font-size: 0.7rem;
+                font-weight: 600;
+                z-index: 2;
+            }
+
+            .book-image.fallback-text {
+                color: #6c757d;
+                font-size: 0.9rem;
+                text-align: center;
+                padding: 2rem;
+                background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            }
+
+            .book-image.fallback-text::before {
+                content: "📚";
+                font-size: 2rem;
+                display: block;
+                margin-bottom: 0.5rem;
+            }
+
+            .book-image.loading {
+                position: relative;
+            }
+
+            .book-image.loading::after {
+                content: "";
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                width: 30px;
+                height: 30px;
+                margin: -15px 0 0 -15px;
+                border: 3px solid #e9ecef;
+                border-top: 3px solid var(--primary-color);
+                border-radius: 50%;
+                animation: spin 1s linear infinite;
+            }
+
+            @keyframes spin {
+                0% {
+                    transform: rotate(0deg);
+                }
+                100% {
+                    transform: rotate(360deg);
+                }
+            }
+
+            .image-caption {
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                background: rgba(0, 0, 0, 0.7);
+                color: white;
+                padding: 0.5rem;
+                font-size: 0.8rem;
+                text-align: center;
+                opacity: 0;
+                transition: opacity 0.3s ease;
+            }
+
+            .book-image:hover .image-caption {
+                opacity: 1;
+            }
+
+            /* Responsive adjustments */
+            @media screen and (max-width: 768px) {
+                .image-grid {
+                    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                    gap: 1.5rem;
+                }
+
+                .book-image {
+                    height: 350px;
+                }
+
+                .book-image.cover-image {
+                    height: 400px;
+                }
+            }
+
+            @media screen and (max-width: 480px) {
+                .image-grid {
+                    grid-template-columns: 1fr;
+                }
+
+                .book-image {
+                    height: 300px;
+                }
+
+                .book-image.cover-image {
+                    height: 350px;
+                }
             }
 
             .book-description {
@@ -227,7 +368,21 @@
 
                     <div class="book-info-grid">
                         <div class="info-section">
-                            <h3>Basic Information</h3>
+                            <h3
+                                style="
+                                    margin-bottom: 1rem;
+                                    color: var(--dark-color);
+                                    border-bottom: 2px solid
+                                        var(--primary-color);
+                                    padding-bottom: 0.5rem;
+                                "
+                            >
+                                <i
+                                    class="fas fa-info-circle"
+                                    style="margin-right: 0.5rem"
+                                ></i>
+                                Basic Information
+                            </h3>
                             <div class="info-item">
                                 <span class="info-label">Book ID:</span>
                                 <span class="info-value" id="book-id"
@@ -261,7 +416,21 @@
                         </div>
 
                         <div class="info-section">
-                            <h3>Seller Information</h3>
+                            <h3
+                                style="
+                                    margin-bottom: 1rem;
+                                    color: var(--dark-color);
+                                    border-bottom: 2px solid
+                                        var(--primary-color);
+                                    padding-bottom: 0.5rem;
+                                "
+                            >
+                                <i
+                                    class="fas fa-user"
+                                    style="margin-right: 0.5rem"
+                                ></i>
+                                Seller Information
+                            </h3>
                             <div class="info-item">
                                 <span class="info-label">Seller Name:</span>
                                 <span class="info-value" id="seller-name"
@@ -290,16 +459,74 @@
                     </div>
 
                     <div class="book-description">
-                        <h3>Description</h3>
+                        <h3
+                            style="
+                                margin-bottom: 1rem;
+                                color: var(--dark-color);
+                                border-bottom: 2px solid var(--primary-color);
+                                padding-bottom: 0.5rem;
+                            "
+                        >
+                            <i
+                                class="fas fa-align-left"
+                                style="margin-right: 0.5rem"
+                            ></i>
+                            Description
+                        </h3>
                         <div class="description-text" id="book-description">
-                            <p>Loading...</p>
+                            <div
+                                style="
+                                    text-align: center;
+                                    padding: 2rem;
+                                    color: #666;
+                                "
+                            >
+                                <i
+                                    class="fas fa-spinner fa-spin"
+                                    style="
+                                        font-size: 1.5rem;
+                                        margin-bottom: 0.5rem;
+                                    "
+                                ></i>
+                                <div>Loading description...</div>
+                            </div>
                         </div>
                     </div>
 
                     <div class="book-images">
-                        <h3>Book Images</h3>
+                        <h3
+                            style="
+                                margin-bottom: 1rem;
+                                color: var(--dark-color);
+                                border-bottom: 2px solid var(--primary-color);
+                                padding-bottom: 0.5rem;
+                            "
+                        >
+                            <i
+                                class="fas fa-images"
+                                style="margin-right: 0.5rem"
+                            ></i>
+                            Book Images
+                        </h3>
                         <div class="image-grid" id="book-images">
-                            <div class="book-image">Loading...</div>
+                            <div class="book-image loading">
+                                <div
+                                    style="
+                                        text-align: center;
+                                        padding: 2rem;
+                                        color: #666;
+                                    "
+                                >
+                                    <i
+                                        class="fas fa-spinner fa-spin"
+                                        style="
+                                            font-size: 1.5rem;
+                                            margin-bottom: 0.5rem;
+                                        "
+                                    ></i>
+                                    <div>Loading images...</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -511,35 +738,107 @@
                 const imagesContainer = document.getElementById("book-images");
                 imagesContainer.innerHTML = "";
 
+                // Display cover image first
                 if (book.cover_image_path) {
-                    const coverImage = document.createElement("div");
-                    coverImage.className = "book-image";
-                    coverImage.innerHTML = `<img src="../../${book.cover_image_path}" alt="Cover" style="max-width: 100%; height: auto;">`;
+                    const coverImage = createImageElement(
+                        book.cover_image_path,
+                        "Book Cover",
+                        true
+                    );
                     imagesContainer.appendChild(coverImage);
                 }
 
+                // Display additional images
                 if (book.additional_images) {
                     try {
                         const additionalImages = JSON.parse(
                             book.additional_images
                         );
                         if (Array.isArray(additionalImages)) {
-                            additionalImages.forEach((imagePath) => {
-                                const imageDiv = document.createElement("div");
-                                imageDiv.className = "book-image";
-                                imageDiv.innerHTML = `<img src="../../${imagePath}" alt="Additional" style="max-width: 100%; height: auto;">`;
+                            additionalImages.forEach((imagePath, index) => {
+                                const imageDiv = createImageElement(
+                                    imagePath,
+                                    `Additional Image ${index + 1}`,
+                                    false
+                                );
                                 imagesContainer.appendChild(imageDiv);
                             });
                         }
                     } catch (e) {
-                        console.log("No additional images");
+                        console.log("No additional images or invalid JSON");
                     }
                 }
 
+                // Show fallback if no images
                 if (imagesContainer.children.length === 0) {
-                    imagesContainer.innerHTML =
-                        "<div class='book-image'>No images available</div>";
+                    const fallbackDiv = document.createElement("div");
+                    fallbackDiv.className = "book-image fallback-text";
+                    fallbackDiv.innerHTML = "No images available";
+                    imagesContainer.appendChild(fallbackDiv);
                 }
+            }
+
+            // Create image element with proper styling and error handling
+            function createImageElement(imagePath, altText, isCover = false) {
+                const imageDiv = document.createElement("div");
+                imageDiv.className = isCover
+                    ? "book-image cover-image loading"
+                    : "book-image loading";
+
+                const img = document.createElement("img");
+                img.src = `../../${imagePath}`;
+                img.alt = altText;
+                img.style.display = "none"; // Initially hidden
+                img.style.maxWidth = "100%";
+                img.style.maxHeight = "100%";
+
+                // Add image caption
+                const caption = document.createElement("div");
+                caption.className = "image-caption";
+                caption.textContent = isCover
+                    ? "Cover Image"
+                    : "Additional Image";
+
+                imageDiv.appendChild(img);
+                imageDiv.appendChild(caption);
+
+                // Handle image load
+                img.onload = function () {
+                    imageDiv.classList.remove("loading");
+                    img.style.display = "block";
+
+                    // Add success indicator
+                    const successIndicator = document.createElement("div");
+                    successIndicator.style.cssText = `
+                        position: absolute;
+                        top: 10px;
+                        right: 10px;
+                        background: rgba(39, 174, 96, 0.9);
+                        color: white;
+                        padding: 4px 8px;
+                        border-radius: 4px;
+                        font-size: 0.7rem;
+                        font-weight: 600;
+                        z-index: 2;
+                    `;
+                    successIndicator.textContent = "✓ Loaded";
+                    imageDiv.appendChild(successIndicator);
+                };
+
+                // Handle image error
+                img.onerror = function () {
+                    imageDiv.classList.remove("loading");
+                    imageDiv.classList.add("fallback-text");
+                    imageDiv.innerHTML = `
+                        <div style="text-align: center; padding: 2rem;">
+                            <div style="font-size: 2rem; margin-bottom: 0.5rem;">📚</div>
+                            <div>Image not available</div>
+                            <div style="font-size: 0.8rem; margin-top: 0.5rem; color: #999;">${altText}</div>
+                        </div>
+                    `;
+                };
+
+                return imageDiv;
             }
 
             // Delete book

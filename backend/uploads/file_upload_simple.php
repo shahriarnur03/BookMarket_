@@ -87,36 +87,54 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $fileExtension = pathinfo($fileName, PATHINFO_EXTENSION);
                     $uniqueFileName = 'file_' . time() . '_' . bin2hex(random_bytes(8)) . '.' . $fileExtension;
                     
-                    // Create upload directory if it doesn't exist
-                    $uploadDir = dirname(dirname(dirname(__DIR__))) . '/uploads/books/';
+                                                    // Create upload directory if it doesn't exist
+                $uploadDir = '/Applications/XAMPP/xamppfiles/htdocs/BookMarket_/uploads/books/';
+                error_log("Upload directory path: $uploadDir");
+                
+                if (!is_dir($uploadDir)) {
+                    error_log("Creating upload directory: $uploadDir");
+                    $result = mkdir($uploadDir, 0755, true);
+                    error_log("Directory creation result: " . ($result ? 'success' : 'failed'));
+                } else {
+                    error_log("Upload directory already exists: $uploadDir");
+                }
                     
-                    if (!is_dir($uploadDir)) {
-                        mkdir($uploadDir, 0755, true);
-                    }
-                    
-                    // Determine upload path
-                    $uploadPath = $uploadDir . $uniqueFileName;
-                    
-                    // Move uploaded file
-                    if (move_uploaded_file($fileTmpName, $uploadPath)) {
-                        $uploadedFiles[] = [
-                            'original_name' => $fileName,
-                            'file_name' => $uniqueFileName,
-                            'file_path' => 'uploads/books/' . $uniqueFileName,
-                            'file_size' => $fileSize,
-                            'file_type' => $fileType
-                        ];
-                    } else {
-                        $errors[] = $fileName . ': Failed to move uploaded file';
-                    }
+                                    // Determine upload path
+                $uploadPath = $uploadDir . $uniqueFileName;
+                error_log("Full upload path: $uploadPath");
+                error_log("Temp file path: $fileTmpName");
+                
+                // Move uploaded file
+                if (move_uploaded_file($fileTmpName, $uploadPath)) {
+                    error_log("File moved successfully to: $uploadPath");
+                    $uploadedFiles[] = [
+                        'original_name' => $fileName,
+                        'file_name' => $uniqueFileName,
+                        'file_path' => 'uploads/books/' . $uniqueFileName,
+                        'file_size' => $fileSize,
+                        'file_type' => $fileType
+                    ];
+                } else {
+                    $errorMsg = $fileName . ': Failed to move uploaded file';
+                    error_log("File move failed: $errorMsg");
+                    error_log("PHP error: " . error_get_last()['message'] ?? 'No error info');
+                    $errors[] = $errorMsg;
+                }
                 }
                 
                 if (empty($uploadedFiles)) {
-                    // Allow empty uploads for admin book creation
+                    // No files uploaded successfully, return error
+                    error_log("No files uploaded successfully");
+                    $errorMessage = 'File upload failed. ';
+                    if (!empty($errors)) {
+                        $errorMessage .= 'Errors: ' . implode(', ', $errors);
+                    }
+                    
                     echo json_encode([
-                        'success' => true,
-                        'message' => 'No files uploaded (optional)',
-                        'files' => []
+                        'success' => false,
+                        'message' => $errorMessage,
+                        'files' => [],
+                        'errors' => $errors
                     ]);
                 } else {
                     $response = [
@@ -130,6 +148,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         $response['errors'] = $errors;
                     }
                     
+                    error_log("Upload response: " . json_encode($response));
                     echo json_encode($response);
                 }
                 break;

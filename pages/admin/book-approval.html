@@ -679,8 +679,8 @@
                     const form = new FormData();
                     form.append("action", "get_all_books");
                     form.append("status", "pending");
-                    form.append("page", page);
                     form.append("limit", 8); // Items per page
+                    form.append("offset", (page - 1) * 8); // Calculate offset from page
 
                     if (filters.category)
                         form.append("category_id", filters.category);

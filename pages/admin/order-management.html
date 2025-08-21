@@ -218,6 +218,32 @@
                 background-color: #3a5a80;
             }
 
+            .delivered-notice {
+                color: #27ae60;
+                font-weight: 600;
+                text-align: center;
+                padding: 0.5rem;
+                background: rgba(39, 174, 96, 0.1);
+                border-radius: 4px;
+                border: 1px solid rgba(39, 174, 96, 0.2);
+            }
+
+            .delivered-notice i {
+                margin-right: 0.5rem;
+                color: #27ae60;
+            }
+
+            .btn-update:disabled {
+                background-color: #bdc3c7;
+                cursor: not-allowed;
+                opacity: 0.7;
+            }
+
+            .btn-update:disabled:hover {
+                background-color: #bdc3c7;
+                transform: none;
+            }
+
             .status-badge {
                 display: inline-block;
                 padding: 0.4rem 0.8rem;
@@ -707,10 +733,12 @@
                                 <div class="search-box">
                                     <input
                                         type="text"
+                                        id="search-orders"
+                                        name="search_orders"
                                         class="search-input"
                                         placeholder="Search by order ID, customer name..."
                                     />
-                                    <button class="search-button">
+                                    <button type="button" class="search-button">
                                         <i class="fas fa-search"></i>
                                     </button>
                                 </div>
@@ -720,7 +748,10 @@
                                         <label for="order-status"
                                             >Order Status</label
                                         >
-                                        <select id="order-status">
+                                        <select
+                                            id="order-status"
+                                            name="order_status"
+                                        >
                                             <option value="">All Status</option>
                                             <option value="pending">
                                                 Pending
@@ -745,6 +776,7 @@
                                         <input
                                             type="date"
                                             id="date-from"
+                                            name="date_from"
                                             style="
                                                 width: 100%;
                                                 padding: 0.6rem;
@@ -760,6 +792,7 @@
                                         <input
                                             type="date"
                                             id="date-to"
+                                            name="date_to"
                                             style="
                                                 width: 100%;
                                                 padding: 0.6rem;
@@ -773,12 +806,14 @@
 
                                 <div class="filter-buttons">
                                     <button
+                                        type="button"
                                         class="btn btn-secondary"
                                         id="reset-filters"
                                     >
                                         Reset Filters
                                     </button>
                                     <button
+                                        type="button"
                                         class="btn btn-primary"
                                         id="apply-filters"
                                     >
@@ -884,7 +919,47 @@
         <script src="../../js/admin-navbar.js"></script>
         <!-- Admin Dashboard specific JavaScript -->
         <script>
+            // Check admin authentication first
+            function checkAdminAuth() {
+                console.log("Checking admin authentication...");
+
+                const form = new FormData();
+                form.append("action", "check_admin_auth");
+
+                fetch("../../backend/auth/user_auth.php", {
+                    method: "POST",
+                    body: form,
+                    credentials: "same-origin",
+                })
+                    .then((response) => response.json())
+                    .then((data) => {
+                        console.log("Auth response:", data);
+                        if (!data.success) {
+                            console.log(
+                                "Authentication failed - redirecting to login"
+                            );
+                            window.location.href = "login.html";
+                            return;
+                        }
+                        console.log("Authentication successful - continuing");
+                        // User is authenticated, continue loading the page
+                        return true;
+                    })
+                    .catch((error) => {
+                        console.error("Auth check error:", error);
+                        console.log(
+                            "Authentication error - redirecting to login"
+                        );
+                        window.location.href = "login.html";
+                    });
+            }
+
             document.addEventListener("DOMContentLoaded", function () {
+                // Check admin authentication first
+                checkAdminAuth();
+
+                // Note: Authentication is now async, so we'll continue loading
+                // The auth check will redirect if needed
                 // Logout functionality
                 const logoutBtn = document.getElementById("logout-btn");
                 const sidebarLogoutBtn =
@@ -897,6 +972,7 @@
                     fetch("../../backend/auth/user_auth.php", {
                         method: "POST",
                         body: form,
+                        credentials: "same-origin",
                     })
                         .then((response) => response.json())
                         .then((data) => {
@@ -1025,6 +1101,16 @@
                     currentPage = page;
                     currentFilters = filters;
 
+                    console.log("Loading orders with auth check...");
+                    console.log(
+                        "localStorage isLoggedIn:",
+                        localStorage.getItem("isLoggedIn")
+                    );
+                    console.log(
+                        "localStorage userType:",
+                        localStorage.getItem("userType")
+                    );
+
                     const form = new FormData();
                     form.append("action", "get_recent_orders");
                     form.append("page", page);
@@ -1039,20 +1125,51 @@
                     fetch("../../backend/orders/order_manager.php", {
                         method: "POST",
                         body: form,
+                        credentials: "same-origin",
                     })
-                        .then((response) => response.json())
+                        .then((response) => {
+                            console.log("Response status:", response.status);
+                            if (response.status === 403) {
+                                throw new Error(
+                                    "Access forbidden - please log in as admin"
+                                );
+                            }
+                            if (!response.ok) {
+                                throw new Error(
+                                    `HTTP error! status: ${response.status}`
+                                );
+                            }
+                            return response.json();
+                        })
                         .then((data) => {
                             const grid = document.getElementById("orders-grid");
                             grid.innerHTML = "";
 
                             if (data.success && Array.isArray(data.data)) {
+                                console.log("Orders data received:", data.data);
                                 data.data.forEach((order) => {
+                                    console.log("Processing order:", order);
+                                    // Ensure we have a valid order ID
+                                    const orderId =
+                                        order.id ||
+                                        order.order_id ||
+                                        order.order_number;
+                                    if (!orderId) {
+                                        console.error(
+                                            "Order missing ID:",
+                                            order
+                                        );
+                                        return; // Skip this order
+                                    }
+
                                     const card = document.createElement("div");
                                     card.className = "order-card";
                                     card.innerHTML = `
                                         <div class="order-header">
                                             <h4>Order ${
-                                                order.order_number || order.id
+                                                order.order_number ||
+                                                order.id ||
+                                                orderId
                                             }</h4>
                                             <div class="order-status">
                                                 ${getStatusBadge(
@@ -1072,16 +1189,11 @@
                                             <p><strong>Date:</strong> ${getOrderDateDisplay(
                                                 order
                                             )}</p>
-                                            <p><strong>Items:</strong> ${getItemsCount(
-                                                order
-                                            )} item(s)</p>
                                         </div>
                                         <div class="order-actions">
                                             <div class="status-update">
-                                                <label>Update Status:</label>
-                                                <select class="status-select" data-order-id="${
-                                                    order.id
-                                                }">
+                                                <label for="status-${orderId}">Update Status:</label>
+                                                <select id="status-${orderId}" class="status-select" data-order-id="${orderId}">
                                                     <option value="Pending" ${
                                                         order.order_status ===
                                                         "Pending"
@@ -1114,11 +1226,16 @@
                                                     }>Cancelled</option>
                                                 </select>
                                             </div>
-                                            <button class="btn btn-primary btn-update" data-order-id="${
-                                                order.id
-                                            }">
-                                                <i class="fas fa-save"></i> Update
-                                            </button>
+                                                                                         ${
+                                                                                             order.order_status ===
+                                                                                             "Delivered"
+                                                                                                 ? `<div class="delivered-notice" style="color: #27ae60; font-weight: 600; text-align: center; padding: 0.5rem; background: rgba(39, 174, 96, 0.1); border-radius: 4px;">
+                                                         <i class="fas fa-check-circle"></i> Order Delivered
+                                                     </div>`
+                                                                                                 : `<button class="btn btn-primary btn-update" data-order-id="${orderId}">
+                                                         <i class="fas fa-save"></i> Update
+                                                     </button>`
+                                                                                         }
                                         </div>
                                     `;
                                     grid.appendChild(card);
@@ -1133,7 +1250,32 @@
                                 // Re-attach event listeners
                                 attachOrderListeners();
                             } else {
-                                grid.innerHTML = "<p>No orders found</p>";
+                                grid.innerHTML = `
+                                    <div style="text-align: center; padding: 2rem; color: #666;">
+                                        <p>No orders found</p>
+                                        <button type="button" class="btn btn-primary" id="create-test-order" style="margin-top: 1rem;">
+                                            <i class="fas fa-plus"></i> Create Test Order
+                                        </button>
+                                    </div>
+                                `;
+
+                                // Add event listener for test order creation
+                                const createTestOrderBtn =
+                                    document.getElementById(
+                                        "create-test-order"
+                                    );
+                                if (createTestOrderBtn) {
+                                    createTestOrderBtn.addEventListener(
+                                        "click",
+                                        function () {
+                                            showNotification(
+                                                "Test order functionality removed. Orders will appear here once created by customers.",
+                                                "info"
+                                            );
+                                        }
+                                    );
+                                }
+
                                 updatePagination(1, 1);
                             }
                         })
@@ -1230,10 +1372,43 @@
                     updateButtons.forEach((button) => {
                         button.addEventListener("click", function () {
                             const orderId = this.getAttribute("data-order-id");
+                            console.log(
+                                "Update button clicked for order ID:",
+                                orderId
+                            );
+
+                            if (!orderId || orderId === "undefined") {
+                                console.error("Invalid order ID:", orderId);
+                                showNotification(
+                                    "Error: Invalid order ID",
+                                    "error"
+                                );
+                                return;
+                            }
+
                             const statusSelect = document.querySelector(
                                 `.status-select[data-order-id="${orderId}"]`
                             );
+
+                            if (!statusSelect) {
+                                console.error(
+                                    "Status select not found for order ID:",
+                                    orderId
+                                );
+                                showNotification(
+                                    "Error: Status select not found",
+                                    "error"
+                                );
+                                return;
+                            }
+
                             const newStatus = statusSelect.value;
+                            console.log(
+                                "Updating order",
+                                orderId,
+                                "to status:",
+                                newStatus
+                            );
 
                             if (
                                 confirm(
@@ -1248,26 +1423,54 @@
 
                 // Update order status
                 function updateOrderStatus(orderId, newStatus) {
+                    console.log("Updating order status:", {
+                        orderId,
+                        newStatus,
+                    });
+
                     const form = new FormData();
                     form.append("action", "update_order_status");
                     form.append("order_id", orderId);
                     form.append("status", newStatus);
 
+                    // Show loading state
+                    const updateButton = document.querySelector(
+                        `[data-order-id="${orderId}"]`
+                    );
+                    if (updateButton) {
+                        updateButton.disabled = true;
+                        updateButton.innerHTML =
+                            '<i class="fas fa-spinner fa-spin"></i> Updating...';
+                    }
+
                     fetch("../../backend/orders/order_manager.php", {
                         method: "POST",
                         body: form,
+                        credentials: "same-origin",
                     })
-                        .then((response) => response.json())
+                        .then((response) => {
+                            console.log("Response status:", response.status);
+                            if (!response.ok) {
+                                throw new Error(
+                                    `HTTP error! status: ${response.status}`
+                                );
+                            }
+                            return response.json();
+                        })
                         .then((data) => {
+                            console.log("Response data:", data);
                             if (data.success) {
                                 showNotification(
                                     `Order status updated to ${newStatus}`,
                                     "success"
                                 );
-                                loadOrders(currentPage, currentFilters); // Reload current page
+                                // Reload current page to reflect changes
+                                loadOrders(currentPage, currentFilters);
                             } else {
                                 showNotification(
-                                    `Failed to update order status: ${data.message}`,
+                                    `Failed to update order status: ${
+                                        data.message || "Unknown error"
+                                    }`,
                                     "error"
                                 );
                             }
@@ -1278,9 +1481,17 @@
                                 error
                             );
                             showNotification(
-                                "Error updating order status",
+                                `Failed to update order status: ${error.message}`,
                                 "error"
                             );
+                        })
+                        .finally(() => {
+                            // Reset button state
+                            if (updateButton) {
+                                updateButton.disabled = false;
+                                updateButton.innerHTML =
+                                    '<i class="fas fa-save"></i> Update';
+                            }
                         });
                 }
 

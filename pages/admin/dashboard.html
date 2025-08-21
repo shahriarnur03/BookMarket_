@@ -353,7 +353,10 @@
                 </div>
 
                 <div class="dashboard-actions">
-                    <a href="book-management.html" class="btn btn-primary"
+                    <a href="login.html" class="btn btn-primary">
+                        <i class="fas fa-sign-in-alt"></i> Admin Login
+                    </a>
+                    <a href="book-management.html" class="btn btn-secondary"
                         ><i class="fas fa-book"></i> Book Management</a
                     >
                     <a href="user-management.html" class="btn btn-secondary"
@@ -600,14 +603,8 @@
                         .then((r) => r.json())
                         .then((d) => {
                             if (!d.success) {
-                                showNotification(
-                                    "Access denied. Please login as admin.",
-                                    "error"
-                                );
-                                setTimeout(() => {
-                                    window.location.href =
-                                        "../../pages/login.html";
-                                }, 2000);
+                                // Redirect to admin login immediately
+                                window.location.href = "login.html";
                                 return;
                             }
                             // User is authenticated, continue loading dashboard
@@ -615,13 +612,8 @@
                         })
                         .catch((error) => {
                             console.error("Auth check error:", error);
-                            showNotification(
-                                "Authentication failed. Please login again.",
-                                "error"
-                            );
-                            setTimeout(() => {
-                                window.location.href = "../../pages/login.html";
-                            }, 2000);
+                            // Redirect to admin login immediately
+                            window.location.href = "login.html";
                         });
                 }
 

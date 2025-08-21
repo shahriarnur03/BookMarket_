@@ -81,6 +81,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 
             case 'add_book':
                 try {
+                    // Log all received data for debugging
+                    error_log("Received POST data: " . json_encode($_POST));
+                    error_log("Cover image path: " . ($_POST['cover_image_path'] ?? 'NOT SET'));
+                    error_log("Additional images: " . ($_POST['additional_images'] ?? 'NOT SET'));
+                    error_log("Stock quantity: " . ($_POST['stock_quantity'] ?? 'NOT SET'));
+                    
+                    // Validate cover image path
+                    if (empty($_POST['cover_image_path'])) {
+                        echo json_encode([
+                            'success' => false,
+                            'message' => 'Cover image is required. Please upload an image first.'
+                        ]);
+                        exit;
+                    }
+                    
                     // Validate required fields
                     $requiredFields = ['title', 'author', 'price', 'book_condition', 'category_id'];
                     foreach ($requiredFields as $field) {
@@ -167,8 +182,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     
                     // Insert new book
                     $bookId = $db->insert(
-                        "INSERT INTO books (title, author, isbn, description, price, book_condition, cover_image_path, additional_images, seller_id, category_id, status) 
-                         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'approved')",
+                        "INSERT INTO books (title, author, isbn, description, price, book_condition, cover_image_path, additional_images, seller_id, category_id, status, stock_quantity) 
+                         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'approved', ?)",
                         [
                             $_POST['title'],
                             $_POST['author'],
@@ -179,7 +194,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             $_POST['cover_image_path'] ?? '',
                             $_POST['additional_images'] ?? '',
                             $adminSellerId,
-                            $_POST['category_id']
+                            $_POST['category_id'],
+                            intval($_POST['stock_quantity'] ?? 1)
                         ]
                     );
                     

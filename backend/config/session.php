@@ -68,13 +68,23 @@ function getCurrentUser() {
  * @param int $userId User ID
  * @param string $username Username
  * @param string $userType User type (admin/customer)
+ * @param array $additionalData Additional user data (optional)
  * @return void
  */
-function loginUser($userId, $username, $userType) {
+function loginUser($userId, $username, $userType, $additionalData = []) {
     $_SESSION['user_id'] = $userId;
     $_SESSION['username'] = $username;
     $_SESSION['user_type'] = $userType;
     $_SESSION['login_time'] = time();
+    
+    // Store additional user data if provided
+    if (is_array($additionalData)) {
+        foreach ($additionalData as $key => $value) {
+            if (in_array($key, ['email', 'first_name', 'last_name', 'phone', 'address', 'city', 'postal_code', 'country'])) {
+                $_SESSION[$key] = $value;
+            }
+        }
+    }
 }
 
 /**

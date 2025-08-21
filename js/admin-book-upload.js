@@ -24,6 +24,7 @@ class AdminBookUpload {
         this.loadCategories();
         this.setupEventListeners();
         this.setupDragAndDrop();
+        this.updateSubmitButtonState(); // Set initial button state
     }
 
     /**
@@ -131,6 +132,11 @@ class AdminBookUpload {
         const form = document.getElementById("book-upload-form");
         if (form) {
             form.addEventListener("submit", (e) => this.handleFormSubmit(e));
+
+            // Real-time validation for cover image
+            form.addEventListener("input", () => {
+                this.updateSubmitButtonState();
+            });
         }
 
         // Cancel button
@@ -217,8 +223,36 @@ class AdminBookUpload {
     handleCoverImageChange(event) {
         const file = event.target.files[0];
         if (file) {
-            this.uploadedFiles.cover = file;
-            this.displayImagePreview(file, "cover-preview", true);
+            if (this.validateImageFile(file)) {
+                this.uploadedFiles.cover = file;
+                this.displayImagePreview(file, "cover-preview", true);
+
+                // Remove error styling and show success feedback
+                const coverSection = document.getElementById(
+                    "cover-upload-section"
+                );
+                if (coverSection) {
+                    coverSection.classList.remove("required");
+                    coverSection.style.borderColor = "#27ae60";
+                    coverSection.style.backgroundColor =
+                        "rgba(39, 174, 96, 0.05)";
+
+                    // Show success message
+                    this.showAlert(
+                        "Cover image uploaded successfully!",
+                        "success"
+                    );
+
+                    // Reset styling after 2 seconds
+                    setTimeout(() => {
+                        coverSection.style.borderColor = "";
+                        coverSection.style.backgroundColor = "";
+                    }, 2000);
+                }
+
+                // Update submit button state
+                this.updateSubmitButtonState();
+            }
         }
     }
 
@@ -242,11 +276,38 @@ class AdminBookUpload {
             if (this.validateImageFile(file)) {
                 this.uploadedFiles.cover = file;
                 this.displayImagePreview(file, "cover-preview", true);
+
                 // Update the file input
                 const coverInput = document.getElementById("cover_image");
                 if (coverInput) {
                     coverInput.files = files;
                 }
+
+                // Remove error styling and show success feedback
+                const coverSection = document.getElementById(
+                    "cover-upload-section"
+                );
+                if (coverSection) {
+                    coverSection.classList.remove("required");
+                    coverSection.style.borderColor = "#27ae60";
+                    coverSection.style.backgroundColor =
+                        "rgba(39, 174, 96, 0.05)";
+
+                    // Show success message
+                    this.showAlert(
+                        "Cover image uploaded successfully!",
+                        "success"
+                    );
+
+                    // Reset styling after 2 seconds
+                    setTimeout(() => {
+                        coverSection.style.borderColor = "";
+                        coverSection.style.backgroundColor = "";
+                    }, 2000);
+                }
+
+                // Update submit button state
+                this.updateSubmitButtonState();
             }
         }
     }
@@ -361,6 +422,13 @@ class AdminBookUpload {
             if (coverInput) {
                 coverInput.value = "";
             }
+
+            // Update submit button state and show warning
+            this.updateSubmitButtonState();
+            this.showAlert(
+                "Cover image removed. You must upload a new cover image.",
+                "warning"
+            );
         } else {
             const index = this.uploadedFiles.additional.findIndex(
                 (f) => f.name === file.name
@@ -414,6 +482,17 @@ class AdminBookUpload {
             if (!imageUploads.success) {
                 throw new Error(imageUploads.message);
             }
+
+            // Check if cover image was actually uploaded successfully
+            if (
+                !imageUploads.coverImagePath ||
+                imageUploads.coverImagePath.trim() === ""
+            ) {
+                throw new Error(
+                    "Cover image upload failed. Please try uploading the image again."
+                );
+            }
+
             console.log("Images uploaded successfully");
 
             // Then create the book
@@ -422,6 +501,12 @@ class AdminBookUpload {
             bookData.cover_image_path = imageUploads.coverImagePath;
             bookData.additional_images = JSON.stringify(
                 imageUploads.additionalImagePaths
+            );
+
+            console.log("Final book data being sent:", bookData);
+            console.log(
+                "Cover image path being sent:",
+                bookData.cover_image_path
             );
 
             const result = await this.createBook(bookData);
@@ -439,6 +524,48 @@ class AdminBookUpload {
         } finally {
             submitBtn.disabled = false;
             submitBtn.innerHTML = '<i class="fas fa-upload"></i> Upload Book';
+        }
+    }
+
+    /**
+     * Update submit button state based on form validation
+     */
+    updateSubmitButtonState() {
+        const submitBtn = document.getElementById("submit-upload");
+        const coverImage = this.uploadedFiles.cover;
+        const statusDiv = document.getElementById("cover-status");
+        const statusText = document.getElementById("cover-status-text");
+
+        if (submitBtn) {
+            if (coverImage) {
+                submitBtn.disabled = false;
+                submitBtn.style.backgroundColor = "var(--success-color)";
+                submitBtn.innerHTML =
+                    '<i class="fas fa-upload"></i> Upload Book';
+
+                // Update status indicator
+                if (statusDiv && statusText) {
+                    statusDiv.style.display = "block";
+                    statusDiv.style.backgroundColor = "rgba(39, 174, 96, 0.1)";
+                    statusDiv.style.border = "1px solid rgba(39, 174, 96, 0.3)";
+                    statusText.style.color = "#27ae60";
+                    statusText.innerHTML = `✅ Cover image uploaded: ${coverImage.name}`;
+                }
+            } else {
+                submitBtn.disabled = true;
+                submitBtn.style.backgroundColor = "#bdc3c7";
+                submitBtn.innerHTML =
+                    '<i class="fas fa-exclamation-triangle"></i> Upload Cover Image First';
+
+                // Update status indicator
+                if (statusDiv && statusText) {
+                    statusDiv.style.display = "block";
+                    statusDiv.style.backgroundColor = "rgba(231, 76, 60, 0.1)";
+                    statusDiv.style.border = "1px solid rgba(231, 76, 60, 0.3)";
+                    statusText.style.color = "#e74c3c";
+                    statusText.innerHTML = "❌ No cover image uploaded";
+                }
+            }
         }
     }
 
@@ -466,11 +593,31 @@ class AdminBookUpload {
             }
         }
 
-        // Cover image is optional for admin uploads
-        // if (!this.uploadedFiles.cover) {
-        //     this.showAlert("Please upload a cover image.", "error");
-        //     return false;
-        // }
+        // Cover image is mandatory for admin uploads
+        if (!this.uploadedFiles.cover) {
+            this.showAlert("Please upload a cover image.", "error");
+            // Highlight the cover image upload section
+            const coverSection = document.getElementById(
+                "cover-upload-section"
+            );
+            if (coverSection) {
+                coverSection.classList.add("required");
+                // Add shake animation
+                coverSection.style.animation = "shake 0.5s ease-in-out";
+                setTimeout(() => {
+                    coverSection.style.animation = "";
+                }, 500);
+            }
+            return false;
+        } else {
+            // Remove error styling if image is uploaded
+            const coverSection = document.getElementById(
+                "cover-upload-section"
+            );
+            if (coverSection) {
+                coverSection.classList.remove("required");
+            }
+        }
 
         const price = parseFloat(document.getElementById("price").value);
         if (isNaN(price) || price <= 0) {
@@ -490,11 +637,10 @@ class AdminBookUpload {
             !this.uploadedFiles.cover &&
             this.uploadedFiles.additional.length === 0
         ) {
-            // No files to upload, return success with empty paths
+            // No files to upload, return error
             return {
-                success: true,
-                coverImagePath: "",
-                additionalImagePaths: [],
+                success: false,
+                message: "No files selected for upload",
             };
         }
 
@@ -533,10 +679,34 @@ class AdminBookUpload {
 
             if (result.success) {
                 const files = result.files;
+                console.log("Upload result files:", files);
+
+                // Check if files array exists and has content
+                if (!files || !Array.isArray(files) || files.length === 0) {
+                    console.error("Upload succeeded but no files returned");
+                    return {
+                        success: false,
+                        message:
+                            "Upload succeeded but no files were returned. Please try again.",
+                    };
+                }
+
                 const coverImagePath = files[0]?.file_path || "";
                 const additionalImagePaths = files
                     .slice(1)
                     .map((f) => f.file_path);
+
+                console.log("Cover image path:", coverImagePath);
+                console.log("Additional image paths:", additionalImagePaths);
+
+                // Validate that cover image path is not empty
+                if (!coverImagePath || coverImagePath.trim() === "") {
+                    console.error("Cover image path is empty");
+                    return {
+                        success: false,
+                        message: "Cover image upload failed. Please try again.",
+                    };
+                }
 
                 return {
                     success: true,
@@ -544,6 +714,7 @@ class AdminBookUpload {
                     additionalImagePaths,
                 };
             } else {
+                console.error("Upload failed:", result);
                 return result;
             }
         } catch (error) {

@@ -128,6 +128,17 @@
                 background-color: #d35400;
             }
 
+            .btn:disabled {
+                background-color: #bdc3c7 !important;
+                cursor: not-allowed !important;
+                opacity: 0.7 !important;
+            }
+
+            .btn:disabled:hover {
+                background-color: #bdc3c7 !important;
+                transform: none !important;
+            }
+
             .calculator-result {
                 font-size: 1.2rem;
             }
@@ -171,6 +182,30 @@
                 font-size: 1rem;
             }
 
+            .required-field::after {
+                content: " *";
+                color: #e74c3c;
+                font-weight: bold;
+            }
+
+            .image-upload.required {
+                border-color: #e74c3c;
+                background-color: rgba(231, 76, 60, 0.05);
+            }
+
+            .image-upload.required label {
+                color: #e74c3c;
+            }
+
+            .image-upload.required {
+                border-color: #e74c3c;
+                background-color: rgba(231, 76, 60, 0.05);
+            }
+
+            .image-upload.required p {
+                color: #e74c3c;
+            }
+
             .form-group textarea {
                 height: 150px;
                 resize: vertical;
@@ -197,14 +232,27 @@
 
             .image-preview {
                 display: grid;
-                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
                 gap: 1rem;
                 margin-top: 1rem;
+                min-height: 120px;
+            }
+
+            .image-preview:empty::before {
+                content: "No images selected";
+                color: #999;
+                font-style: italic;
+                text-align: center;
+                grid-column: 1 / -1;
+                padding: 2rem;
+                background-color: #f9f9f9;
+                border-radius: 4px;
+                border: 2px dashed #ddd;
             }
 
             .preview-item {
-                width: 100px;
-                height: 100px;
+                width: 120px;
+                height: 120px;
                 border-radius: 4px;
                 overflow: hidden;
                 position: relative;
@@ -214,22 +262,40 @@
                 width: 100%;
                 height: 100%;
                 object-fit: cover;
+                border-radius: 4px;
+            }
+
+            .preview-item {
+                position: relative;
+                transition: transform 0.2s ease;
+            }
+
+            .preview-item:hover {
+                transform: scale(1.05);
             }
 
             .preview-remove {
                 position: absolute;
                 top: 5px;
                 right: 5px;
-                width: 20px;
-                height: 20px;
-                background-color: rgba(0, 0, 0, 0.5);
+                width: 24px;
+                height: 24px;
+                background-color: rgba(231, 76, 60, 0.9);
                 color: white;
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 border-radius: 50%;
                 cursor: pointer;
-                font-size: 0.8rem;
+                font-size: 1rem;
+                font-weight: bold;
+                transition: all 0.2s ease;
+                border: 2px solid white;
+            }
+
+            .preview-remove:hover {
+                background-color: rgba(231, 76, 60, 1);
+                transform: scale(1.1);
             }
 
             .terms {
@@ -696,24 +762,41 @@
                     </div>
 
                     <div class="form-group">
-                        <label>Book Images (Max 5MB each)</label>
-                        <div class="image-upload">
+                        <label for="book-images" class="required-field"
+                            >Book Images (Max 5MB each)*</label
+                        >
+                        <div class="image-upload" id="image-upload-section">
                             <input
                                 type="file"
                                 id="book-images"
                                 accept="image/*"
                                 multiple
+                                required
                                 hidden
                             />
                             <label for="book-images" class="btn btn-secondary"
                                 >Select Images</label
                             >
-                            <p>Click to select one or more images (optional)</p>
+                            <p>
+                                <strong style="color: #e74c3c"
+                                    >⚠️ At least one cover image is
+                                    MANDATORY</strong
+                                >
+                            </p>
+                            <p>
+                                Click to select one or more images. First image
+                                will be used as cover.
+                            </p>
 
                             <div class="image-preview" id="image-preview">
                                 <!-- Images will be displayed here after selection -->
                             </div>
                         </div>
+                        <small style="color: #e74c3c; font-weight: 500">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            You must upload at least one image to proceed with
+                            book listing.
+                        </small>
                     </div>
 
                     <div class="terms">
@@ -810,6 +893,13 @@
         <script src="../js/customer-navbar.js"></script>
         <!-- Sell page specific JavaScript -->
         <script>
+            // Global variables for image management
+            let uploadedFiles = [];
+            let imageUploadStatus = {
+                cover: null,
+                additional: [],
+            };
+
             document.addEventListener("DOMContentLoaded", function () {
                 // Commission Calculator
                 const bookPriceInput = document.getElementById("book-price");
@@ -828,36 +918,54 @@
                     }
                 });
 
-                // Image Upload Preview (optional images; size check only)
+                // Image Upload Preview with validation
                 const bookImagesInput = document.getElementById("book-images");
                 const imagePreview = document.getElementById("image-preview");
+                const imageUploadSection = document.getElementById(
+                    "image-upload-section"
+                );
 
                 bookImagesInput.addEventListener("change", function () {
-                    // Clear previous previews
+                    // Clear previous previews and reset status
                     imagePreview.innerHTML = "";
+                    uploadedFiles = [];
+                    imageUploadStatus.cover = null;
+                    imageUploadStatus.additional = [];
 
-                    // Optional: allow any number; enforce max 5MB each
-
-                    // Display each selected image
+                    // Validate and display each selected image
                     for (let i = 0; i < this.files.length; i++) {
                         const file = this.files[i];
 
                         // Check file size (5MB limit)
                         if (file.size > 5 * 1024 * 1024) {
-                            alert(
-                                `Image ${file.name} exceeds the 5MB size limit.`
+                            showNotification(
+                                `Image ${file.name} exceeds the 5MB size limit.`,
+                                "error"
                             );
                             continue;
                         }
 
+                        // Check file type
+                        if (!file.type.startsWith("image/")) {
+                            showNotification(
+                                `File ${file.name} is not an image.`,
+                                "error"
+                            );
+                            continue;
+                        }
+
+                        // Add to uploaded files
+                        uploadedFiles.push(file);
+
                         // Create preview element
                         const previewItem = document.createElement("div");
                         previewItem.className = "preview-item";
+                        previewItem.dataset.filename = file.name;
 
-                        // Create image element
-                        const img = document.createElement("div");
-                        img.className = "placeholder-image";
-                        img.textContent = "Image " + (i + 1);
+                        // Create image element with actual preview
+                        const img = document.createElement("img");
+                        img.src = URL.createObjectURL(file);
+                        img.alt = file.name;
 
                         // Create remove button
                         const removeBtn = document.createElement("div");
@@ -868,24 +976,42 @@
                         removeBtn.addEventListener("click", function () {
                             previewItem.remove();
 
-                            // Check if enough images remain
-                            if (imagePreview.children.length < 3) {
-                                alert(
-                                    "You need at least 3 images. Please add more."
-                                );
+                            // Remove from uploaded files
+                            const index = uploadedFiles.findIndex(
+                                (f) => f.name === file.name
+                            );
+                            if (index > -1) {
+                                uploadedFiles.splice(index, 1);
                             }
+
+                            // Update status
+                            updateImageUploadStatus();
                         });
 
                         // Append elements
                         previewItem.appendChild(img);
                         previewItem.appendChild(removeBtn);
                         imagePreview.appendChild(previewItem);
-
-                        // Placeholder preview
                     }
+
+                    // Update status after adding images
+                    updateImageUploadStatus();
                 });
 
-                // Form Submit and Preview Functionality
+                // Update image upload status and styling
+                function updateImageUploadStatus() {
+                    if (uploadedFiles.length === 0) {
+                        imageUploadSection.classList.add("required");
+                        imageUploadStatus.cover = null;
+                        imageUploadStatus.additional = [];
+                    } else {
+                        imageUploadSection.classList.remove("required");
+                        imageUploadStatus.cover = uploadedFiles[0];
+                        imageUploadStatus.additional = uploadedFiles.slice(1);
+                    }
+                }
+
+                // Form Submit with proper validation
                 const sellBookForm = document.getElementById("sell-book-form");
                 const publishBtn = document.getElementById("publish-btn");
 
@@ -920,7 +1046,10 @@
                         !price ||
                         !description
                     ) {
-                        alert("Please fill in all required fields.");
+                        showNotification(
+                            "Please fill in all required fields.",
+                            "error"
+                        );
                         return;
                     }
 
@@ -933,13 +1062,23 @@
                         return;
                     }
 
-                    // Images are optional now
+                    // Check if images are uploaded
+                    if (uploadedFiles.length === 0) {
+                        showNotification(
+                            "Please upload at least one image for your book.",
+                            "error"
+                        );
+                        imageUploadSection.classList.add("required");
+                        return;
+                    }
 
+                    // Proceed with publishing
                     publishListing();
                 });
 
                 async function publishListing() {
                     try {
+                        // Check user authentication
                         const user =
                             window.bookmarketAuth?.getUserId?.() ||
                             JSON.parse(
@@ -948,6 +1087,7 @@
                             JSON.parse(
                                 localStorage.getItem("bookmarket_user") || "{}"
                             ).id;
+
                         if (!user) {
                             showNotification(
                                 "Please login to publish your listing",
@@ -956,97 +1096,250 @@
                             return;
                         }
 
-                        const fd = new FormData();
-                        fd.append("action", "add_book");
-                        fd.append(
-                            "title",
-                            document.getElementById("book-title").value.trim()
-                        );
-                        fd.append(
-                            "author",
-                            document.getElementById("book-author").value.trim()
-                        );
-                        fd.append(
-                            "isbn",
-                            document.getElementById("book-isbn").value.trim()
-                        );
-                        fd.append(
-                            "description",
-                            document
-                                .getElementById("book-description")
-                                .value.trim()
-                        );
-                        fd.append(
-                            "price",
-                            document.getElementById("book-price-input").value
-                        );
-                        // Map to backend expected enum case
-                        const condMap = {
-                            new: "New",
-                            excellent: "Excellent",
-                            good: "Good",
-                            fair: "Fair",
-                            poor: "Poor",
-                        };
-                        fd.append(
-                            "book_condition",
-                            condMap[
-                                document.getElementById("book-condition").value
-                            ] || "Good"
-                        );
-                        // Map category to ID (simple map for demo)
-                        const catText =
-                            document.getElementById("book-category").value;
-                        const catMap = {
-                            fiction: 1,
-                            academic: 2,
-                            science: 3,
-                            business: 4,
-                            children: 5,
-                            history: 6,
-                            biography: 1,
-                            "self-help": 7,
-                            art: 1,
-                            travel: 1,
-                            other: 1,
-                        };
-                        fd.append("category_id", catMap[catText] || 1);
-                        fd.append(
-                            "stock_quantity",
-                            document.getElementById("book-quantity").value ||
-                                "1"
-                        );
-                        fd.append("cover_image_path", "");
-                        fd.append("additional_images", "");
+                        // Show loading state
+                        publishBtn.disabled = true;
+                        publishBtn.innerHTML =
+                            '<i class="fas fa-spinner fa-spin"></i> Publishing...';
 
-                        const apiBase =
-                            window.location.origin +
-                            (window.location.pathname.includes("/BookMarket_/")
-                                ? "/BookMarket_/"
-                                : "/");
-                        const resp = await fetch(
-                            apiBase + "backend/books/book_manager.php",
-                            { method: "POST", body: fd }
-                        );
-                        const data = await resp.json();
-                        if (data.success) {
-                            showNotification(
-                                "Your book listing has been submitted (pending approval).",
-                                "success"
-                            );
-                        } else {
-                            showNotification(
-                                data.message || "Failed to publish listing",
-                                "error"
+                        // First upload images
+                        console.log("Uploading images...");
+                        const imageUploads = await uploadImages();
+
+                        if (!imageUploads.success) {
+                            throw new Error(imageUploads.message);
+                        }
+
+                        // Check if cover image was uploaded successfully
+                        if (
+                            !imageUploads.coverImagePath ||
+                            imageUploads.coverImagePath.trim() === ""
+                        ) {
+                            throw new Error(
+                                "Cover image upload failed. Please try uploading the image again."
                             );
                         }
-                    } catch (e) {
-                        console.error(e);
+
+                        console.log("Images uploaded successfully");
+
+                        // Then create the book
+                        console.log("Creating book...");
+                        const bookData = getFormData();
+                        bookData.cover_image_path = imageUploads.coverImagePath;
+                        bookData.additional_images = JSON.stringify(
+                            imageUploads.additionalImagePaths
+                        );
+
+                        console.log("Final book data being sent:", bookData);
+
+                        const result = await createBook(bookData);
+                        console.log("Book creation result:", result);
+
+                        if (result.success) {
+                            showNotification(
+                                "Your book listing has been submitted successfully! It will be reviewed by admin.",
+                                "success"
+                            );
+                            sellBookForm.reset();
+                            imagePreview.innerHTML = "";
+                            uploadedFiles = [];
+                            updateImageUploadStatus();
+                        } else {
+                            throw new Error(
+                                result.message || "Failed to create book"
+                            );
+                        }
+                    } catch (error) {
+                        console.error("Publish error:", error);
                         showNotification(
-                            "Network error while publishing",
+                            "Failed to publish listing: " + error.message,
                             "error"
                         );
+                    } finally {
+                        // Reset button state
+                        publishBtn.disabled = false;
+                        publishBtn.innerHTML = "Publish Listing";
                     }
+                }
+
+                // Upload images to server
+                async function uploadImages() {
+                    if (uploadedFiles.length === 0) {
+                        return {
+                            success: false,
+                            message: "No files selected for upload",
+                        };
+                    }
+
+                    const formData = new FormData();
+                    formData.append("action", "upload_book_images");
+
+                    // Add all images
+                    uploadedFiles.forEach((file) => {
+                        formData.append("images[]", file);
+                    });
+
+                    try {
+                        const response = await fetch(
+                            "../backend/uploads/file_upload_simple.php",
+                            {
+                                method: "POST",
+                                body: formData,
+                            }
+                        );
+
+                        if (!response.ok) {
+                            throw new Error(
+                                `HTTP error! status: ${response.status}`
+                            );
+                        }
+
+                        const result = await response.json();
+                        console.log("Upload result:", result);
+
+                        if (result.success) {
+                            const files = result.files;
+
+                            // Check if files array exists and has content
+                            if (
+                                !files ||
+                                !Array.isArray(files) ||
+                                files.length === 0
+                            ) {
+                                return {
+                                    success: false,
+                                    message:
+                                        "Upload succeeded but no files were returned. Please try again.",
+                                };
+                            }
+
+                            const coverImagePath = files[0]?.file_path || "";
+                            const additionalImagePaths = files
+                                .slice(1)
+                                .map((f) => f.file_path);
+
+                            // Validate that cover image path is not empty
+                            if (
+                                !coverImagePath ||
+                                coverImagePath.trim() === ""
+                            ) {
+                                return {
+                                    success: false,
+                                    message:
+                                        "Cover image upload failed. Please try again.",
+                                };
+                            }
+
+                            return {
+                                success: true,
+                                coverImagePath,
+                                additionalImagePaths,
+                            };
+                        } else {
+                            return result;
+                        }
+                    } catch (error) {
+                        console.error("Upload error:", error);
+                        return {
+                            success: false,
+                            message: "Upload failed: " + error.message,
+                        };
+                    }
+                }
+
+                // Create book in database
+                async function createBook(bookData) {
+                    const formData = new FormData();
+                    formData.append("action", "add_book");
+
+                    // Add all book data
+                    Object.keys(bookData).forEach((key) => {
+                        formData.append(key, bookData[key]);
+                    });
+
+                    try {
+                        const response = await fetch(
+                            "../backend/books/book_manager.php",
+                            {
+                                method: "POST",
+                                body: formData,
+                            }
+                        );
+
+                        if (!response.ok) {
+                            throw new Error(
+                                `HTTP error! status: ${response.status}`
+                            );
+                        }
+
+                        const responseText = await response.text();
+                        if (!responseText) {
+                            throw new Error("Empty response from server");
+                        }
+
+                        return JSON.parse(responseText);
+                    } catch (error) {
+                        console.error("Create book error:", error);
+                        throw new Error(`Network error: ${error.message}`);
+                    }
+                }
+
+                // Get form data
+                function getFormData() {
+                    const condMap = {
+                        new: "New",
+                        excellent: "Excellent",
+                        good: "Good",
+                        fair: "Fair",
+                        poor: "Poor",
+                    };
+
+                    const catMap = {
+                        fiction: 1,
+                        academic: 2,
+                        science: 3,
+                        business: 4,
+                        children: 5,
+                        history: 6,
+                        biography: 1,
+                        "self-help": 7,
+                        art: 1,
+                        travel: 1,
+                        other: 1,
+                    };
+
+                    return {
+                        title: document
+                            .getElementById("book-title")
+                            .value.trim(),
+                        author: document
+                            .getElementById("book-author")
+                            .value.trim(),
+                        isbn: document.getElementById("book-isbn").value.trim(),
+                        description: document
+                            .getElementById("book-description")
+                            .value.trim(),
+                        price: document.getElementById("book-price-input")
+                            .value,
+                        book_condition:
+                            condMap[
+                                document.getElementById("book-condition").value
+                            ] || "Good",
+                        category_id:
+                            catMap[
+                                document.getElementById("book-category").value
+                            ] || 1,
+                        stock_quantity:
+                            document.getElementById("book-quantity").value ||
+                            "1",
+                        seller_id:
+                            window.bookmarketAuth?.getUserId?.() ||
+                            JSON.parse(
+                                localStorage.getItem("bookmarket_user") || "{}"
+                            ).userId ||
+                            JSON.parse(
+                                localStorage.getItem("bookmarket_user") || "{}"
+                            ).id,
+                    };
                 }
             });
         </script>

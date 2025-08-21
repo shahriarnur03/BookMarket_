@@ -79,6 +79,16 @@
                 color: white;
             }
 
+            .status-approved {
+                background-color: #27ae60;
+                color: white;
+            }
+
+            .status-rejected {
+                background-color: #e74c3c;
+                color: white;
+            }
+
             .book-content {
                 padding: 2rem;
             }
@@ -120,22 +130,139 @@
 
             .image-grid {
                 display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-                gap: 1rem;
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 1.5rem;
                 margin-top: 1rem;
             }
 
             .book-image {
                 width: 100%;
-                height: 200px;
-                background-color: #f0f0f0;
-                border-radius: 8px;
+                height: 300px;
+                background-color: #f8f9fa;
+                border-radius: 12px;
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 color: #666;
-                font-weight: bold;
-                border: 2px dashed #ddd;
+                font-weight: 500;
+                border: 2px solid #e9ecef;
+                overflow: hidden;
+                position: relative;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+                transition: all 0.3s ease;
+            }
+
+            .book-image:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+                border-color: var(--primary-color);
+            }
+
+            .book-image img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                border-radius: 12px;
+                transition: transform 0.3s ease;
+            }
+
+            .book-image:hover img {
+                transform: scale(1.02);
+            }
+
+            .book-image .fallback-text {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+                padding: 1rem;
+                color: #6c757d;
+                font-size: 0.9rem;
+            }
+
+            .book-image .fallback-text i {
+                font-size: 2.5rem;
+                margin-bottom: 0.5rem;
+                color: #adb5bd;
+            }
+
+            .book-image .fallback-text span {
+                font-size: 0.8rem;
+                line-height: 1.3;
+            }
+
+            .book-image.cover-image {
+                grid-column: span 2;
+                height: 350px;
+            }
+
+            .book-image.cover-image img {
+                object-fit: contain;
+                background-color: #ffffff;
+                padding: 1rem;
+            }
+
+            .book-image.loading {
+                position: relative;
+            }
+
+            .book-image.loading::before {
+                content: "";
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                width: 30px;
+                height: 30px;
+                margin: -15px 0 0 -15px;
+                border: 3px solid #f3f3f3;
+                border-top: 3px solid var(--primary-color);
+                border-radius: 50%;
+                animation: spin 1s linear infinite;
+                z-index: 1;
+            }
+
+            @keyframes spin {
+                0% {
+                    transform: rotate(0deg);
+                }
+                100% {
+                    transform: rotate(360deg);
+                }
+            }
+
+            .book-image .image-caption {
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                background: rgba(0, 0, 0, 0.7);
+                color: white;
+                padding: 0.5rem;
+                font-size: 0.8rem;
+                text-align: center;
+                transform: translateY(100%);
+                transition: transform 0.3s ease;
+            }
+
+            .book-image:hover .image-caption {
+                transform: translateY(0);
+            }
+
+            @media screen and (max-width: 768px) {
+                .image-grid {
+                    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                    gap: 1rem;
+                }
+
+                .book-image {
+                    height: 250px;
+                }
+
+                .book-image.cover-image {
+                    grid-column: span 1;
+                    height: 300px;
+                }
             }
 
             .book-description {
@@ -252,40 +379,54 @@
 
             <div class="book-details-card">
                 <div class="book-header">
-                    <h2 class="book-title">Clean Code</h2>
-                    <p class="book-author">by Robert C. Martin</p>
-                    <span class="status-badge status-pending"
-                        >Pending Approval</span
+                    <h2 class="book-title" id="book-title">Loading...</h2>
+                    <p class="book-author" id="book-author">Loading...</p>
+                    <span class="status-badge status-pending" id="book-status"
+                        >Loading...</span
                     >
                 </div>
 
                 <div class="book-content">
-                    <div class="price-display">৳450</div>
+                    <div class="price-display" id="book-price">Loading...</div>
 
                     <div class="book-info-grid">
                         <div class="info-section">
                             <h3>Basic Information</h3>
                             <div class="info-item">
                                 <span class="info-label">Book ID:</span>
-                                <span class="info-value">#B005</span>
+                                <span class="info-value" id="book-id"
+                                    >Loading...</span
+                                >
                             </div>
                             <div class="info-item">
                                 <span class="info-label">ISBN:</span>
-                                <span class="info-value">978-0132350884</span>
+                                <span class="info-value" id="book-isbn"
+                                    >Loading...</span
+                                >
                             </div>
                             <div class="info-item">
                                 <span class="info-label">Category:</span>
-                                <span class="info-value"
-                                    >Science & Technology</span
+                                <span class="info-value" id="book-category"
+                                    >Loading...</span
                                 >
                             </div>
                             <div class="info-item">
                                 <span class="info-label">Condition:</span>
-                                <span class="info-value">New</span>
+                                <span class="info-value" id="book-condition"
+                                    >Loading...</span
+                                >
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Stock Quantity:</span>
+                                <span class="info-value" id="book-stock"
+                                    >Loading...</span
+                                >
                             </div>
                             <div class="info-item">
                                 <span class="info-label">Listed Date:</span>
-                                <span class="info-value">July 20, 2023</span>
+                                <span class="info-value" id="book-date"
+                                    >Loading...</span
+                                >
                             </div>
                         </div>
 
@@ -293,50 +434,60 @@
                             <h3>Seller Information</h3>
                             <div class="info-item">
                                 <span class="info-label">Seller Name:</span>
-                                <span class="info-value">Mike Johnson</span>
+                                <span class="info-value" id="seller-name"
+                                    >Loading...</span
+                                >
                             </div>
                             <div class="info-item">
                                 <span class="info-label">Seller ID:</span>
-                                <span class="info-value">#U003</span>
+                                <span class="info-value" id="seller-id"
+                                    >Loading...</span
+                                >
                             </div>
                             <div class="info-item">
-                                <span class="info-label">Seller Rating:</span>
-                                <span class="info-value">4.8/5.0</span>
+                                <span class="info-label">Seller Email:</span>
+                                <span class="info-value" id="seller-email"
+                                    >Loading...</span
+                                >
                             </div>
                             <div class="info-item">
-                                <span class="info-label">Books Sold:</span>
-                                <span class="info-value">12</span>
+                                <span class="info-label">Books Listed:</span>
+                                <span class="info-value" id="seller-books"
+                                    >Loading...</span
+                                >
                             </div>
                         </div>
                     </div>
 
                     <div class="book-description">
                         <h3>Description</h3>
-                        <div class="description-text">
-                            <p>
-                                This is a brand new copy of "Clean Code" by
-                                Robert C. Martin, a must-read for any software
-                                developer. The book is completely unopened and
-                                in pristine condition.
-                            </p>
-                            <p>
-                                The book covers essential principles, patterns,
-                                and practices of clean code, helping developers
-                                write better, more maintainable software.
-                                Perfect for both beginners and experienced
-                                developers looking to improve their coding
-                                practices.
-                            </p>
+                        <div class="description-text" id="book-description">
+                            <p>Loading book description...</p>
                         </div>
                     </div>
 
                     <div class="book-images">
-                        <h3>Book Images</h3>
-                        <div class="image-grid">
-                            <div class="book-image">Front Cover</div>
-                            <div class="book-image">Back Cover</div>
-                            <div class="book-image">Spine</div>
-                            <div class="book-image">Sample Pages</div>
+                        <h3
+                            style="
+                                margin-bottom: 1rem;
+                                color: var(--dark-color);
+                                border-bottom: 2px solid var(--primary-color);
+                                padding-bottom: 0.5rem;
+                            "
+                        >
+                            <i
+                                class="fas fa-images"
+                                style="margin-right: 0.5rem"
+                            ></i>
+                            Book Images
+                        </h3>
+                        <div class="image-grid" id="book-images-grid">
+                            <div class="book-image">
+                                <div class="fallback-text">
+                                    <i class="fas fa-spinner fa-spin"></i>
+                                    <span>Loading images...</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -444,6 +595,391 @@
         <script src="../../js/admin-navbar.js"></script>
         <!-- Book Approval View specific JavaScript -->
         <script>
+            // Global variables
+            let currentBookId = null;
+            let currentBookData = null;
+
+            document.addEventListener("DOMContentLoaded", function () {
+                // Get book ID from URL
+                const urlParams = new URLSearchParams(window.location.search);
+                currentBookId = urlParams.get("id");
+
+                if (!currentBookId) {
+                    showNotification("No book ID provided", "error");
+                    return;
+                }
+
+                // Check admin authentication
+                checkAdminAuth();
+            });
+
+            // Check if user is authenticated as admin
+            function checkAdminAuth() {
+                fetch("../../backend/config/session_check.php")
+                    .then((response) => response.json())
+                    .then((data) => {
+                        if (!data.success || !data.isAdmin) {
+                            showNotification(
+                                "Access denied. Admin privileges required.",
+                                "error"
+                            );
+                            setTimeout(() => {
+                                window.location.href = "../login.html";
+                            }, 2000);
+                            return;
+                        }
+                        // User is authenticated, load book details
+                        loadBookDetails();
+                    })
+                    .catch((error) => {
+                        console.error("Auth check error:", error);
+                        showNotification("Authentication error", "error");
+                    });
+            }
+
+            // Load book details from database
+            async function loadBookDetails() {
+                try {
+                    const formData = new FormData();
+                    formData.append("action", "get_book_details");
+                    formData.append("book_id", currentBookId);
+
+                    const response = await fetch(
+                        "../../backend/books/book_manager.php",
+                        {
+                            method: "POST",
+                            body: formData,
+                        }
+                    );
+
+                    if (!response.ok) {
+                        throw new Error(
+                            `HTTP error! status: ${response.status}`
+                        );
+                    }
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        currentBookData = result.data;
+                        displayBookDetails(result.data);
+                    } else {
+                        throw new Error(
+                            result.message || "Failed to load book details"
+                        );
+                    }
+                } catch (error) {
+                    console.error("Load book details error:", error);
+                    showNotification(
+                        "Failed to load book details: " + error.message,
+                        "error"
+                    );
+                }
+            }
+
+            // Display book details in the UI
+            function displayBookDetails(book) {
+                // Update book header
+                document.getElementById("book-title").textContent = book.title;
+                document.getElementById(
+                    "book-author"
+                ).textContent = `by ${book.author}`;
+                document.getElementById("book-status").textContent =
+                    book.status;
+
+                // Update price
+                document.getElementById(
+                    "book-price"
+                ).textContent = `৳${book.price}`;
+
+                // Update basic information
+                document.getElementById("book-id").textContent = `#${book.id}`;
+                document.getElementById("book-isbn").textContent =
+                    book.isbn || "Not provided";
+                document.getElementById("book-category").textContent =
+                    book.category_name || "Unknown";
+                document.getElementById("book-condition").textContent =
+                    book.book_condition;
+                document.getElementById("book-stock").textContent =
+                    book.stock_quantity || "1";
+
+                // Format date
+                const listedDate = new Date(book.created_at || book.updated_at);
+                document.getElementById("book-date").textContent =
+                    listedDate.toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                    });
+
+                // Update seller information
+                document.getElementById("seller-name").textContent =
+                    book.seller_name || "Unknown";
+                document.getElementById(
+                    "seller-id"
+                ).textContent = `#${book.seller_id}`;
+                document.getElementById("seller-email").textContent =
+                    book.seller_email || "Not provided";
+                document.getElementById("seller-books").textContent =
+                    book.seller_books_count || "0";
+
+                // Update description
+                const descriptionDiv =
+                    document.getElementById("book-description");
+                if (book.description && book.description.trim()) {
+                    descriptionDiv.innerHTML = `<p>${book.description}</p>`;
+                } else {
+                    descriptionDiv.innerHTML =
+                        "<p><em>No description provided</em></p>";
+                }
+
+                // Update images
+                displayBookImages(book);
+
+                // Update status badge styling
+                updateStatusBadge(book.status);
+            }
+
+            // Display book images
+            function displayBookImages(book) {
+                const imagesGrid = document.getElementById("book-images-grid");
+                imagesGrid.innerHTML = "";
+
+                // Add cover image
+                if (book.cover_image_path && book.cover_image_path.trim()) {
+                    const coverImage = createImageElement(
+                        book.cover_image_path,
+                        "Cover Image",
+                        true // Mark as cover image
+                    );
+                    imagesGrid.appendChild(coverImage);
+                }
+
+                // Add additional images
+                if (book.additional_images && book.additional_images.trim()) {
+                    try {
+                        const additionalImages = JSON.parse(
+                            book.additional_images
+                        );
+                        if (Array.isArray(additionalImages)) {
+                            additionalImages.forEach((imagePath, index) => {
+                                if (imagePath && imagePath.trim()) {
+                                    const imageElement = createImageElement(
+                                        imagePath,
+                                        `Additional Image ${index + 1}`,
+                                        false // Not cover image
+                                    );
+                                    imagesGrid.appendChild(imageElement);
+                                }
+                            });
+                        }
+                    } catch (e) {
+                        console.error("Error parsing additional images:", e);
+                    }
+                }
+
+                // Show message if no images
+                if (imagesGrid.children.length === 0) {
+                    imagesGrid.innerHTML = `
+                        <div class="book-image">
+                            <div class="fallback-text">
+                                <i class="fas fa-image"></i>
+                                <span>No book images available</span>
+                            </div>
+                        </div>`;
+                }
+            }
+
+            // Create image element
+            function createImageElement(imagePath, altText, isCover = false) {
+                const imageDiv = document.createElement("div");
+                imageDiv.className = isCover
+                    ? "book-image cover-image loading"
+                    : "book-image loading";
+
+                const img = document.createElement("img");
+                img.src = `../../${imagePath}`;
+                img.alt = altText;
+                img.style.width = "100%";
+                img.style.height = "100%";
+                img.style.objectFit = isCover ? "contain" : "cover";
+                img.style.borderRadius = "12px";
+                img.style.transition = "transform 0.3s ease";
+                img.style.display = "none"; // Hidden initially
+
+                // Handle image load error
+                img.onerror = function () {
+                    imageDiv.classList.remove("loading");
+                    this.style.display = "none";
+                    if (this.nextElementSibling) {
+                        this.nextElementSibling.style.display = "flex";
+                    }
+                };
+
+                // Handle image load success
+                img.onload = function () {
+                    imageDiv.classList.remove("loading");
+                    this.style.display = "block";
+                    if (this.nextElementSibling) {
+                        this.nextElementSibling.style.display = "none";
+                    }
+                };
+
+                // Create fallback element
+                const fallback = document.createElement("div");
+                fallback.className = "fallback-text";
+                fallback.style.display = "none";
+                fallback.innerHTML = `
+                    <i class="fas fa-image"></i>
+                    <span>${altText}</span>
+                `;
+
+                // Create image caption
+                const caption = document.createElement("div");
+                caption.className = "image-caption";
+                caption.textContent = altText;
+
+                imageDiv.appendChild(img);
+                imageDiv.appendChild(fallback);
+                imageDiv.appendChild(caption);
+
+                return imageDiv;
+            }
+
+            // Update status badge styling
+            function updateStatusBadge(status) {
+                const statusBadge = document.getElementById("book-status");
+                statusBadge.className = "status-badge";
+
+                switch (status.toLowerCase()) {
+                    case "approved":
+                        statusBadge.classList.add("status-approved");
+                        break;
+                    case "rejected":
+                        statusBadge.classList.add("status-rejected");
+                        break;
+                    case "pending":
+                    default:
+                        statusBadge.classList.add("status-pending");
+                        break;
+                }
+            }
+
+            // Approve book functionality
+            async function approveBook() {
+                if (!confirm("Are you sure you want to approve this book?")) {
+                    return;
+                }
+
+                try {
+                    const formData = new FormData();
+                    formData.append("action", "update_book_status");
+                    formData.append("book_id", currentBookId);
+                    formData.append("status", "approved");
+
+                    const response = await fetch(
+                        "../../backend/books/book_manager.php",
+                        {
+                            method: "POST",
+                            body: formData,
+                        }
+                    );
+
+                    if (!response.ok) {
+                        throw new Error(
+                            `HTTP error! status: ${response.status}`
+                        );
+                    }
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        showNotification(
+                            "Book approved successfully!",
+                            "success"
+                        );
+                        // Update status in UI
+                        updateStatusBadge("approved");
+                        document.getElementById("book-status").textContent =
+                            "Approved";
+
+                        // Redirect back to book approval after a short delay
+                        setTimeout(() => {
+                            window.location.href = "book-approval.html";
+                        }, 1500);
+                    } else {
+                        throw new Error(
+                            result.message || "Failed to approve book"
+                        );
+                    }
+                } catch (error) {
+                    console.error("Approve book error:", error);
+                    showNotification(
+                        "Failed to approve book: " + error.message,
+                        "error"
+                    );
+                }
+            }
+
+            // Reject book functionality
+            async function rejectBook(reason) {
+                if (!reason || reason.trim() === "") {
+                    showNotification(
+                        "Please provide a reason for rejection.",
+                        "warning"
+                    );
+                    return;
+                }
+
+                try {
+                    const formData = new FormData();
+                    formData.append("action", "update_book_status");
+                    formData.append("book_id", currentBookId);
+                    formData.append("status", "rejected");
+                    formData.append("rejection_reason", reason.trim());
+
+                    const response = await fetch(
+                        "../../backend/books/book_manager.php",
+                        {
+                            method: "POST",
+                            body: formData,
+                        }
+                    );
+
+                    if (!response.ok) {
+                        throw new Error(
+                            `HTTP error! status: ${response.status}`
+                        );
+                    }
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        showNotification("Book rejected successfully!", "info");
+                        // Update status in UI
+                        updateStatusBadge("rejected");
+                        document.getElementById("book-status").textContent =
+                            "Rejected";
+
+                        // Redirect back to book approval after a short delay
+                        setTimeout(() => {
+                            window.location.href = "book-approval.html";
+                        }, 1500);
+                    } else {
+                        throw new Error(
+                            result.message || "Failed to reject book"
+                        );
+                    }
+                } catch (error) {
+                    console.error("Reject book error:", error);
+                    showNotification(
+                        "Failed to reject book: " + error.message,
+                        "error"
+                    );
+                }
+            }
+
+            // Event listeners
             document.addEventListener("DOMContentLoaded", function () {
                 const approveBtn = document.getElementById("approve-book");
                 const rejectBtn = document.getElementById("reject-book");
@@ -454,24 +990,7 @@
 
                 // Approve book functionality
                 if (approveBtn) {
-                    approveBtn.addEventListener("click", function () {
-                        if (
-                            confirm(
-                                "Are you sure you want to approve this book?"
-                            )
-                        ) {
-                            // This will be connected to backend later
-                            showNotification(
-                                "Book approved successfully!",
-                                "success"
-                            );
-
-                            // Redirect back to book approval after a short delay
-                            setTimeout(() => {
-                                window.location.href = "book-approval.html";
-                            }, 1500);
-                        }
-                    });
+                    approveBtn.addEventListener("click", approveBook);
                 }
 
                 // Show rejection reason input
@@ -488,21 +1007,7 @@
                         const reason = rejectionReason
                             .querySelector("textarea")
                             .value.trim();
-                        if (!reason) {
-                            showNotification(
-                                "Please provide a reason for rejection.",
-                                "warning"
-                            );
-                            return;
-                        }
-
-                        // This will be connected to backend later
-                        showNotification("Book rejected successfully!", "info");
-
-                        // Redirect back to book approval after a short delay
-                        setTimeout(() => {
-                            window.location.href = "book-approval.html";
-                        }, 1500);
+                        rejectBook(reason);
                     });
                 }
             });

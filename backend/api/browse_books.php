@@ -65,7 +65,7 @@ class BrowseBooksManager {
 
             // Add condition filter
             if (!empty($filters['condition'])) {
-                $whereConditions[] = "b.condition = ?";
+                $whereConditions[] = "b.book_condition = ?";
                 $params[] = $filters['condition'];
             }
 

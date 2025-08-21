@@ -184,8 +184,8 @@ class UserAuth {
                 return ['success' => false, 'message' => 'Invalid user type selected. Please select the correct user type.'];
             }
             
-            // Create user session
-            loginUser($user['id'], $user['username'], $user['user_type']);
+            // Create user session with additional user data
+            loginUser($user['id'], $user['username'], $user['user_type'], $user);
             
             // Return success with user data (excluding sensitive info)
             unset($user['password_hash']);
@@ -512,6 +512,48 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') 
             }
             break;
         
+        case 'admin_login':
+            $email = $_POST['email'] ?? '';
+            $password = $_POST['password'] ?? '';
+            
+            if (empty($email) || empty($password)) {
+                sendErrorResponse('Email and password are required');
+            }
+            
+            $result = $userAuth->loginUser($email, $password, 'admin');
+            if ($result && $result['success']) {
+                // Login successful, session already set by loginUser method
+                sendSuccessResponse($result['user'], 'Login successful');
+            } else {
+                sendErrorResponse($result['message'] ?? 'Login failed');
+            }
+            break;
+            
+        case 'get_current_user':
+            if (!isLoggedIn()) {
+                sendErrorResponse('User not logged in', 401);
+            }
+            $currentUser = getCurrentUser();
+            if ($currentUser) {
+                sendSuccessResponse($currentUser, 'Current user retrieved successfully');
+            } else {
+                sendErrorResponse('Failed to retrieve current user');
+            }
+            break;
+            
+        case 'debug_session':
+            // Debug endpoint to see what's in the session
+            $debugData = [
+                'session_id' => session_id(),
+                'session_data' => $_SESSION,
+                'is_logged_in' => isLoggedIn(),
+                'is_admin' => isAdmin(),
+                'current_user_id' => getCurrentUserId(),
+                'current_user_type' => getCurrentUserType()
+            ];
+            sendSuccessResponse($debugData, 'Session debug info');
+            break;
+            
         case 'check_admin_auth':
             if (!isLoggedIn()) {
                 sendErrorResponse('User not logged in', 401);

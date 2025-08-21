@@ -94,22 +94,6 @@
                 margin-bottom: 1rem;
             }
 
-            .book-rating {
-                display: flex;
-                align-items: center;
-                margin-bottom: 1rem;
-            }
-
-            .stars {
-                color: var(--warning-color);
-                margin-right: 0.5rem;
-            }
-
-            .rating-count {
-                color: #666;
-                font-size: 0.9rem;
-            }
-
             .book-category {
                 display: inline-block;
                 padding: 0.3rem 0.8rem;
@@ -222,23 +206,6 @@
                 margin-right: 0.5rem;
             }
 
-            .share-btn {
-                padding: 1rem;
-                background-color: white;
-                color: var(--dark-color);
-                border: 1px solid #ddd;
-                border-radius: 4px;
-                cursor: pointer;
-                transition: all 0.3s ease;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-
-            .share-btn:hover {
-                background-color: #f5f5f5;
-            }
-
             .seller-info {
                 display: flex;
                 align-items: center;
@@ -270,33 +237,16 @@
                 margin-bottom: 0.2rem;
             }
 
-            .seller-rating {
+            .seller-email {
                 display: flex;
                 align-items: center;
-                color: var(--warning-color);
+                color: #666;
                 font-size: 0.9rem;
             }
 
-            .seller-rating span {
-                color: #666;
-                margin-left: 0.5rem;
-            }
-
-            .contact-seller-btn {
-                padding: 0.5rem 1rem;
-                background-color: transparent;
+            .seller-email i {
                 color: var(--primary-color);
-                border: 1px solid var(--primary-color);
-                border-radius: 4px;
-                font-weight: 600;
-                cursor: pointer;
-                transition: all 0.3s ease;
-                margin-left: 1rem;
-            }
-
-            .contact-seller-btn:hover {
-                background-color: var(--primary-color);
-                color: white;
+                margin-right: 0.5rem;
             }
 
             .book-description {
@@ -359,68 +309,6 @@
                 margin-bottom: 1.5rem;
             }
 
-            .similar-books {
-                margin-bottom: 3rem;
-            }
-
-            .books-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-                gap: 1.5rem;
-            }
-
-            .book-card {
-                background-color: white;
-                border-radius: 8px;
-                overflow: hidden;
-                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-                transition: transform 0.3s ease;
-            }
-
-            .book-card:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            }
-
-            .book-card-image {
-                height: 200px;
-                overflow: hidden;
-            }
-
-            .book-card-image .placeholder-image {
-                width: 100%;
-                height: 100%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                background-color: #f0f0f0;
-                color: #777;
-            }
-
-            .book-card-info {
-                padding: 1rem;
-            }
-
-            .book-card-title {
-                margin-bottom: 0.5rem;
-                color: var(--dark-color);
-                font-size: 1rem;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-            }
-
-            .book-card-author {
-                color: #666;
-                font-size: 0.9rem;
-                margin-bottom: 0.5rem;
-            }
-
-            .book-card-price {
-                font-weight: 700;
-                color: var(--primary-color);
-            }
-
             /* Responsive styles */
             @media screen and (max-width: 992px) {
                 .book-details-wrapper {
@@ -438,20 +326,12 @@
             }
 
             @media screen and (max-width: 768px) {
-                .books-grid {
-                    grid-template-columns: repeat(3, 1fr);
-                }
-
                 .book-actions {
                     flex-direction: column;
                 }
             }
 
             @media screen and (max-width: 576px) {
-                .books-grid {
-                    grid-template-columns: repeat(2, 1fr);
-                }
-
                 .seller-info {
                     flex-direction: column;
                     align-items: flex-start;
@@ -459,13 +339,6 @@
 
                 .seller-avatar {
                     margin-bottom: 1rem;
-                }
-
-                .contact-seller-btn {
-                    margin-left: 0;
-                    margin-top: 1rem;
-                    width: 100%;
-                    text-align: center;
                 }
             }
         </style>
@@ -530,15 +403,6 @@
                     <h1 class="book-title" id="book-title">Loading...</h1>
                     <p class="book-author" id="book-author">Loading...</p>
 
-                    <div class="book-rating">
-                        <div class="stars" id="book-stars">
-                            <!-- Stars will be loaded dynamically -->
-                        </div>
-                        <span class="rating-count" id="rating-count"
-                            >Loading...</span
-                        >
-                    </div>
-
                     <div class="book-category" id="book-category">
                         Loading...
                     </div>
@@ -552,13 +416,9 @@
                         >
                     </div>
 
-                    <div class="shipping-info">
-                        <i class="fas fa-truck"></i> Free shipping on orders
-                        over ৳25
-                    </div>
-
                     <div class="stock-info">
-                        <i class="fas fa-check-circle"></i> In Stock
+                        <i class="fas fa-check-circle"></i> Available Items:
+                        <span id="stock-count">Loading...</span>
                     </div>
 
                     <div class="book-actions">
@@ -568,9 +428,6 @@
                         <button class="buy-now-btn">
                             <i class="fas fa-bolt"></i> Buy Now
                         </button>
-                        <button class="share-btn">
-                            <i class="fas fa-share-alt"></i>
-                        </button>
                     </div>
 
                     <div class="seller-info">
@@ -579,18 +436,11 @@
                             <div class="seller-name" id="seller-name">
                                 Loading...
                             </div>
-                            <div class="seller-rating">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star-half-alt"></i>
-                                <span id="seller-rating">Loading...</span>
+                            <div class="seller-email">
+                                <i class="fas fa-envelope"></i>
+                                <span id="seller-email">Loading...</span>
                             </div>
                         </div>
-                        <button class="contact-seller-btn">
-                            Contact Seller
-                        </button>
                     </div>
 
                     <div class="book-description">
@@ -623,16 +473,12 @@
                                 <th>Seller</th>
                                 <td id="book-seller-detail">Loading...</td>
                             </tr>
+                            <tr>
+                                <th>Contact Email</th>
+                                <td id="book-seller-email">Loading...</td>
+                            </tr>
                         </table>
                     </div>
-                </div>
-            </div>
-
-            <!-- Related Books -->
-            <div class="similar-books">
-                <h2 class="section-title">Related Books</h2>
-                <div class="books-grid" id="related-books-grid">
-                    <!-- Related books will be loaded dynamically -->
                 </div>
             </div>
         </div>
@@ -701,7 +547,7 @@
         <!-- JavaScript -->
         <script src="../js/main.js"></script>
         <script src="../js/auth.js"></script>
-        <!-- <script src="../js/customer-navbar.js"></script> -->
+        <script src="../js/customer-navbar.js"></script>
         <!-- Book Details Specific JavaScript -->
         <script>
             // Simple test to confirm script is loading
@@ -805,10 +651,14 @@
                     buyNowBtn.addEventListener("click", function () {
                         // Check if user is logged in
                         if (!isLoggedIn()) {
-                            showNotification(
-                                "Please login to purchase books",
-                                "warning"
-                            );
+                            try {
+                                showNotification(
+                                    "Please login to purchase books",
+                                    "warning"
+                                );
+                            } catch (e) {
+                                console.error("❌ showNotification failed:", e);
+                            }
                             // Redirect to login page
                             setTimeout(() => {
                                 window.location.href = "login.html";
@@ -818,38 +668,11 @@
 
                         try {
                             showNotification("Proceeding to checkout!", "info");
-                        } catch (e) {
-                            console.error("❌ showNotification failed:", e);
-                        }
-                    });
-                }
-
-                // Share button
-                const shareBtn = document.querySelector(".share-btn");
-                if (shareBtn) {
-                    shareBtn.addEventListener("click", function () {
-                        try {
-                            showNotification(
-                                "Share functionality coming soon",
-                                "info"
-                            );
-                        } catch (e) {
-                            console.error("❌ showNotification failed:", e);
-                        }
-                    });
-                }
-
-                // Contact seller button
-                const contactSellerBtn = document.querySelector(
-                    ".contact-seller-btn"
-                );
-                if (contactSellerBtn) {
-                    contactSellerBtn.addEventListener("click", function () {
-                        try {
-                            showNotification(
-                                "Message sent to seller",
-                                "success"
-                            );
+                            // Redirect to payment page with book details
+                            setTimeout(() => {
+                                const paymentUrl = `payment.html?book_id=${currentBookId}&action=buy_now`;
+                                window.location.href = paymentUrl;
+                            }, 1000);
                         } catch (e) {
                             console.error("❌ showNotification failed:", e);
                         }
@@ -896,7 +719,6 @@
                             console.log("📚 Book data:", bookData);
 
                             displayBookDetails(bookData);
-                            displayRelatedBooks(bookData.related_books);
                             displayReviews(bookData.reviews);
                         } else {
                             console.error(
@@ -1092,9 +914,39 @@
                     );
                 }
 
-                // Update rating (placeholder for now)
-                updateRating(4.5, 12);
-                console.log("⭐ Rating updated");
+                // Update seller email
+                const sellerEmailElement =
+                    document.getElementById("seller-email");
+                if (sellerEmailElement) {
+                    sellerEmailElement.textContent = book.seller_email || "N/A";
+                    console.log(
+                        "✅ Seller email updated to:",
+                        book.seller_email || "N/A"
+                    );
+                }
+
+                // Update seller email in details table
+                const sellerEmailDetailElement =
+                    document.getElementById("book-seller-email");
+                if (sellerEmailDetailElement) {
+                    sellerEmailDetailElement.textContent =
+                        book.seller_email || "N/A";
+                    console.log(
+                        "✅ Seller email detail updated to:",
+                        book.seller_email || "N/A"
+                    );
+                }
+
+                // Update stock count
+                const stockCountElement =
+                    document.getElementById("stock-count");
+                if (stockCountElement) {
+                    stockCountElement.textContent = book.stock_quantity || 0;
+                    console.log(
+                        "✅ Stock count updated to:",
+                        book.stock_quantity || 0
+                    );
+                }
 
                 // Update thumbnails
                 updateThumbnails(book);
@@ -1103,86 +955,10 @@
                 console.log("✅ Book details displayed successfully");
             }
 
-            // Display related books
-            function displayRelatedBooks(relatedBooks) {
-                const relatedGrid =
-                    document.getElementById("related-books-grid");
-
-                if (!relatedBooks || relatedBooks.length === 0) {
-                    relatedGrid.innerHTML =
-                        '<p style="text-align: center; color: #666; padding: 2rem;">No related books found.</p>';
-                    return;
-                }
-
-                relatedGrid.innerHTML = "";
-
-                relatedBooks.forEach((book) => {
-                    const bookCard = createRelatedBookCard(book);
-                    relatedGrid.appendChild(bookCard);
-                });
-            }
-
-            // Create related book card
-            function createRelatedBookCard(book) {
-                const card = document.createElement("div");
-                card.className = "book-card";
-
-                const imagePath = book.cover_image_path
-                    ? `../${book.cover_image_path}`
-                    : "../images/b_cover1.jpg";
-
-                card.innerHTML = `
-                    <div class="book-card-image">
-                        <img src="${imagePath}" alt="${book.title}" class="book-cover" />
-                    </div>
-                    <div class="book-card-info">
-                        <h4 class="book-card-title">${book.title}</h4>
-                        <div class="book-card-author">${book.author}</div>
-                        <div class="book-card-price">৳${book.price}</div>
-                    </div>
-                `;
-
-                // Add click event to navigate to book details
-                card.addEventListener("click", () => {
-                    window.location.href = `book-details.html?id=${book.id}`;
-                });
-
-                return card;
-            }
-
             // Display reviews (placeholder for future implementation)
             function displayReviews(reviews) {
                 // This will be implemented when reviews are added
                 console.log("📝 Reviews data:", reviews);
-            }
-
-            // Update rating display
-            function updateRating(rating, totalReviews) {
-                const starsContainer = document.getElementById("book-stars");
-                const ratingText = document.getElementById("rating-count");
-
-                // Clear existing stars
-                starsContainer.innerHTML = "";
-
-                // Add stars based on rating
-                const fullStars = Math.floor(rating);
-                const hasHalfStar = rating % 1 >= 0.5;
-
-                for (let i = 0; i < fullStars; i++) {
-                    starsContainer.innerHTML += '<i class="fas fa-star"></i>';
-                }
-
-                if (hasHalfStar) {
-                    starsContainer.innerHTML +=
-                        '<i class="fas fa-star-half-alt"></i>';
-                }
-
-                const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
-                for (let i = 0; i < emptyStars; i++) {
-                    starsContainer.innerHTML += '<i class="far fa-star"></i>';
-                }
-
-                ratingText.textContent = `${rating} (${totalReviews} reviews)`;
             }
 
             // Update thumbnails
@@ -1340,6 +1116,11 @@
 
                             // Update cart count in navbar
                             updateCartCountFromDatabase();
+
+                            // Redirect to cart page after successful addition
+                            setTimeout(() => {
+                                window.location.href = "cart.html";
+                            }, 1500);
                         } else {
                             try {
                                 showNotification(

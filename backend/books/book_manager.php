@@ -326,6 +326,24 @@ class BookManager {
                 $params
             );
             
+            // Process books to add seller_name field
+            if ($books && is_array($books)) {
+                foreach ($books as &$book) {
+                    // Combine first and last name for seller
+                    if ($book['first_name'] && $book['last_name']) {
+                        $book['seller_name'] = $book['first_name'] . ' ' . $book['last_name'];
+                    } elseif ($book['first_name']) {
+                        $book['seller_name'] = $book['first_name'];
+                    } elseif ($book['last_name']) {
+                        $book['seller_name'] = $book['last_name'];
+                    } elseif ($book['username']) {
+                        $book['seller_name'] = $book['username'];
+                    } else {
+                        $book['seller_name'] = 'Unknown Seller';
+                    }
+                }
+            }
+            
             return $books;
             
         } catch (Exception $e) {
@@ -483,7 +501,8 @@ class BookManager {
     public function getBookDetails($bookId) {
         try {
             $book = $this->db->selectOne(
-                "SELECT b.*, c.name as category_name, u.first_name, u.last_name, u.username as seller_name, u.user_type as seller_type 
+                "SELECT b.*, c.name as category_name, u.first_name, u.last_name, u.username as seller_name, u.email as seller_email, u.user_type as seller_type,
+                        (SELECT COUNT(*) FROM books WHERE seller_id = u.id) as seller_books_count
                  FROM books b 
                  LEFT JOIN categories c ON b.category_id = c.id 
                  LEFT JOIN users u ON b.seller_id = u.id 
@@ -694,6 +713,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 sendSuccessResponse($books, 'User books retrieved successfully');
             } else {
                 sendErrorResponse('Failed to retrieve user books');
+            }
+            break;
+            
+        case 'get_my_books':
+            if (!isLoggedIn()) {
+                sendErrorResponse('User not logged in', 401);
+            }
+            $userId = getCurrentUserId();
+            $books = $bookManager->getUserBooks($userId);
+            if ($books !== false) {
+                sendSuccessResponse($books, 'Your books retrieved successfully');
+            } else {
+                sendErrorResponse('Failed to retrieve your books');
             }
             break;
             

@@ -584,7 +584,7 @@ class OrderManager {
     public function getRecentOrders($limit = 10) {
         try {
             $orders = $this->db->select(
-                "SELECT o.order_number, o.total_amount, o.order_status, o.order_date,
+                "SELECT o.id, o.order_number, o.total_amount, o.order_status, o.order_date,
                         u.username, u.first_name, u.last_name
                  FROM orders o
                  JOIN users u ON o.user_id = u.id
@@ -592,6 +592,9 @@ class OrderManager {
                  LIMIT ?",
                 [intval($limit)]
             );
+            
+            // Debug: Log what we're returning
+            error_log("getRecentOrders returning: " . json_encode($orders));
             
             return $orders;
             
@@ -655,6 +658,53 @@ class OrderManager {
             
         } catch (Exception $e) {
             error_log("Get User Orders Error: " . $e->getMessage());
+            return false;
+        }
+    }
+    
+    /**
+     * Create a test order for development/testing purposes
+     * @return array|false Test order data or false on failure
+     */
+    public function createTestOrder() {
+        try {
+            // Check if we already have orders
+            $existingOrders = $this->db->selectOne("SELECT COUNT(*) as count FROM orders");
+            if ($existingOrders && $existingOrders['count'] > 0) {
+                return false; // Already have orders
+            }
+            
+            // Get first user (admin or customer)
+            $user = $this->db->selectOne("SELECT id FROM users LIMIT 1");
+            if (!$user) {
+                return false; // No users exist
+            }
+            
+            // Create test order
+            $orderNumber = $this->generateOrderNumber();
+            $orderId = $this->db->insert(
+                "INSERT INTO orders (order_number, user_id, total_amount, shipping_address, shipping_city, shipping_postal_code, order_status) 
+                 VALUES (?, ?, ?, ?, ?, ?, ?)",
+                [
+                    $orderNumber,
+                    $user['id'],
+                    1500.00,
+                    '123 Test Street, Dhaka',
+                    'Dhaka',
+                    '1200',
+                    'Pending'
+                ]
+            );
+            
+            if ($orderId) {
+                error_log("Created test order with ID: " . $orderId);
+                return ['success' => true, 'order_id' => $orderId];
+            }
+            
+            return false;
+            
+        } catch (Exception $e) {
+            error_log("Create Test Order Error: " . $e->getMessage());
             return false;
         }
     }
@@ -815,6 +865,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 sendSuccessResponse($orders, 'Recent orders retrieved successfully');
             } else {
                 sendErrorResponse('Failed to retrieve recent orders');
+            }
+            break;
+            
+        case 'create_test_order':
+            if (!isAdmin()) {
+                sendErrorResponse('Access denied', 403);
+            }
+            $result = $orderManager->createTestOrder();
+            if ($result !== false) {
+                sendSuccessResponse($result, 'Test order created successfully');
+            } else {
+                sendErrorResponse('Failed to create test order or orders already exist');
             }
             break;
             

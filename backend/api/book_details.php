@@ -31,6 +31,7 @@ class BookDetailsManager {
                         b.description,
                         b.price,
                         b.book_condition,
+                        b.stock_quantity,
                         b.cover_image_path,
                         b.additional_images,
                         b.status,
