@@ -524,10 +524,71 @@ class OrderManager {
                 $stats['avg_order_value'] = floatval($stats['avg_order_value'] ?? 0);
             }
             
+            // Calculate commission based on book ownership
+            $commissionStats = $this->getCommissionStats();
+            if ($commissionStats) {
+                $stats = array_merge($stats, $commissionStats);
+            }
+            
             return $stats;
             
         } catch (Exception $e) {
             error_log("Get Order Stats Error: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Get commission statistics based on book ownership
+     * @return array|false Commission statistics
+     */
+    public function getCommissionStats() {
+        try {
+            $stats = $this->db->selectOne(
+                "SELECT 
+                    -- Customer books: Admin gets 5% commission
+                    SUM(CASE 
+                        WHEN o.order_status IN ('Delivered', 'Shipped') 
+                        AND b.seller_id != 1  -- Assuming admin user_id is 1
+                        THEN oi.price_per_item * oi.quantity * 0.05
+                        ELSE 0 
+                    END) as customer_book_commission,
+                    
+                    -- Admin books: Admin gets 15% profit
+                    SUM(CASE 
+                        WHEN o.order_status IN ('Delivered', 'Shipped') 
+                        AND b.seller_id = 1  -- Admin uploaded books
+                        THEN oi.price_per_item * oi.quantity * 0.15
+                        ELSE 0 
+                    END) as admin_book_profit,
+                    
+                    -- Total admin earnings (commission + profit)
+                    SUM(CASE 
+                        WHEN o.order_status IN ('Delivered', 'Shipped') 
+                        AND b.seller_id != 1  -- Customer books
+                        THEN oi.price_per_item * oi.quantity * 0.05
+                        WHEN o.order_status IN ('Delivered', 'Shipped') 
+                        AND b.seller_id = 1  -- Admin books
+                        THEN oi.price_per_item * oi.quantity * 0.15
+                        ELSE 0 
+                    END) as total_admin_earnings
+                    
+                 FROM orders o
+                 JOIN order_items oi ON o.id = oi.order_id
+                 JOIN books b ON oi.book_id = b.id
+                 WHERE o.order_status IN ('Delivered', 'Shipped')"
+            );
+            
+            if ($stats) {
+                $stats['customer_book_commission'] = floatval($stats['customer_book_commission'] ?? 0);
+                $stats['admin_book_profit'] = floatval($stats['admin_book_profit'] ?? 0);
+                $stats['total_admin_earnings'] = floatval($stats['total_admin_earnings'] ?? 0);
+            }
+            
+            return $stats;
+            
+        } catch (Exception $e) {
+            error_log("Get Commission Stats Error: " . $e->getMessage());
             return false;
         }
     }
@@ -662,52 +723,7 @@ class OrderManager {
         }
     }
     
-    /**
-     * Create a test order for development/testing purposes
-     * @return array|false Test order data or false on failure
-     */
-    public function createTestOrder() {
-        try {
-            // Check if we already have orders
-            $existingOrders = $this->db->selectOne("SELECT COUNT(*) as count FROM orders");
-            if ($existingOrders && $existingOrders['count'] > 0) {
-                return false; // Already have orders
-            }
-            
-            // Get first user (admin or customer)
-            $user = $this->db->selectOne("SELECT id FROM users LIMIT 1");
-            if (!$user) {
-                return false; // No users exist
-            }
-            
-            // Create test order
-            $orderNumber = $this->generateOrderNumber();
-            $orderId = $this->db->insert(
-                "INSERT INTO orders (order_number, user_id, total_amount, shipping_address, shipping_city, shipping_postal_code, order_status) 
-                 VALUES (?, ?, ?, ?, ?, ?, ?)",
-                [
-                    $orderNumber,
-                    $user['id'],
-                    1500.00,
-                    '123 Test Street, Dhaka',
-                    'Dhaka',
-                    '1200',
-                    'Pending'
-                ]
-            );
-            
-            if ($orderId) {
-                error_log("Created test order with ID: " . $orderId);
-                return ['success' => true, 'order_id' => $orderId];
-            }
-            
-            return false;
-            
-        } catch (Exception $e) {
-            error_log("Create Test Order Error: " . $e->getMessage());
-            return false;
-        }
-    }
+
     
     /**
      * Log admin action for audit trail
@@ -868,17 +884,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
             break;
             
-        case 'create_test_order':
-            if (!isAdmin()) {
-                sendErrorResponse('Access denied', 403);
-            }
-            $result = $orderManager->createTestOrder();
-            if ($result !== false) {
-                sendSuccessResponse($result, 'Test order created successfully');
-            } else {
-                sendErrorResponse('Failed to create test order or orders already exist');
-            }
-            break;
+
             
         case 'get_user_selling_stats':
             if (!isLoggedIn()) {

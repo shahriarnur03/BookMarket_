@@ -36,7 +36,7 @@ class AdminBookUpload {
             formData.append("action", "test_connection");
 
             const response = await fetch(
-                "../../backend/books/admin_book_upload_simple.php",
+                "../../backend/books/admin_book_upload.php",
                 {
                     method: "POST",
                     body: formData,
@@ -76,7 +76,7 @@ class AdminBookUpload {
     async loadCategories() {
         try {
             const response = await fetch(
-                "../../backend/books/admin_book_upload_simple.php",
+                "../../backend/books/admin_book_upload.php",
                 {
                     method: "POST",
                     headers: {
@@ -465,14 +465,13 @@ class AdminBookUpload {
 
         try {
             // Test connection first
-            console.log("Testing connection...");
+
             const connectionTest = await this.testConnection();
             if (!connectionTest.success) {
                 throw new Error(
                     "Backend connection failed: " + connectionTest.message
                 );
             }
-            console.log("Connection test passed");
 
             // First upload images
             console.log("Uploading images...");
@@ -659,7 +658,7 @@ class AdminBookUpload {
 
         try {
             const response = await fetch(
-                "../../backend/uploads/file_upload_simple.php",
+                "../../backend/uploads/file_upload.php",
                 {
                     method: "POST",
                     body: formData,
@@ -740,7 +739,7 @@ class AdminBookUpload {
 
         try {
             const response = await fetch(
-                "../../backend/books/admin_book_upload_simple.php",
+                "../../backend/books/admin_book_upload.php",
                 {
                     method: "POST",
                     body: formData,

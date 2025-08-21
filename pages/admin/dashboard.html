@@ -32,11 +32,6 @@
                 color: #666;
             }
 
-            .dashboard-actions {
-                display: flex;
-                gap: 1rem;
-            }
-
             .dashboard-layout {
                 display: flex;
                 gap: 2rem;
@@ -148,8 +143,12 @@
                 border-top: 3px solid var(--warning-color);
             }
 
-            .stat-earnings {
-                border-top: 3px solid var(--secondary-color);
+            .stat-revenue {
+                border-top: 3px solid var(--warning-color);
+            }
+
+            .stat-total-earnings {
+                border-top: 3px solid var(--primary-color);
             }
 
             .section-card {
@@ -189,6 +188,46 @@
                 display: grid;
                 grid-template-columns: 1fr 1fr;
                 gap: 2rem;
+            }
+
+            .charts-grid {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 2rem;
+                margin-bottom: 2rem;
+            }
+
+            .chart-container {
+                position: relative;
+                height: 300px;
+                width: 100%;
+            }
+
+            .chart-container canvas {
+                width: 100% !important;
+                height: 100% !important;
+            }
+
+            /* Responsive Design for Charts */
+            @media screen and (max-width: 768px) {
+                .charts-grid {
+                    grid-template-columns: 1fr;
+                    gap: 1.5rem;
+                }
+
+                .chart-container {
+                    height: 250px;
+                }
+            }
+
+            @media screen and (max-width: 576px) {
+                .stats-cards {
+                    grid-template-columns: repeat(2, 1fr);
+                }
+
+                .charts-container {
+                    grid-template-columns: 1fr;
+                }
             }
 
             .chart-box {
@@ -351,18 +390,6 @@
                     <h1>Admin Dashboard</h1>
                     <p>Monitor and manage your BookMarket platform</p>
                 </div>
-
-                <div class="dashboard-actions">
-                    <a href="login.html" class="btn btn-primary">
-                        <i class="fas fa-sign-in-alt"></i> Admin Login
-                    </a>
-                    <a href="book-management.html" class="btn btn-secondary"
-                        ><i class="fas fa-book"></i> Book Management</a
-                    >
-                    <a href="user-management.html" class="btn btn-secondary"
-                        ><i class="fas fa-users"></i> User Management</a
-                    >
-                </div>
             </div>
 
             <div class="dashboard-layout">
@@ -397,12 +424,31 @@
                             </div>
                         </div>
 
-                        <div class="stat-card stat-earnings">
+                        <div class="stat-card stat-revenue">
+                            <div class="stat-icon">
+                                <i class="fas fa-money-bill-wave"></i>
+                            </div>
+                            <div class="stat-label">Total Revenue</div>
+                            <div class="stat-value" id="stat-total-revenue">
+                                ৳0
+                            </div>
+                            <div class="stat-trend trend-up">
+                                <i class="fas fa-arrow-up"></i> 18% from last
+                                month
+                            </div>
+                        </div>
+
+                        <div class="stat-card stat-total-earnings">
                             <div class="stat-icon">
                                 <i class="fas fa-dollar-sign"></i>
                             </div>
-                            <div class="stat-label">Total Earnings</div>
-                            <div class="stat-value" id="stat-total-earnings">
+                            <div class="stat-label">
+                                Total Platform Earnings
+                            </div>
+                            <div
+                                class="stat-value"
+                                id="stat-total-admin-earnings"
+                            >
                                 ৳0
                             </div>
                             <div class="stat-trend trend-up">
@@ -443,63 +489,84 @@
                         </div>
                     </div>
 
-                    <!-- Recent Orders -->
+                    <!-- Dashboard Charts -->
                     <div class="section-card">
                         <div class="section-header">
-                            <h3 class="section-title">Recent Orders</h3>
-                            <a
-                                href="order-management.html"
-                                class="section-action"
-                                >View All</a
-                            >
+                            <h3 class="section-title">Sales Overview</h3>
+                            <a href="#" class="section-action">View Details</a>
                         </div>
-
                         <div class="section-content">
-                            <div class="table-responsive">
-                                <table class="admin-table">
-                                    <thead>
-                                        <tr>
-                                            <th>Order ID</th>
-                                            <th>Date</th>
-                                            <th>Customer</th>
-                                            <th>Book</th>
-                                            <th>Amount</th>
-                                            <th>Status</th>
-                                            <th>Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="recent-orders-body"></tbody>
-                                </table>
+                            <div class="chart-container">
+                                <canvas
+                                    id="salesChart"
+                                    width="400"
+                                    height="200"
+                                ></canvas>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Recent Users -->
-                    <div class="section-card">
-                        <div class="section-header">
-                            <h3 class="section-title">Recent Users</h3>
-                            <a
-                                href="user-management.html"
-                                class="section-action"
-                                >View All</a
-                            >
+                    <!-- Additional Charts Grid -->
+                    <div class="charts-grid">
+                        <div class="section-card">
+                            <div class="section-header">
+                                <h3 class="section-title">Monthly Revenue</h3>
+                            </div>
+                            <div class="section-content">
+                                <div class="chart-container">
+                                    <canvas
+                                        id="revenueChart"
+                                        width="400"
+                                        height="300"
+                                    ></canvas>
+                                </div>
+                            </div>
                         </div>
 
-                        <div class="section-content">
-                            <div class="table-responsive">
-                                <table class="admin-table">
-                                    <thead>
-                                        <tr>
-                                            <th>User ID</th>
-                                            <th>Name</th>
-                                            <th>Email</th>
-                                            <th>Type</th>
-                                            <th>Joined Date</th>
-                                            <th>Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="recent-users-body"></tbody>
-                                </table>
+                        <div class="section-card">
+                            <div class="section-header">
+                                <h3 class="section-title">Book Categories</h3>
+                            </div>
+                            <div class="section-content">
+                                <div class="chart-container">
+                                    <canvas
+                                        id="categoriesChart"
+                                        width="400"
+                                        height="300"
+                                    ></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="section-card">
+                            <div class="section-header">
+                                <h3 class="section-title">
+                                    Order Status Distribution
+                                </h3>
+                            </div>
+                            <div class="section-content">
+                                <div class="chart-container">
+                                    <canvas
+                                        id="orderStatusChart"
+                                        width="400"
+                                        height="300"
+                                    ></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="section-card">
+                            <div class="section-header">
+                                <h3 class="section-title">User Growth</h3>
+                            </div>
+                            <div class="section-content">
+                                <div class="chart-container">
+                                    <canvas
+                                        id="userGrowthChart"
+                                        width="400"
+                                        height="300"
+                                    ></canvas>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -575,6 +642,9 @@
         <!-- Notification Container -->
         <div id="notification-container" class="notification-container"></div>
 
+        <!-- Chart.js CDN -->
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
         <!-- JavaScript -->
         <script src="../../js/main.js"></script>
         <script src="../../js/auth.js"></script>
@@ -582,6 +652,20 @@
         <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
         <!-- Admin Dashboard specific JavaScript -->
         <script>
+            /**
+             * Admin Dashboard - All charts now use real database data
+             *
+             * Charts implemented:
+             * 1. Sales Overview Chart - Uses get_revenue_timeseries API
+             * 2. Monthly Revenue Chart - Uses get_revenue_timeseries API
+             * 3. Book Categories Chart - Uses get_categories_with_counts API
+             * 4. Order Status Distribution - Uses get_order_stats API
+             * 5. User Growth Chart - Uses get_user_growth API
+             * 6. Books by Category (ApexCharts) - Uses home_data.php API
+             * 7. Earnings Overview (ApexCharts) - Uses get_revenue_timeseries API
+             *
+             * All hardcoded data has been removed and replaced with real database queries
+             */
             document.addEventListener("DOMContentLoaded", function () {
                 // Check authentication first
                 checkAdminAuth();
@@ -621,8 +705,7 @@
                 function loadDashboardData() {
                     // Initial loads
                     loadStats();
-                    loadRecentOrders();
-                    loadRecentUsers();
+                    initializeCharts();
                     loadCharts();
                 }
 
@@ -690,6 +773,14 @@
                     })}`;
                 }
 
+                // Show no data message for charts
+                function showNoDataMessage(chartId, message) {
+                    const container = document.getElementById(chartId);
+                    if (container) {
+                        container.innerHTML = `<div class="chart-placeholder">${message}</div>`;
+                    }
+                }
+
                 function statusBadge(status) {
                     const map = {
                         Pending: "status-pending",
@@ -721,7 +812,7 @@
                             }
                         });
 
-                    // Orders stats for total revenue
+                    // Orders stats for total revenue and commission breakdown
                     const ordersForm = new FormData();
                     ordersForm.append("action", "get_order_stats");
                     fetch("../../backend/orders/order_manager.php", {
@@ -731,11 +822,25 @@
                         .then((r) => r.json())
                         .then((d) => {
                             if (d.success && d.data) {
+                                // Display total revenue
                                 document.getElementById(
-                                    "stat-total-earnings"
+                                    "stat-total-revenue"
                                 ).textContent = formatCurrency(
                                     d.data.total_revenue || 0
                                 );
+
+                                // Display total platform earnings
+                                document.getElementById(
+                                    "stat-total-admin-earnings"
+                                ).textContent = formatCurrency(
+                                    d.data.total_admin_earnings || 0
+                                );
+
+                                console.log("📊 Order Stats:", {
+                                    revenue: d.data.total_revenue,
+                                    platform_earnings:
+                                        d.data.total_admin_earnings,
+                                });
                             }
                         });
 
@@ -756,95 +861,520 @@
                         });
                 }
 
-                // Fetch recent orders
-                function loadRecentOrders() {
+                // Initialize Charts
+                function initializeCharts() {
+                    console.log("📊 Initializing dashboard charts...");
+
+                    // Wait for Chart.js to be loaded
+                    if (typeof Chart === "undefined") {
+                        console.log("Chart.js not loaded yet, retrying...");
+                        setTimeout(initializeCharts, 100);
+                        return;
+                    }
+
+                    // Initialize charts with empty data first
+                    // Real data will be loaded and rendered by loadCharts()
+                    renderSalesChart([]);
+                    renderRevenueChart([]);
+                    renderCategoriesChart([]);
+                    renderOrderStatusChart({});
+                    renderUserGrowthChart([]);
+                }
+
+                // Load Charts with Real Database Data
+                function loadCharts() {
+                    console.log("📈 Loading real chart data from database...");
+
+                    // Load Chart.js charts
+                    loadSalesData();
+                    loadRevenueData();
+                    loadCategoriesData();
+                    loadOrderStatusData();
+                    loadUserGrowthData();
+
+                    // Load ApexCharts
+                    loadApexCharts();
+                }
+
+                // Load Real Sales Data from Database
+                function loadSalesData() {
                     const form = new FormData();
-                    form.append("action", "get_recent_orders");
-                    form.append("limit", "10");
+                    form.append("action", "get_revenue_timeseries");
+                    form.append("months", "12");
+
                     fetch("../../backend/orders/order_manager.php", {
                         method: "POST",
                         body: form,
                     })
                         .then((r) => r.json())
                         .then((d) => {
-                            const tbody =
-                                document.getElementById("recent-orders-body");
-                            tbody.innerHTML = "";
-                            if (d.success && Array.isArray(d.data)) {
-                                d.data.forEach((o) => {
-                                    const tr = document.createElement("tr");
-                                    tr.innerHTML = `
-                                        <td>#${o.order_number}</td>
-                                        <td>${new Date(
-                                            o.order_date
-                                        ).toLocaleDateString()}</td>
-                                        <td>${o.first_name || ""} ${
-                                        o.last_name || ""
-                                    } (${o.username})</td>
-                                        <td>-</td>
-                                        <td>${formatCurrency(
-                                            o.total_amount
-                                        )}</td>
-                                        <td>${statusBadge(o.order_status)}</td>
-                                        <td><button class="action-button btn-view" data-order-id="${
-                                            o.id
-                                        }">View</button></td>
-                                    `;
-                                    tbody.appendChild(tr);
-                                });
+                            if (d.success && d.data) {
+                                console.log("📊 Sales data loaded:", d.data);
+                                renderSalesChart(d.data);
                             } else {
-                                tbody.innerHTML =
-                                    '<tr><td colspan="7">No recent orders</td></tr>';
+                                console.error(
+                                    "Failed to load sales data:",
+                                    d.message
+                                );
+                                renderSalesChart([]); // Render with empty data
                             }
+                        })
+                        .catch((error) => {
+                            console.error("Error loading sales data:", error);
+                            renderSalesChart([]); // Render with empty data
                         });
                 }
 
-                // Fetch recent users
-                function loadRecentUsers() {
+                // Load Real Revenue Data from Database
+                function loadRevenueData() {
                     const form = new FormData();
-                    form.append("action", "get_recent_users");
-                    form.append("limit", "10");
+                    form.append("action", "get_revenue_timeseries");
+                    form.append("months", "6");
+
+                    fetch("../../backend/orders/order_manager.php", {
+                        method: "POST",
+                        body: form,
+                    })
+                        .then((r) => r.json())
+                        .then((d) => {
+                            if (d.success && d.data) {
+                                console.log("📊 Revenue data loaded:", d.data);
+                                renderRevenueChart(d.data);
+                            } else {
+                                console.error(
+                                    "Failed to load revenue data:",
+                                    d.message
+                                );
+                                renderRevenueChart([]); // Render with empty data
+                            }
+                        })
+                        .catch((error) => {
+                            console.error("Error loading revenue data:", error);
+                            renderRevenueChart([]); // Render with empty data
+                        });
+                }
+
+                // Load Real Categories Data from Database
+                function loadCategoriesData() {
+                    const form = new FormData();
+                    form.append("action", "get_categories_with_counts");
+
+                    fetch("../../backend/api/home_data.php", {
+                        method: "POST",
+                        body: form,
+                    })
+                        .then((r) => r.json())
+                        .then((d) => {
+                            if (d.success && d.data) {
+                                console.log(
+                                    "📊 Categories data loaded:",
+                                    d.data
+                                );
+                                renderCategoriesChart(d.data);
+                            } else {
+                                console.error(
+                                    "Failed to load categories data:",
+                                    d.message
+                                );
+                                renderCategoriesChart([]); // Render with empty data
+                            }
+                        })
+                        .catch((error) => {
+                            console.error(
+                                "Error loading categories data:",
+                                error
+                            );
+                            renderCategoriesChart([]); // Render with empty data
+                        });
+                }
+
+                // Load Real Order Status Data from Database
+                function loadOrderStatusData() {
+                    const form = new FormData();
+                    form.append("action", "get_order_stats");
+
+                    fetch("../../backend/orders/order_manager.php", {
+                        method: "POST",
+                        body: form,
+                    })
+                        .then((r) => r.json())
+                        .then((d) => {
+                            if (d.success && d.data) {
+                                console.log(
+                                    "📊 Order status data loaded:",
+                                    d.data
+                                );
+                                renderOrderStatusChart(d.data);
+                            } else {
+                                console.error(
+                                    "Failed to load order status data:",
+                                    d.message
+                                );
+                                renderOrderStatusChart([]); // Render with empty data
+                            }
+                        })
+                        .catch((error) => {
+                            console.error(
+                                "Error loading order status data:",
+                                error
+                            );
+                            renderOrderStatusChart([]); // Render with empty data
+                        });
+                }
+
+                // Load Real User Growth Data from Database
+                function loadUserGrowthData() {
+                    const form = new FormData();
+                    form.append("action", "get_user_growth");
+
                     fetch("../../backend/auth/user_auth.php", {
                         method: "POST",
                         body: form,
                     })
                         .then((r) => r.json())
                         .then((d) => {
-                            const tbody =
-                                document.getElementById("recent-users-body");
-                            tbody.innerHTML = "";
-                            if (d.success && Array.isArray(d.data)) {
-                                d.data.forEach((u) => {
-                                    const tr = document.createElement("tr");
-                                    tr.innerHTML = `
-                                        <td>#${u.id}</td>
-                                        <td>${u.username}</td>
-                                        <td>${u.email}</td>
-                                        <td>${
-                                            u.user_type === "admin"
-                                                ? "Admin"
-                                                : "Customer"
-                                        }</td>
-                                        <td>${new Date(
-                                            u.created_at
-                                        ).toLocaleDateString()}</td>
-                                        <td>
-                                            <div class="action-buttons">
-                                                <button class="action-button btn-view" data-user="${
-                                                    u.id
-                                                }">View</button>
-                                                <button class="action-button btn-delete" data-user="${
-                                                    u.id
-                                                }">Delete</button>
-                                            </div>
-                                        </td>`;
-                                    tbody.appendChild(tr);
-                                });
+                            if (d.success && d.data) {
+                                console.log(
+                                    "📊 User growth data loaded:",
+                                    d.data
+                                );
+                                renderUserGrowthChart(d.data);
                             } else {
-                                tbody.innerHTML =
-                                    '<tr><td colspan="6">No recent users</td></tr>';
+                                console.error(
+                                    "Failed to load user growth data:",
+                                    d.message
+                                );
+                                renderUserGrowthChart([]); // Render with empty data
                             }
+                        })
+                        .catch((error) => {
+                            console.error(
+                                "Error loading user growth data:",
+                                error
+                            );
+                            renderUserGrowthChart([]); // Render with empty data
                         });
+                }
+
+                // Sales Overview Chart (Line Chart)
+                function renderSalesChart(data = []) {
+                    const ctx = document
+                        .getElementById("salesChart")
+                        .getContext("2d");
+
+                    // Process real data or use fallback
+                    let labels = [];
+                    let salesData = [];
+
+                    if (data && data.length > 0) {
+                        labels = data.map((item) => item.month_label);
+                        salesData = data.map((item) =>
+                            parseFloat(item.revenue || 0)
+                        );
+                    } else {
+                        // Show no data message
+                        showNoDataMessage(
+                            "salesChart",
+                            "No sales data available"
+                        );
+                        return;
+                    }
+
+                    new Chart(ctx, {
+                        type: "line",
+                        data: {
+                            labels: labels,
+                            datasets: [
+                                {
+                                    label: "Sales",
+                                    data: salesData,
+                                    borderColor: "#3498db",
+                                    backgroundColor: "rgba(52, 152, 219, 0.1)",
+                                    borderWidth: 3,
+                                    fill: true,
+                                    tension: 0.4,
+                                },
+                            ],
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    display: false,
+                                },
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    grid: {
+                                        color: "rgba(0, 0, 0, 0.1)",
+                                    },
+                                    ticks: {
+                                        callback: function (value) {
+                                            return (
+                                                "৳" +
+                                                value.toLocaleString("en-BD")
+                                            );
+                                        },
+                                    },
+                                },
+                                x: {
+                                    grid: {
+                                        display: false,
+                                    },
+                                },
+                            },
+                            tooltips: {
+                                callbacks: {
+                                    label: function (tooltipItem, chart) {
+                                        return (
+                                            "Sales: ৳" +
+                                            tooltipItem.yLabel.toLocaleString(
+                                                "en-BD"
+                                            )
+                                        );
+                                    },
+                                },
+                            },
+                        },
+                    });
+                }
+
+                // Monthly Revenue Chart (Bar Chart)
+                function renderRevenueChart(data = []) {
+                    const ctx = document
+                        .getElementById("revenueChart")
+                        .getContext("2d");
+
+                    // Process real data or use fallback
+                    let labels = [];
+                    let revenueData = [];
+
+                    if (data && data.length > 0) {
+                        labels = data.map((item) => item.month_label);
+                        revenueData = data.map((item) =>
+                            parseFloat(item.revenue || 0)
+                        );
+                    } else {
+                        // Show no data message
+                        showNoDataMessage(
+                            "revenueChart",
+                            "No revenue data available"
+                        );
+                        return;
+                    }
+
+                    new Chart(ctx, {
+                        type: "bar",
+                        data: {
+                            labels: labels,
+                            datasets: [
+                                {
+                                    label: "Revenue",
+                                    data: revenueData,
+                                    backgroundColor: [
+                                        "#e74c3c",
+                                        "#f39c12",
+                                        "#f1c40f",
+                                        "#2ecc71",
+                                        "#3498db",
+                                        "#9b59b6",
+                                    ],
+                                    borderWidth: 0,
+                                    borderRadius: 8,
+                                },
+                            ],
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    display: false,
+                                },
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                },
+                            },
+                        },
+                    });
+                }
+
+                // Book Categories Chart (Doughnut Chart)
+                function renderCategoriesChart(data = []) {
+                    const ctx = document
+                        .getElementById("categoriesChart")
+                        .getContext("2d");
+
+                    // Process real data or use fallback
+                    let labels = [];
+                    let categoryData = [];
+
+                    if (data && data.length > 0) {
+                        labels = data.map((item) => item.name);
+                        categoryData = data.map((item) =>
+                            parseInt(item.book_count || 0)
+                        );
+                    } else {
+                        // Show no data message
+                        showNoDataMessage(
+                            "categoriesChart",
+                            "No category data available"
+                        );
+                        return;
+                    }
+
+                    new Chart(ctx, {
+                        type: "doughnut",
+                        data: {
+                            labels: labels,
+                            datasets: [
+                                {
+                                    data: categoryData,
+                                    backgroundColor: [
+                                        "#e74c3c",
+                                        "#f39c12",
+                                        "#f1c40f",
+                                        "#2ecc71",
+                                        "#3498db",
+                                        "#9b59b6",
+                                    ],
+                                    borderWidth: 0,
+                                },
+                            ],
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    position: "bottom",
+                                },
+                            },
+                        },
+                    });
+                }
+
+                // Order Status Distribution (Pie Chart)
+                function renderOrderStatusChart(data = {}) {
+                    const ctx = document
+                        .getElementById("orderStatusChart")
+                        .getContext("2d");
+
+                    // Process real data or use fallback
+                    let labels = [];
+                    let statusData = [];
+
+                    if (data && Object.keys(data).length > 0) {
+                        labels = [
+                            "Delivered",
+                            "Processing",
+                            "Shipped",
+                            "Cancelled",
+                        ];
+                        statusData = [
+                            parseInt(data.delivered_orders || 0),
+                            parseInt(data.processing_orders || 0),
+                            parseInt(data.shipped_orders || 0),
+                            parseInt(data.cancelled_orders || 0),
+                        ];
+                    } else {
+                        // Show no data message
+                        showNoDataMessage(
+                            "orderStatusChart",
+                            "No order status data available"
+                        );
+                        return;
+                    }
+
+                    new Chart(ctx, {
+                        type: "pie",
+                        data: {
+                            labels: labels,
+                            datasets: [
+                                {
+                                    data: statusData,
+                                    backgroundColor: [
+                                        "#2ecc71",
+                                        "#f39c12",
+                                        "#3498db",
+                                        "#e74c3c",
+                                    ],
+                                    borderWidth: 2,
+                                    borderColor: "#fff",
+                                },
+                            ],
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    position: "bottom",
+                                },
+                            },
+                        },
+                    });
+                }
+
+                // User Growth Chart (Area Chart)
+                function renderUserGrowthChart(data = []) {
+                    const ctx = document
+                        .getElementById("userGrowthChart")
+                        .getContext("2d");
+
+                    // Process real data or use fallback
+                    let labels = [];
+                    let userData = [];
+
+                    if (data && data.length > 0) {
+                        labels = data.map((item) => item.month_label);
+                        userData = data.map((item) =>
+                            parseInt(item.new_users || 0)
+                        );
+                    } else {
+                        // Show no data message
+                        showNoDataMessage(
+                            "userGrowthChart",
+                            "No user growth data available"
+                        );
+                        return;
+                    }
+
+                    new Chart(ctx, {
+                        type: "line",
+                        data: {
+                            labels: labels,
+                            datasets: [
+                                {
+                                    label: "New Users",
+                                    data: userData,
+                                    borderColor: "#27ae60",
+                                    backgroundColor: "rgba(39, 174, 96, 0.2)",
+                                    borderWidth: 3,
+                                    fill: true,
+                                    tension: 0.4,
+                                },
+                            ],
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    display: false,
+                                },
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                },
+                            },
+                        },
+                    });
                 }
 
                 // Event delegation for user actions
@@ -890,7 +1420,7 @@
                                     "User deleted successfully",
                                     "success"
                                 );
-                                loadRecentUsers(); // Reload the table
+                                // User deleted successfully
                             } else {
                                 showNotification(
                                     "Failed to delete user: " +
@@ -1022,7 +1552,8 @@
                     chart.render();
                 }
 
-                function loadCharts() {
+                // Load ApexCharts (Books by Category and Earnings Overview)
+                function loadApexCharts() {
                     // Books by Category
                     fetch("../../backend/api/home_data.php?action=categories")
                         .then((r) => r.json())
@@ -1064,12 +1595,8 @@
                         });
                 }
 
-                // Initial loads
-                // loadStats();
-                // loadRecentOrders();
-
-                // loadRecentUsers();
-                // loadCharts();
+                // All data is now loaded through loadDashboardData()
+                // which calls loadStats() and loadCharts()
             });
         </script>
     </body>

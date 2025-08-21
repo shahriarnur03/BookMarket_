@@ -51,6 +51,9 @@ document.addEventListener("DOMContentLoaded", function () {
                     <li><a href="${basePath}book-approval.html" class="${
             currentPage === "book-approval" ? "active" : ""
         }">Book Approval</a></li>
+                    <li><a href="${basePath}sales-reports.html" class="${
+            currentPage === "sales-reports" ? "active" : ""
+        }">Sales Reports</a></li>
                 </ul>
                 <div class="navbar-buttons">
                     <div class="profile-dropdown">
@@ -62,6 +65,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         <div class="dropdown-content">
                             <a href="${basePath}profile.html">Profile</a>
                             <a href="${basePath}dashboard.html">Dashboard</a>
+                            <a href="${basePath}sales-reports.html">Sales Reports</a>
                             <a href="#" id="logout-btn">Logout</a>
                         </div>
                     </div>

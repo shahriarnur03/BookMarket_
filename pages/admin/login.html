@@ -136,8 +136,14 @@
 
             <form id="admin-login-form">
                 <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" name="email" required />
+                    <label for="email">Username</label>
+                    <input
+                        type="text"
+                        id="email"
+                        name="username"
+                        placeholder="Enter your username"
+                        required
+                    />
                 </div>
 
                 <div class="form-group">
@@ -198,24 +204,28 @@
                 form.addEventListener("submit", function (e) {
                     e.preventDefault();
 
-                    const email = document.getElementById("email").value.trim();
+                    const username = document
+                        .getElementById("email")
+                        .value.trim();
                     const password = document.getElementById("password").value;
 
-                    if (!email || !password) {
+                    if (!username || !password) {
                         showMessage("Please fill in all fields", "error");
                         return;
                     }
 
                     setLoading(true);
 
-                    const formData = new FormData();
-                    formData.append("action", "admin_login");
-                    formData.append("email", email);
-                    formData.append("password", password);
-
-                    fetch("../../backend/auth/user_auth.php", {
+                    // Use the new admin login API
+                    fetch("../../backend/auth/admin_login.php", {
                         method: "POST",
-                        body: formData,
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                            username: username,
+                            password: password,
+                        }),
                         credentials: "same-origin",
                     })
                         .then((response) => response.json())
@@ -227,33 +237,22 @@
                                 );
 
                                 // Store admin info in localStorage for frontend use
-                                localStorage.setItem("isLoggedIn", "true");
-                                localStorage.setItem("userType", "admin");
                                 localStorage.setItem(
-                                    "userId",
-                                    data.data.id || ""
-                                );
-                                localStorage.setItem(
-                                    "username",
-                                    data.data.username || email
+                                    "bookmarket_user",
+                                    JSON.stringify({
+                                        username: data.data.username,
+                                        userType: data.data.user_type,
+                                        userId: data.data.user_id,
+                                        loginTime: new Date().toISOString(),
+                                    })
                                 );
 
                                 // Debug: Log what we're setting
                                 console.log("Setting localStorage:", {
-                                    isLoggedIn: "true",
-                                    userType: "admin",
-                                    userId: data.data.id || "",
-                                    username: data.data.username || email,
+                                    username: data.data.username,
+                                    userType: data.data.user_type,
+                                    userId: data.data.user_id,
                                 });
-
-                                // Debug: Log the full response structure
-                                console.log("Full login response:", data);
-                                console.log("data.data:", data.data);
-                                console.log("data.data.id:", data.data.id);
-                                console.log(
-                                    "data.data.username:",
-                                    data.data.username
-                                );
 
                                 // Redirect to admin dashboard
                                 setTimeout(() => {

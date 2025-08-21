@@ -50,6 +50,54 @@ class UserAuth {
     }
     
     /**
+     * Get user growth data for the last N months
+     * @param int $months Number of months to include
+     * @return array|false Array of user growth data or false on failure
+     */
+    public function getUserGrowth($months = 6) {
+        try {
+            $months = intval($months);
+            if ($months < 1) { $months = 1; }
+            if ($months > 36) { $months = 36; }
+            
+            // Start from the first day of the month (months-1) ago
+            $startTimestamp = strtotime('-' . ($months - 1) . ' months', strtotime(date('Y-m-01')));
+            $startDate = date('Y-m-01', $startTimestamp);
+            
+            $rows = $this->db->select(
+                "SELECT DATE_FORMAT(created_at, '%Y-%m') as ym, COUNT(*) as new_users
+                 FROM users
+                 WHERE created_at >= ?
+                 GROUP BY ym
+                 ORDER BY ym ASC",
+                [$startDate]
+            );
+            
+            $map = [];
+            foreach ($rows as $r) {
+                $map[$r['ym']] = intval($r['new_users'] ?? 0);
+            }
+            
+            $result = [];
+            for ($i = 0; $i < $months; $i++) {
+                $ts = strtotime('+' . $i . ' months', $startTimestamp);
+                $key = date('Y-m', $ts);
+                $label = date('M Y', $ts);
+                $result[] = [
+                    'month' => $key,
+                    'month_label' => $label,
+                    'new_users' => isset($map[$key]) ? $map[$key] : 0
+                ];
+            }
+            
+            return $result;
+        } catch (Exception $e) {
+            error_log("Get User Growth Error: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
      * Get recent users (admin)
      * @param int $limit Number of users to return
      * @return array|false Users or false on failure
@@ -601,6 +649,19 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') 
                 sendSuccessResponse($userDetails, 'User details retrieved successfully');
             } else {
                 sendErrorResponse('Failed to retrieve user details');
+            }
+            break;
+            
+        case 'get_user_growth':
+            if (!isAdmin()) {
+                sendErrorResponse('Access denied', 403);
+            }
+            $months = isset($_POST['months']) ? intval($_POST['months']) : 6;
+            $data = $userAuth->getUserGrowth($months);
+            if ($data !== false) {
+                sendSuccessResponse($data, 'User growth data retrieved successfully');
+            } else {
+                sendErrorResponse('Failed to retrieve user growth data');
             }
             break;
             

@@ -315,6 +315,62 @@
                     width: 100%;
                 }
             }
+
+            /* Status Badge Styles */
+            .status-badge {
+                padding: 0.25rem 0.75rem;
+                border-radius: 20px;
+                font-size: 0.8rem;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }
+
+            .status-delivered {
+                background-color: rgba(39, 174, 96, 0.1);
+                color: var(--success-color);
+                border: 1px solid var(--success-color);
+            }
+
+            .status-shipped {
+                background-color: rgba(74, 111, 165, 0.1);
+                color: var(--primary-color);
+                border: 1px solid var(--primary-color);
+            }
+
+            .status-completed {
+                background-color: rgba(39, 174, 96, 0.1);
+                color: var(--success-color);
+                border: 1px solid var(--success-color);
+            }
+
+            .status-pending {
+                background-color: rgba(243, 156, 18, 0.1);
+                color: var(--warning-color);
+                border: 1px solid var(--warning-color);
+            }
+
+            .status-cancelled {
+                background-color: rgba(231, 76, 60, 0.1);
+                color: #e74c3c;
+                border: 1px solid #e74c3c;
+            }
+
+            /* Table Improvements */
+            .sales-table th {
+                background-color: #f8f9fa;
+                font-weight: 600;
+                color: var(--dark-color);
+                border-bottom: 2px solid var(--border-color);
+            }
+
+            .sales-table tr:hover {
+                background-color: #f8f9fa;
+            }
+
+            .sales-table td {
+                vertical-align: middle;
+            }
         </style>
         <!-- Font Awesome for icons -->
         <link
@@ -389,7 +445,7 @@
                                     <div class="stat-icon sales">
                                         <i class="fas fa-book"></i>
                                     </div>
-                                    <div class="stat-value">8</div>
+                                    <div class="stat-value">0</div>
                                     <div class="stat-label">Books Sold</div>
                                 </div>
 
@@ -397,7 +453,7 @@
                                     <div class="stat-icon earnings">
                                         <i class="fas fa-dollar-sign"></i>
                                     </div>
-                                    <div class="stat-value">৳5,250</div>
+                                    <div class="stat-value">৳0</div>
                                     <div class="stat-label">Total Earnings</div>
                                 </div>
 
@@ -405,16 +461,12 @@
                                     <div class="stat-icon commission">
                                         <i class="fas fa-percentage"></i>
                                     </div>
-                                    <div class="stat-value">৳262.50</div>
+                                    <div class="stat-value">৳0</div>
                                     <div class="stat-label">
                                         Commission Paid
                                     </div>
                                 </div>
-
-
                             </div>
-
-
                         </div>
                     </div>
 
@@ -430,8 +482,8 @@
                                 <div class="filter-group">
                                     <label for="date-range">Date Range</label>
                                     <select id="date-range">
-                                        <option value="all-time">
-                                            All Time
+                                        <option value="all-time" disabled>
+                                            All Time (Coming Soon)
                                         </option>
                                         <option value="this-month">
                                             This Month
@@ -458,19 +510,7 @@
                                     <label for="book-filter">Book</label>
                                     <select id="book-filter">
                                         <option value="all">All Books</option>
-                                        <option value="book1">
-                                            The Great Gatsby
-                                        </option>
-                                        <option value="book2">
-                                            To Kill a Mockingbird
-                                        </option>
-                                        <option value="book3">1984</option>
-                                        <option value="book4">
-                                            Pride and Prejudice
-                                        </option>
-                                        <option value="book5">
-                                            The Catcher in the Rye
-                                        </option>
+                                        <!-- Book options will be loaded dynamically -->
                                     </select>
                                 </div>
 
@@ -616,7 +656,6 @@
         <script src="../../js/main.js"></script>
         <script src="../../js/auth.js"></script>
         <script src="../../js/customer-navbar.js"></script>
-        <script src="../../js/sales-reports.js"></script>
-
+        <script src="../../js/customer-sales-reports.js"></script>
     </body>
 </html>

@@ -1,271 +1,204 @@
 <?php
-/**
- * Sales Reports API
- * Provides sales data for customer sales reports including statistics and detailed sales
- * 
- * @author BookMarket Team
- * @version 1.0
- */
+session_start();
+require_once '../config/database.php';
+require_once '../config/session.php';
 
-header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: POST, GET, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type');
-
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    exit(0);
+// Check if user is logged in and is admin
+if (!isLoggedIn()) {
+    http_response_code(401);
+    echo json_encode(['success' => false, 'message' => 'Please log in to access this resource']);
+    exit;
 }
 
-require_once __DIR__ . '/../config/database.php';
-require_once __DIR__ . '/../config/session.php';
-
-class SalesReportsManager {
-    private $db;
-    
-    public function __construct() {
-        $this->db = getDB();
-    }
-    
-    /**
-     * Get sales data for a customer
-     * @param int $userId User ID
-     * @return array Sales data including stats and detailed sales
-     */
-    public function getSalesData($userId) {
-        try {
-            // Get total books sold
-            $booksSoldQuery = "SELECT COUNT(*) as total_books_sold
-                               FROM order_items oi
-                               JOIN orders o ON oi.order_id = o.id
-                               JOIN books b ON oi.book_id = b.id
-                               WHERE b.seller_id = ? AND o.order_status = 'Delivered'";
-            $booksSold = $this->db->selectOne($booksSoldQuery, [$userId]);
-            
-            // Get total earnings
-            $earningsQuery = "SELECT SUM(oi.price_per_item * oi.quantity) as total_earnings
-                             FROM order_items oi
-                             JOIN orders o ON oi.order_id = o.id
-                             JOIN books b ON oi.book_id = b.id
-                             WHERE b.seller_id = ? AND o.order_status = 'Delivered'";
-            $earnings = $this->db->selectOne($earningsQuery, [$userId]);
-            
-            // Get total commission (5% of total earnings)
-            $totalCommission = ($earnings['total_earnings'] ?? 0) * 0.05;
-            
-            // Get detailed sales data
-            $salesQuery = "SELECT 
-                            oi.id,
-                            oi.order_id,
-                            oi.book_id,
-                            oi.price_per_item,
-                            oi.quantity,
-                            o.order_number,
-                            o.order_date,
-                            o.order_status,
-                            b.title as book_title,
-                            b.author as book_author,
-                            u.username as buyer_name
-                           FROM order_items oi
-                           JOIN orders o ON oi.order_id = o.id
-                           JOIN books b ON oi.book_id = b.id
-                           JOIN users u ON o.user_id = u.id
-                           WHERE b.seller_id = ? AND o.order_status = 'Delivered'
-                           ORDER BY o.order_date DESC";
-            $sales = $this->db->select($salesQuery, [$userId]);
-            
-            return [
-                'success' => true,
-                'data' => [
-                    'total_books_sold' => intval($booksSold['total_books_sold'] ?? 0),
-                    'total_earnings' => floatval($earnings['total_earnings'] ?? 0),
-                    'total_commission' => $totalCommission,
-                    'sales' => $sales ?: []
-                ]
-            ];
-            
-        } catch (Exception $e) {
-            error_log("Sales Data Error: " . $e->getMessage());
-            return [
-                'success' => false,
-                'message' => 'Failed to fetch sales data',
-                'error' => $e->getMessage()
-            ];
-        }
-    }
-    
-    /**
-     * Export sales report as CSV
-     * @param int $userId User ID
-     * @param array $filters Filter criteria
-     * @return string CSV data
-     */
-    public function exportSalesReport($userId, $filters = []) {
-        try {
-            // Get sales data with filters
-            $salesData = $this->getSalesData($userId);
-            if (!$salesData['success']) {
-                throw new Exception('Failed to get sales data');
-            }
-            
-            $sales = $salesData['data']['sales'];
-            
-            // Apply filters if provided
-            if (!empty($filters)) {
-                $sales = $this->applyExportFilters($sales, $filters);
-            }
-            
-            // Generate CSV
-            $csv = "Date,Book Title,Order ID,Buyer,Price,Commission,Earnings\n";
-            
-            foreach ($sales as $sale) {
-                $saleDate = date('Y-m-d', strtotime($sale['order_date']));
-                $price = floatval($sale['price_per_item']);
-                $commission = $price * 0.05;
-                $earnings = $price - $commission;
-                
-                $csv .= sprintf(
-                    "%s,%s,%s,%s,%.2f,%.2f,%.2f\n",
-                    $saleDate,
-                    $this->escapeCsv($sale['book_title'] ?? 'N/A'),
-                    $sale['order_number'] ?? $sale['id'],
-                    $this->escapeCsv($sale['buyer_name'] ?? 'Customer'),
-                    $price,
-                    $commission,
-                    $earnings
-                );
-            }
-            
-            return $csv;
-            
-        } catch (Exception $e) {
-            error_log("Export Sales Report Error: " . $e->getMessage());
-            throw $e;
-        }
-    }
-    
-    /**
-     * Apply filters to sales data for export
-     * @param array $sales Sales data
-     * @param array $filters Filter criteria
-     * @return array Filtered sales data
-     */
-    private function applyExportFilters($sales, $filters) {
-        if (empty($filters)) return $sales;
-        
-        $filtered = $sales;
-        
-        // Apply date range filter
-        if (isset($filters['dateRange']) && $filters['dateRange'] !== 'all-time') {
-            $now = new DateTime();
-            $startDate = new DateTime();
-            
-            switch ($filters['dateRange']) {
-                case 'this-month':
-                    $startDate = new DateTime('first day of this month');
-                    break;
-                case 'last-month':
-                    $startDate = new DateTime('first day of last month');
-                    break;
-                case 'last-3-months':
-                    $startDate->modify('-3 months');
-                    break;
-                case 'last-6-months':
-                    $startDate->modify('-6 months');
-                    break;
-                case 'this-year':
-                    $startDate = new DateTime('first day of january this year');
-                    break;
-                case 'custom':
-                    if (!empty($filters['customDateFrom'])) {
-                        $startDate = new DateTime($filters['customDateFrom']);
-                    }
-                    break;
-            }
-            
-            $filtered = array_filter($filtered, function($sale) use ($startDate) {
-                $saleDate = new DateTime($sale['order_date']);
-                return $saleDate >= $startDate;
-            });
-        }
-        
-        // Apply book filter
-        if (isset($filters['bookFilter']) && $filters['bookFilter'] !== 'all') {
-            $filtered = array_filter($filtered, function($sale) use ($filters) {
-                return $sale['book_id'] == $filters['bookFilter'];
-            });
-        }
-        
-        return array_values($filtered);
-    }
-    
-    /**
-     * Escape CSV values
-     * @param string $value Value to escape
-     * @return string Escaped value
-     */
-    private function escapeCsv($value) {
-        if (strpos($value, ',') !== false || strpos($value, '"') !== false || strpos($value, "\n") !== false) {
-            return '"' . str_replace('"', '""', $value) . '"';
-        }
-        return $value;
-    }
+if (!isAdmin()) {
+    http_response_code(403);
+    echo json_encode(['success' => false, 'message' => 'Admin access required']);
+    exit;
 }
 
-// Handle AJAX requests
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $action = $_POST['action'] ?? '';
-    $salesManager = new SalesReportsManager();
-    
-    // Check if user is logged in
-    if (!isLoggedIn()) {
-        echo json_encode([
-            'success' => false,
-            'message' => 'User not logged in',
-            'data' => null
-        ]);
-        exit;
-    }
-    
-    $userId = getCurrentUserId();
-    
+// Get request parameters
+$action = $_GET['action'] ?? $_POST['action'] ?? '';
+$startDate = $_GET['start_date'] ?? $_POST['start_date'] ?? '';
+$endDate = $_GET['end_date'] ?? $_POST['end_date'] ?? '';
+$format = $_GET['format'] ?? $_POST['format'] ?? 'csv';
+
+// Validate dates
+if (empty($startDate) || empty($endDate)) {
+    echo json_encode(['success' => false, 'message' => 'Start date and end date are required']);
+    exit;
+}
+
+try {
     switch ($action) {
-        case 'get_sales_data':
-            $result = $salesManager->getSalesData($userId);
-            echo json_encode($result);
+        case 'kpi':
+            $data = getSalesKPI($startDate, $endDate);
+            echo json_encode(['success' => true, 'data' => $data]);
             break;
             
-        case 'export_sales_report':
-            try {
-                $filters = json_decode($_POST['filters'] ?? '{}', true);
-                $csvData = $salesManager->exportSalesReport($userId, $filters);
-                
-                // Set headers for CSV download
-                header('Content-Type: text/csv');
-                header('Content-Disposition: attachment; filename="sales_report_' . date('Y-m-d') . '.csv"');
-                header('Content-Length: ' . strlen($csvData));
-                
-                echo $csvData;
-            } catch (Exception $e) {
-                echo json_encode([
-                    'success' => false,
-                    'message' => 'Export failed: ' . $e->getMessage()
-                ]);
-            }
+        case 'export':
+            exportReport($startDate, $endDate, $format);
             break;
             
         default:
-            echo json_encode([
-                'success' => false,
-                'message' => 'Invalid action',
-                'data' => null
-            ]);
+            echo json_encode(['success' => false, 'message' => 'Invalid action']);
             break;
     }
-} else {
-    echo json_encode([
-        'success' => false,
-        'message' => 'Only POST method allowed',
-        'data' => null
+} catch (Exception $e) {
+    error_log('Sales Reports Error: ' . $e->getMessage());
+    echo json_encode(['success' => false, 'message' => 'An error occurred while processing the request']);
+}
+
+function getSalesKPI($startDate, $endDate) {
+    global $conn;
+    
+    $sql = "SELECT 
+                COUNT(DISTINCT o.id) as total_orders,
+                SUM(oi.quantity) as total_books_sold,
+                SUM(oi.quantity * oi.price) as total_sales,
+                AVG(oi.quantity * oi.price) as avg_order_value
+            FROM orders o
+            JOIN order_items oi ON o.id = oi.order_id
+            WHERE o.order_date BETWEEN ? AND ?
+            AND o.status = 'completed'";
+    
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param('ss', $startDate, $endDate);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $data = $result->fetch_assoc();
+    
+    return [
+        'total_orders' => (int)$data['total_orders'],
+        'total_books_sold' => (int)$data['total_books_sold'],
+        'total_sales' => (float)$data['total_sales'],
+        'avg_order_value' => (float)$data['avg_order_value']
+    ];
+}
+
+function exportReport($startDate, $endDate, $format) {
+    // Get KPI data for export
+    $kpiData = getSalesKPI($startDate, $endDate);
+    
+    switch ($format) {
+        case 'csv':
+            exportAsCSV($startDate, $endDate, $kpiData);
+            break;
+        case 'excel':
+            exportAsExcel($startDate, $endDate, $kpiData);
+            break;
+        case 'pdf':
+            exportAsPDF($startDate, $endDate, $kpiData);
+            break;
+        default:
+            exportAsCSV($startDate, $endDate, $kpiData);
+    }
+}
+
+function exportAsCSV($startDate, $endDate, $kpiData) {
+    header('Content-Type: text/csv');
+    header('Content-Disposition: attachment; filename="sales_report_' . $startDate . '_to_' . $endDate . '.csv"');
+    
+    $output = fopen('php://output', 'w');
+    
+    // Report Header
+    fputcsv($output, ['SALES REPORT SUMMARY']);
+    fputcsv($output, ['Period:', $startDate, 'to', $endDate]);
+    fputcsv($output, []);
+    
+    // KPI Summary Table
+    fputcsv($output, ['Metric', 'Value', 'Calculation', 'Description']);
+    fputcsv($output, [
+        'Total Revenue',
+        $kpiData['total_sales'],
+        'Sum of all order values',
+        'Total sales amount for the period'
     ]);
+    fputcsv($output, [
+        'Total Orders',
+        $kpiData['total_orders'],
+        'Count of completed orders',
+        'Number of successful transactions'
+    ]);
+    fputcsv($output, [
+        'Total Books Sold',
+        $kpiData['total_books_sold'],
+        'Sum of all book quantities',
+        'Total units sold across all orders'
+    ]);
+    fputcsv($output, [
+        'Average Order Value',
+        $kpiData['avg_order_value'],
+        'Total Revenue ÷ Total Orders',
+        'Average amount spent per order'
+    ]);
+    
+    // Calculate additional metrics
+    $totalRevenue = $kpiData['total_sales'];
+    $totalOrders = $kpiData['total_orders'];
+    $totalBooks = $kpiData['total_books_sold'];
+    
+    if ($totalOrders > 0) {
+        $booksPerOrder = $totalBooks / $totalOrders;
+        fputcsv($output, [
+            'Books Per Order',
+            round($booksPerOrder, 1),
+            'Total Books ÷ Total Orders',
+            'Average number of books per transaction'
+        ]);
+    }
+    
+    // Calculate daily averages
+    $startDateObj = new DateTime($startDate);
+    $endDateObj = new DateTime($endDate);
+    $daysDiff = $startDateObj->diff($endDateObj)->days + 1;
+    
+    if ($daysDiff > 0) {
+        $dailyRevenue = $totalRevenue / $daysDiff;
+        $dailyOrders = $totalOrders / $daysDiff;
+        
+        fputcsv($output, [
+            'Daily Average Revenue',
+            round($dailyRevenue, 0),
+            "Total Revenue ÷ {$daysDiff} days",
+            'Average daily sales performance'
+        ]);
+        fputcsv($output, [
+            'Daily Average Orders',
+            round($dailyOrders, 1),
+            "Total Orders ÷ {$daysDiff} days",
+            'Average daily order volume'
+        ]);
+    }
+    
+    // Calculate profit estimates
+    $estimatedProfit = $totalRevenue * 0.3;
+    $profitMargin = $totalRevenue > 0 ? ($estimatedProfit / $totalRevenue) * 100 : 0;
+    
+    fputcsv($output, [
+        'Estimated Profit',
+        round($estimatedProfit, 0),
+        'Total Revenue × 30%',
+        'Estimated profit based on 30% margin'
+    ]);
+    fputcsv($output, [
+        'Profit Margin',
+        round($profitMargin, 1) . '%',
+        '(Estimated Profit ÷ Total Revenue) × 100',
+        'Profit as percentage of revenue'
+    ]);
+    
+    fclose($output);
+}
+
+function exportAsExcel($startDate, $endDate, $kpiData) {
+    // For Excel export, we'll create a CSV with Excel-compatible formatting
+    // In a production environment, you might want to use a library like PhpSpreadsheet
+    exportAsCSV($startDate, $endDate, $kpiData);
+}
+
+function exportAsPDF($startDate, $endDate, $kpiData) {
+    // For PDF export, we'll create a CSV for now
+    // In a production environment, you might want to use a library like TCPDF or FPDF
+    exportAsCSV($startDate, $endDate, $kpiData);
 }
 ?>

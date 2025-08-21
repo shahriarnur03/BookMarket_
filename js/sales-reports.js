@@ -1,463 +1,445 @@
-// Sales Reports Page JavaScript
-// Handles fetching and displaying sales data from the database
+/**
+ * Admin Sales Reports JavaScript
+ * Comprehensive sales analytics and reporting functionality
+ */
 
-class SalesReportsManager {
-    constructor() {
-        this.salesData = null;
-        this.currentFilters = {
-            dateRange: 'all-time',
-            bookFilter: 'all',
-            sortBy: 'date-desc',
-            customDateFrom: '',
-            customDateTo: ''
-        };
-        this.init();
+// Sales Reports JavaScript
+// Note: This file is initialized by the authentication check in the HTML
+
+function initSalesReports() {
+    setupEventListeners();
+    setDefaultDates();
+    loadInitialData();
+}
+
+function setupEventListeners() {
+    // Date range change handler
+    const dateRangeSelect = document.getElementById("date-range");
+    if (dateRangeSelect) {
+        dateRangeSelect.addEventListener("change", handleDateRangeChange);
     }
 
-    async init() {
-        await this.loadSalesData();
-        this.setupEventListeners();
-        this.updateStats();
-        this.renderSalesTable();
+    // Generate report button
+    const generateBtn = document.getElementById("generate-report");
+    if (generateBtn) {
+        generateBtn.addEventListener("click", generateReport);
     }
 
-    async loadSalesData() {
-        try {
-            const form = new FormData();
-            form.append("action", "get_sales_data");
-
-            const response = await fetch(
-                "../../backend/api/sales_reports.php",
-                {
-                    method: "POST",
-                    body: form,
-                }
-            );
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            const data = await response.json();
-            
-            if (data.success && data.data) {
-                this.salesData = data.data;
-                console.log("✅ Sales data loaded successfully:", this.salesData);
-            } else {
-                console.error("❌ Failed to load sales data:", data.message);
-                this.salesData = null;
-            }
-        } catch (error) {
-            console.error("❌ Error loading sales data:", error);
-            this.salesData = null;
-            this.showNotification("Failed to load sales data. Please try again.", "error");
-        }
+    // Reset filters button
+    const resetBtn = document.getElementById("reset-filters");
+    if (resetBtn) {
+        resetBtn.addEventListener("click", resetFilters);
     }
 
-    updateStats() {
-        if (!this.salesData) return;
-
-        // Update Books Sold stat
-        const booksSoldElement = document.querySelector('.stat-card:nth-child(1) .stat-value');
-        if (booksSoldElement) {
-            booksSoldElement.textContent = this.salesData.total_books_sold || 0;
-        }
-
-        // Update Total Earnings stat
-        const earningsElement = document.querySelector('.stat-card:nth-child(2) .stat-value');
-        if (earningsElement) {
-            const earnings = this.salesData.total_earnings || 0;
-            earningsElement.textContent = `৳${parseFloat(earnings).toFixed(2)}`;
-        }
-
-        // Update Commission Paid stat
-        const commissionElement = document.querySelector('.stat-card:nth-child(3) .stat-value');
-        if (commissionElement) {
-            const commission = this.salesData.total_commission || 0;
-            commissionElement.textContent = `৳${parseFloat(commission).toFixed(2)}`;
-        }
-
-        console.log("✅ Stats updated");
+    // Export buttons
+    const exportPdfBtn = document.getElementById("export-pdf");
+    if (exportPdfBtn) {
+        exportPdfBtn.addEventListener("click", () => exportReport("pdf"));
     }
 
-    renderSalesTable() {
-        const container = document.getElementById('sales-table-container');
-        if (!container) return;
-
-        if (!this.salesData || !this.salesData.sales || this.salesData.sales.length === 0) {
-            container.innerHTML = `
-                <div class="empty-state">
-                    <i class="fas fa-chart-bar"></i>
-                    <h3>No Sales Data Available</h3>
-                    <p>You haven't sold any books yet. Once you make sales, your data will appear here.</p>
-                </div>
-            `;
-            return;
-        }
-
-        // Apply filters
-        const filteredSales = this.applyFilters(this.salesData.sales);
-        
-        // Sort data
-        const sortedSales = this.sortSalesData(filteredSales);
-
-        let tableHTML = `
-            <table class="sales-table">
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Book Title</th>
-                        <th>Order ID</th>
-                        <th>Buyer</th>
-                        <th>Price</th>
-                        <th>Commission</th>
-                        <th>Earnings</th>
-                    </tr>
-                </thead>
-                <tbody>
-        `;
-
-        let totalPrice = 0;
-        let totalCommission = 0;
-        let totalEarnings = 0;
-
-        sortedSales.forEach(sale => {
-            const saleDate = new Date(sale.order_date).toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric'
-            });
-            
-            const price = parseFloat(sale.price_per_item || sale.total_amount);
-            const commission = price * 0.05; // 5% commission
-            const earnings = price - commission;
-
-            totalPrice += price;
-            totalCommission += commission;
-            totalEarnings += earnings;
-
-            tableHTML += `
-                <tr>
-                    <td>${saleDate}</td>
-                    <td>${this.escapeHtml(sale.book_title || 'N/A')}</td>
-                    <td>${this.escapeHtml(sale.order_number || sale.id)}</td>
-                    <td>${this.escapeHtml(sale.buyer_name || 'Customer')}</td>
-                    <td>৳${price.toFixed(2)}</td>
-                    <td>৳${commission.toFixed(2)}</td>
-                    <td>৳${earnings.toFixed(2)}</td>
-                </tr>
-            `;
-        });
-
-        tableHTML += `
-                </tbody>
-                <tfoot>
-                    <tr>
-                        <td colspan="4" style="text-align: right; font-weight: 600;">Total:</td>
-                        <td style="font-weight: 600;">৳${totalPrice.toFixed(2)}</td>
-                        <td style="font-weight: 600;">৳${totalCommission.toFixed(2)}</td>
-                        <td style="font-weight: 600;">৳${totalEarnings.toFixed(2)}</td>
-                    </tr>
-                </tfoot>
-            </table>
-        `;
-
-        container.innerHTML = tableHTML;
-        console.log("✅ Sales table rendered:", sortedSales.length, "sales");
+    const exportExcelBtn = document.getElementById("export-excel");
+    if (exportExcelBtn) {
+        exportExcelBtn.addEventListener("click", () => exportReport("excel"));
     }
 
-    applyFilters(sales) {
-        if (!sales) return [];
-
-        let filtered = [...sales];
-
-        // Apply date range filter
-        if (this.currentFilters.dateRange !== 'all-time') {
-            const now = new Date();
-            let startDate = new Date();
-
-            switch (this.currentFilters.dateRange) {
-                case 'this-month':
-                    startDate = new Date(now.getFullYear(), now.getMonth(), 1);
-                    break;
-                case 'last-month':
-                    startDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-                    break;
-                case 'last-3-months':
-                    startDate = new Date(now.getFullYear(), now.getMonth() - 3, 1);
-                    break;
-                case 'last-6-months':
-                    startDate = new Date(now.getFullYear(), now.getMonth() - 6, 1);
-                    break;
-                case 'this-year':
-                    startDate = new Date(now.getFullYear(), 0, 1);
-                    break;
-                case 'custom':
-                    if (this.currentFilters.customDateFrom) {
-                        startDate = new Date(this.currentFilters.customDateFrom);
-                    }
-                    break;
-            }
-
-            filtered = filtered.filter(sale => {
-                const saleDate = new Date(sale.order_date);
-                return saleDate >= startDate;
-            });
-        }
-
-        // Apply book filter
-        if (this.currentFilters.bookFilter !== 'all') {
-            filtered = filtered.filter(sale => 
-                sale.book_id == this.currentFilters.bookFilter
-            );
-        }
-
-        return filtered;
-    }
-
-    sortSalesData(sales) {
-        if (!sales) return [];
-
-        const sorted = [...sales];
-
-        switch (this.currentFilters.sortBy) {
-            case 'date-desc':
-                sorted.sort((a, b) => new Date(b.order_date) - new Date(a.order_date));
-                break;
-            case 'date-asc':
-                sorted.sort((a, b) => new Date(a.order_date) - new Date(b.order_date));
-                break;
-            case 'price-high':
-                sorted.sort((a, b) => parseFloat(b.price_per_item || b.total_amount) - parseFloat(a.price_per_item || a.total_amount));
-                break;
-            case 'price-low':
-                sorted.sort((a, b) => parseFloat(a.price_per_item || a.total_amount) - parseFloat(b.price_per_item || b.total_amount));
-                break;
-        }
-
-        return sorted;
-    }
-
-    setupEventListeners() {
-        // Date range filter
-        const dateRangeSelect = document.getElementById('date-range');
-        if (dateRangeSelect) {
-            dateRangeSelect.addEventListener('change', (e) => {
-                this.currentFilters.dateRange = e.target.value;
-                this.handleCustomDateRange();
-                this.renderSalesTable();
-            });
-        }
-
-        // Book filter
-        const bookFilter = document.getElementById('book-filter');
-        if (bookFilter) {
-            bookFilter.addEventListener('change', (e) => {
-                this.currentFilters.bookFilter = e.target.value;
-                this.renderSalesTable();
-            });
-        }
-
-        // Sort by
-        const sortBy = document.getElementById('sort-by');
-        if (sortBy) {
-            sortBy.addEventListener('change', (e) => {
-                this.currentFilters.sortBy = e.target.value;
-                this.renderSalesTable();
-            });
-        }
-
-        // Custom date inputs
-        const dateFrom = document.getElementById('date-from');
-        const dateTo = document.getElementById('date-to');
-        if (dateFrom) {
-            dateFrom.addEventListener('change', (e) => {
-                this.currentFilters.customDateFrom = e.target.value;
-                this.renderSalesTable();
-            });
-        }
-        if (dateTo) {
-            dateTo.addEventListener('change', (e) => {
-                this.currentFilters.customDateTo = e.target.value;
-                this.renderSalesTable();
-            });
-        }
-
-        // Filter buttons
-        const resetFiltersBtn = document.getElementById('reset-filters');
-        if (resetFiltersBtn) {
-            resetFiltersBtn.addEventListener('click', () => {
-                this.resetFilters();
-            });
-        }
-
-        const applyFiltersBtn = document.getElementById('apply-filters');
-        if (applyFiltersBtn) {
-            applyFiltersBtn.addEventListener('click', () => {
-                this.renderSalesTable();
-            });
-        }
-
-        // Export report button
-        const exportReportBtn = document.getElementById('export-report');
-        if (exportReportBtn) {
-            exportReportBtn.addEventListener('click', () => {
-                this.exportReport();
-            });
-        }
-    }
-
-    handleCustomDateRange() {
-        const customDateRange = document.getElementById('custom-date-range');
-        if (customDateRange) {
-            if (this.currentFilters.dateRange === 'custom') {
-                customDateRange.style.display = 'flex';
-            } else {
-                customDateRange.style.display = 'none';
-            }
-        }
-    }
-
-    resetFilters() {
-        this.currentFilters = {
-            dateRange: 'all-time',
-            bookFilter: 'all',
-            sortBy: 'date-desc',
-            customDateFrom: '',
-            customDateTo: ''
-        };
-
-        // Reset form elements
-        const dateRangeSelect = document.getElementById('date-range');
-        if (dateRangeSelect) dateRangeSelect.selectedIndex = 0;
-
-        const bookFilter = document.getElementById('book-filter');
-        if (bookFilter) bookFilter.selectedIndex = 0;
-
-        const sortBy = document.getElementById('sort-by');
-        if (sortBy) sortBy.selectedIndex = 0;
-
-        const dateFrom = document.getElementById('date-from');
-        if (dateFrom) dateFrom.value = '';
-
-        const dateTo = document.getElementById('date-to');
-        if (dateTo) dateTo.value = '';
-
-        const customDateRange = document.getElementById('custom-date-range');
-        if (customDateRange) customDateRange.style.display = 'none';
-
-        this.renderSalesTable();
-        this.showNotification("Filters reset successfully", "success");
-    }
-
-    async exportReport() {
-        try {
-            const form = new FormData();
-            form.append("action", "export_sales_report");
-            form.append("filters", JSON.stringify(this.currentFilters));
-
-            const response = await fetch(
-                "../../backend/api/sales_reports.php",
-                {
-                    method: "POST",
-                    body: form,
-                }
-            );
-
-            if (response.ok) {
-                const blob = await response.blob();
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `sales_report_${new Date().toISOString().split('T')[0]}.csv`;
-                document.body.appendChild(a);
-                a.click();
-                window.URL.revokeObjectURL(url);
-                document.body.removeChild(a);
-                
-                this.showNotification("Report exported successfully", "success");
-            } else {
-                throw new Error("Export failed");
-            }
-        } catch (error) {
-            console.error("❌ Export error:", error);
-            this.showNotification("Failed to export report. Please try again.", "error");
-        }
-    }
-
-    showNotification(message, type = "info") {
-        // Check if notification function exists
-        if (typeof showNotification === "function") {
-            showNotification(message, type);
-        } else {
-            // Fallback notification
-            const notification = document.createElement("div");
-            notification.className = `notification notification-${type}`;
-            notification.textContent = message;
-            notification.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                padding: 1rem 1.5rem;
-                border-radius: 4px;
-                color: white;
-                font-weight: 600;
-                z-index: 1000;
-                background-color: ${
-                    type === "success"
-                        ? "#27ae60"
-                        : type === "error"
-                        ? "#e74c3c"
-                        : "#3498db"
-                };
-                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-                animation: slideIn 0.3s ease-out;
-            `;
-            
-            // Add animation keyframes
-            if (!document.querySelector("#notification-styles")) {
-                const style = document.createElement("style");
-                style.id = "notification-styles";
-                style.textContent = `
-                    @keyframes slideIn {
-                        from { transform: translateX(100%); opacity: 0; }
-                        to { transform: translateX(0); opacity: 1; }
-                    }
-                `;
-                document.head.appendChild(style);
-            }
-            
-            document.body.appendChild(notification);
-            
-            setTimeout(() => {
-                notification.remove();
-            }, 3000);
-        }
-    }
-
-    escapeHtml(text) {
-        const div = document.createElement("div");
-        div.textContent = text;
-        return div.innerHTML;
+    const exportCsvBtn = document.getElementById("export-csv");
+    if (exportCsvBtn) {
+        exportCsvBtn.addEventListener("click", () => exportReport("csv"));
     }
 }
 
-// Initialize when DOM is loaded
-document.addEventListener("DOMContentLoaded", function () {
-    // Wait for auth system to be ready
-    function waitForAuthSystem() {
-        if (
-            typeof window.bookmarketAuth !== "undefined" &&
-            window.bookmarketAuth.isLoggedIn
-        ) {
-            console.log("✅ Auth system ready, initializing Sales Reports Manager...");
-            new SalesReportsManager();
-        } else {
-            console.log("⏳ Auth system not ready yet, waiting...");
-            setTimeout(waitForAuthSystem, 100);
-        }
+function setDefaultDates() {
+    const today = new Date();
+    const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+    const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+
+    const startDateInput = document.getElementById("start-date");
+    const endDateInput = document.getElementById("end-date");
+
+    if (startDateInput && endDateInput) {
+        startDateInput.value = startOfMonth.toISOString().split("T")[0];
+        endDateInput.value = endOfMonth.toISOString().split("T")[0];
+    }
+}
+
+function handleDateRangeChange() {
+    const dateRange = document.getElementById("date-range").value;
+    const startDateInput = document.getElementById("start-date");
+    const endDateInput = document.getElementById("end-date");
+
+    if (!startDateInput || !endDateInput) return;
+
+    const today = new Date();
+    let startDate, endDate;
+
+    switch (dateRange) {
+        case "month":
+            startDate = new Date(today.getFullYear(), today.getMonth(), 1);
+            endDate = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+            break;
+        case "last-month":
+            startDate = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+            endDate = new Date(today.getFullYear(), today.getMonth(), 0);
+            break;
+        case "quarter":
+            const quarter = Math.floor(today.getMonth() / 3);
+            startDate = new Date(today.getFullYear(), quarter * 3, 1);
+            endDate = new Date(today.getFullYear(), (quarter + 1) * 3, 0);
+            break;
+        case "year":
+            startDate = new Date(today.getFullYear(), 0, 1);
+            endDate = new Date(today.getFullYear(), 11, 31);
+            break;
+        case "last-year":
+            startDate = new Date(today.getFullYear() - 1, 0, 1);
+            endDate = new Date(today.getFullYear() - 1, 11, 31);
+            break;
+        case "custom":
+            // Keep current custom dates
+            return;
     }
 
-    // Start waiting for auth system
-    setTimeout(waitForAuthSystem, 100);
-});
+    startDateInput.value = startDate.toISOString().split("T")[0];
+    endDateInput.value = endDate.toISOString().split("T")[0];
+
+    // Auto-generate report when date range changes
+    generateReport();
+}
+
+function loadInitialData() {
+    generateReport();
+}
+
+function generateReport() {
+    const startDate = document.getElementById("start-date").value;
+    const endDate = document.getElementById("end-date").value;
+
+    if (!startDate || !endDate) {
+        showNotification("Please select both start and end dates", "error");
+        return;
+    }
+
+    showLoading(true);
+
+    // Load KPI data for the summary table
+    loadKPIData(startDate, endDate)
+        .then(() => {
+            showLoading(false);
+            showNotification("Report generated successfully", "success");
+        })
+        .catch((error) => {
+            showLoading(false);
+            showNotification(
+                "Error generating report: " + error.message,
+                "error"
+            );
+            console.error("Error generating report:", error);
+        });
+}
+
+function loadKPIData(startDate, endDate) {
+    return fetch(
+        `../../backend/api/sales_reports.php?action=kpi&start_date=${startDate}&end_date=${endDate}`
+    )
+        .then((response) => response.json())
+        .then((data) => {
+            if (data.success) {
+                updateSummaryTable(data.data, startDate, endDate);
+            } else {
+                throw new Error(data.message || "Failed to load KPI data");
+            }
+        })
+        .catch((error) => {
+            console.error("Error loading KPI data:", error);
+            // Show sample data if API fails
+            showSampleData(startDate, endDate);
+        });
+}
+
+function showSampleData(startDate, endDate) {
+    // Show sample data for demonstration purposes
+    const sampleData = {
+        total_orders: 25,
+        total_books_sold: 45,
+        total_sales: 12500,
+        avg_order_value: 500,
+    };
+
+    updateSummaryTable(sampleData, startDate, endDate);
+    showNotification(
+        "Showing sample data. Please log in as admin to see real data.",
+        "info"
+    );
+}
+
+function updateSummaryTable(data, startDate, endDate) {
+    const tableBody = document.getElementById("summary-table-body");
+    if (!tableBody) return;
+
+    // Format dates for display
+    const startDateFormatted = formatDate(startDate);
+    const endDateFormatted = formatDate(endDate);
+    const periodText = getPeriodText(startDate, endDate);
+
+    // Calculate additional metrics
+    const totalRevenue = data.total_sales || 0;
+    const totalOrders = data.total_orders || 0;
+    const totalBooks = data.total_books_sold || 0;
+    const avgOrderValue = data.avg_order_value || 0;
+
+    // Calculate profit margin (assuming 30% profit margin for example)
+    const estimatedProfit = totalRevenue * 0.3;
+    const profitMargin =
+        totalRevenue > 0 ? (estimatedProfit / totalRevenue) * 100 : 0;
+
+    // Calculate books per order
+    const booksPerOrder =
+        totalOrders > 0 ? (totalBooks / totalOrders).toFixed(1) : 0;
+
+    // Calculate daily averages
+    const daysDiff =
+        Math.ceil(
+            (new Date(endDate) - new Date(startDate)) / (1000 * 60 * 60 * 24)
+        ) + 1;
+    const dailyRevenue =
+        daysDiff > 0 ? (totalRevenue / daysDiff).toFixed(0) : 0;
+    const dailyOrders = daysDiff > 0 ? (totalOrders / daysDiff).toFixed(1) : 0;
+
+    tableBody.innerHTML = `
+        <tr>
+            <td class="metric-label">Total Revenue</td>
+            <td class="metric-value">${formatCurrency(totalRevenue)}</td>
+            <td>Sum of all order values</td>
+            <td class="metric-description">Total sales amount for ${periodText}</td>
+        </tr>
+        <tr>
+            <td class="metric-label">Total Orders</td>
+            <td class="metric-value">${totalOrders}</td>
+            <td>Count of completed orders</td>
+            <td class="metric-description">Number of successful transactions</td>
+        </tr>
+        <tr>
+            <td class="metric-label">Total Books Sold</td>
+            <td class="metric-value">${totalBooks}</td>
+            <td>Sum of all book quantities</td>
+            <td class="metric-description">Total units sold across all orders</td>
+        </tr>
+        <tr>
+            <td class="metric-label">Average Order Value</td>
+            <td class="metric-value">${formatCurrency(avgOrderValue)}</td>
+            <td>Total Revenue ÷ Total Orders</td>
+            <td class="metric-description">Average amount spent per order</td>
+        </tr>
+        <tr>
+            <td class="metric-label">Books Per Order</td>
+            <td class="metric-value">${booksPerOrder}</td>
+            <td>Total Books ÷ Total Orders</td>
+            <td class="metric-description">Average number of books per transaction</td>
+        </tr>
+        <tr>
+            <td class="metric-label">Daily Average Revenue</td>
+            <td class="metric-value">${formatCurrency(dailyRevenue)}</td>
+            <td>Total Revenue ÷ ${daysDiff} days</td>
+            <td class="metric-description">Average daily sales performance</td>
+        </tr>
+        <tr>
+            <td class="metric-label">Daily Average Orders</td>
+            <td class="metric-value">${dailyOrders}</td>
+            <td>Total Orders ÷ ${daysDiff} days</td>
+            <td class="metric-description">Average daily order volume</td>
+        </tr>
+        <tr>
+            <td class="metric-label">Estimated Profit</td>
+            <td class="metric-value">${formatCurrency(estimatedProfit)}</td>
+            <td>Total Revenue × 30%</td>
+            <td class="metric-description">Estimated profit based on 30% margin</td>
+        </tr>
+        <tr>
+            <td class="metric-label">Profit Margin</td>
+            <td class="metric-value">${profitMargin.toFixed(1)}%</td>
+            <td>(Estimated Profit ÷ Total Revenue) × 100</td>
+            <td class="metric-description">Profit as percentage of revenue</td>
+        </tr>
+        <tr>
+            <td class="metric-label">Report Period</td>
+            <td class="metric-value">${periodText}</td>
+            <td>${startDateFormatted} to ${endDateFormatted}</td>
+            <td class="metric-description">Date range for this report</td>
+        </tr>
+    `;
+}
+
+function getPeriodText(startDate, endDate) {
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    const today = new Date();
+
+    // Check if it's current month
+    if (
+        start.getMonth() === today.getMonth() &&
+        start.getFullYear() === today.getFullYear()
+    ) {
+        return "This Month";
+    }
+
+    // Check if it's last month
+    const lastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+    if (
+        start.getMonth() === lastMonth.getMonth() &&
+        start.getFullYear() === lastMonth.getFullYear()
+    ) {
+        return "Last Month";
+    }
+
+    // Check if it's current year
+    if (start.getFullYear() === today.getFullYear()) {
+        return "This Year";
+    }
+
+    // Check if it's last year
+    if (start.getFullYear() === today.getFullYear() - 1) {
+        return "Last Year";
+    }
+
+    // Check if it's current quarter
+    const currentQuarter = Math.floor(today.getMonth() / 3);
+    const reportQuarter = Math.floor(start.getMonth() / 3);
+    if (
+        start.getFullYear() === today.getFullYear() &&
+        reportQuarter === currentQuarter
+    ) {
+        return "This Quarter";
+    }
+
+    return "Custom Period";
+}
+
+function resetFilters() {
+    const dateRangeSelect = document.getElementById("date-range");
+    if (dateRangeSelect) {
+        dateRangeSelect.value = "month";
+    }
+
+    setDefaultDates();
+    generateReport();
+}
+
+function exportReport(format) {
+    const startDate = document.getElementById("start-date").value;
+    const endDate = document.getElementById("end-date").value;
+
+    if (!startDate || !endDate) {
+        showNotification(
+            "Please select both start and end dates before exporting",
+            "error"
+        );
+        return;
+    }
+
+    const url = `../../backend/api/sales_reports.php?action=export&format=${format}&start_date=${startDate}&end_date=${endDate}`;
+
+    // Create a temporary link to trigger download
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `sales_report_${startDate}_to_${endDate}.${getFileExtension(
+        format
+    )}`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    showNotification(
+        `Report exported as ${format.toUpperCase()} successfully`,
+        "success"
+    );
+}
+
+function getFileExtension(format) {
+    switch (format) {
+        case "pdf":
+            return "pdf";
+        case "excel":
+            return "xlsx";
+        case "csv":
+            return "csv";
+        default:
+            return "pdf";
+    }
+}
+
+function showLoading(show) {
+    const generateBtn = document.getElementById("generate-report");
+    if (generateBtn) {
+        if (show) {
+            generateBtn.innerHTML =
+                '<i class="fas fa-spinner fa-spin"></i> Generating...';
+            generateBtn.disabled = true;
+        } else {
+            generateBtn.innerHTML =
+                '<i class="fas fa-search"></i> Generate Report';
+            generateBtn.disabled = false;
+        }
+    }
+}
+
+function showNotification(message, type = "info") {
+    // Create notification element
+    const notification = document.createElement("div");
+    notification.className = `notification notification-${type}`;
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 1rem 1.5rem;
+        border-radius: 6px;
+        color: white;
+        font-weight: 600;
+        z-index: 1000;
+        max-width: 300px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    `;
+
+    // Set background color based on type
+    switch (type) {
+        case "success":
+            notification.style.backgroundColor = "#28a745";
+            break;
+        case "error":
+            notification.style.backgroundColor = "#dc3545";
+            break;
+        case "warning":
+            notification.style.backgroundColor = "#ffc107";
+            notification.style.color = "#212529";
+            break;
+        default:
+            notification.style.backgroundColor = "#17a2b8";
+    }
+
+    notification.textContent = message;
+    document.body.appendChild(notification);
+
+    // Remove notification after 3 seconds
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.parentNode.removeChild(notification);
+        }
+    }, 3000);
+}
+
+function formatCurrency(amount) {
+    return new Intl.NumberFormat("en-BD", {
+        style: "currency",
+        currency: "BDT",
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+    }).format(amount);
+}
+
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-BD", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+    });
+}
