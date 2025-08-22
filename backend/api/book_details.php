@@ -23,6 +23,13 @@ class BookDetailsManager {
      */
     public function getBookDetails($bookId) {
         try {
+            // Check if user is logged in and get their ID
+            $currentUserId = null;
+            if (isLoggedIn()) {
+                $currentUserId = getCurrentUserId();
+            }
+            
+            // Base query - allow approved books or books owned by current user
             $sql = "SELECT 
                         b.id,
                         b.title,
@@ -44,9 +51,9 @@ class BookDetailsManager {
                     FROM books b
                     LEFT JOIN categories c ON b.category_id = c.id
                     LEFT JOIN users u ON b.seller_id = u.id
-                    WHERE b.id = ? AND b.status = 'approved'";
+                    WHERE b.id = ? AND (b.status = 'approved' OR b.seller_id = ?)";
             
-            $result = $this->db->select($sql, [$bookId]);
+            $result = $this->db->select($sql, [$bookId, $currentUserId]);
             
             if (empty($result)) {
                 return [
@@ -63,12 +70,17 @@ class BookDetailsManager {
             // Get book reviews/ratings (if you have a reviews table)
             $reviews = $this->getBookReviews($bookId);
 
+            // Check if current user is the owner
+            $isOwner = $currentUserId && $book['seller_id'] == $currentUserId;
+            
             return [
                 'success' => true,
                 'data' => [
                     'book' => $book,
                     'related_books' => $relatedBooks,
-                    'reviews' => $reviews
+                    'reviews' => $reviews,
+                    'is_owner' => $isOwner,
+                    'requires_approval' => $book['status'] === 'pending'
                 ]
             ];
 
@@ -87,6 +99,12 @@ class BookDetailsManager {
      */
     private function getRelatedBooks($categoryId, $excludeBookId, $limit = 4) {
         try {
+            // Check if user is logged in and get their ID
+            $currentUserId = null;
+            if (isLoggedIn()) {
+                $currentUserId = getCurrentUserId();
+            }
+            
             $sql = "SELECT 
                         b.id,
                         b.title,
@@ -97,11 +115,11 @@ class BookDetailsManager {
                     FROM books b
                     WHERE b.category_id = ? 
                     AND b.id != ? 
-                    AND b.status = 'approved'
+                    AND (b.status = 'approved' OR b.seller_id = ?)
                     ORDER BY b.created_at DESC
                     LIMIT ?";
             
-            return $this->db->select($sql, [$categoryId, $excludeBookId, $limit]);
+            return $this->db->select($sql, [$categoryId, $excludeBookId, $currentUserId, $limit]);
         } catch (Exception $e) {
             error_log("Related Books Error: " . $e->getMessage());
             return [];

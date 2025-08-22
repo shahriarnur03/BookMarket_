@@ -1,14 +1,45 @@
 /**
  * Customer Sales Reports JavaScript
  * Handles sales analytics and reporting for customers
+ * VERSION: 2.0 - Fixed authentication and API endpoints
  */
+
+// Global identifier to ensure correct file is loaded
+window.CUSTOMER_SALES_REPORTS_LOADED = true;
+
+// Prevent conflicts with admin sales-reports.js
+if (window.initSalesReports) {
+    console.warn(
+        "Admin sales-reports.js detected, overriding with customer version"
+    );
+    delete window.initSalesReports;
+    delete window.generateReport;
+    delete window.loadKPIData;
+}
 
 // Initialize when DOM is loaded
 document.addEventListener("DOMContentLoaded", function () {
+    console.log("=== CUSTOMER SALES REPORTS JS LOADED ===");
+    console.log("File: customer-sales-reports.js");
+    console.log(
+        "Available functions:",
+        Object.getOwnPropertyNames(window).filter(
+            (name) => name.includes("Sales") || name.includes("sales")
+        )
+    );
     initCustomerSalesReports();
 });
 
 function initCustomerSalesReports() {
+    console.log("Customer Sales Reports initializing...");
+    // Check if user is authenticated before proceeding
+    if (!isLoggedIn()) {
+        console.log("User not authenticated, showing error");
+        showAuthenticationError();
+        return;
+    }
+
+    console.log("User authenticated, setting up sales reports");
     setupEventListeners();
     setDefaultDates();
     loadInitialData();
@@ -36,8 +67,34 @@ function setupEventListeners() {
     // Export report button
     const exportBtn = document.getElementById("export-report");
     if (exportBtn) {
-        exportBtn.addEventListener("click", exportReport);
+        exportBtn.addEventListener("click", showExportModal);
     }
+
+    // Modal close button
+    const closeBtn = document.querySelector(".close");
+    if (closeBtn) {
+        closeBtn.addEventListener("click", hideExportModal);
+    }
+
+    // Cancel button
+    const cancelBtn = document.getElementById("cancel-report");
+    if (cancelBtn) {
+        cancelBtn.addEventListener("click", hideExportModal);
+    }
+
+    // Report form submission
+    const reportForm = document.getElementById("report-form");
+    if (reportForm) {
+        reportForm.addEventListener("submit", handleReportSubmission);
+    }
+
+    // Close modal when clicking outside
+    window.addEventListener("click", function (event) {
+        const modal = document.getElementById("report-modal");
+        if (event.target === modal) {
+            hideExportModal();
+        }
+    });
 }
 
 function setDefaultDates() {
@@ -157,10 +214,24 @@ function loadSalesData() {
 }
 
 function loadKPIData(startDate, endDate) {
+    console.log("Customer loadKPIData called with dates:", startDate, endDate);
     return fetch(
         `../../backend/api/customer_sales_reports.php?action=kpi&start_date=${startDate}&end_date=${endDate}`
     )
-        .then((response) => response.json())
+        .then((response) => {
+            if (response.status === 401) {
+                // User not authenticated
+                showAuthenticationError();
+                throw new Error("Please log in to view sales reports");
+            }
+            if (response.status === 500) {
+                // Server error
+                throw new Error(
+                    "Server error occurred. Please try again later."
+                );
+            }
+            return response.json();
+        })
         .then((data) => {
             if (data.success) {
                 updateStatsCards(data.data);
@@ -170,8 +241,12 @@ function loadKPIData(startDate, endDate) {
         })
         .catch((error) => {
             console.error("Error loading KPI data:", error);
-            // Show sample data if API fails
-            showSampleKPIData();
+            if (error.message.includes("log in")) {
+                showAuthenticationError();
+            } else {
+                // Show sample data if API fails for other reasons
+                showSampleKPIData();
+            }
         });
 }
 
@@ -179,7 +254,20 @@ function loadDetailedSales(startDate, endDate) {
     return fetch(
         `../../backend/api/customer_sales_reports.php?action=detailed_sales&start_date=${startDate}&end_date=${endDate}`
     )
-        .then((response) => response.json())
+        .then((response) => {
+            if (response.status === 401) {
+                // User not authenticated
+                showAuthenticationError();
+                throw new Error("Please log in to view sales reports");
+            }
+            if (response.status === 500) {
+                // Server error
+                throw new Error(
+                    "Server error occurred. Please try again later."
+                );
+            }
+            return response.json();
+        })
         .then((data) => {
             if (data.success) {
                 updateSalesTable(data.data);
@@ -191,8 +279,12 @@ function loadDetailedSales(startDate, endDate) {
         })
         .catch((error) => {
             console.error("Error loading detailed sales data:", error);
-            // Show sample data if API fails
-            showSampleSalesData();
+            if (error.message.includes("log in")) {
+                showAuthenticationError();
+            } else {
+                // Show sample data if API fails for other reasons
+                showSampleSalesData();
+            }
         });
 }
 
@@ -336,6 +428,96 @@ function showSampleSalesData() {
     updateSalesTable(sampleData);
 }
 
+function showExportModal() {
+    const startDate = document.getElementById("date-from").value;
+    const endDate = document.getElementById("date-to").value;
+
+    if (!startDate || !endDate) {
+        showNotification(
+            "Please select both start and end dates before exporting",
+            "error"
+        );
+        return;
+    }
+
+    const modal = document.getElementById("report-modal");
+    if (!modal) {
+        console.error("Modal element not found!");
+        return;
+    }
+
+    // Populate form fields
+    const periodField = document.getElementById("report-period");
+    const generatedByField = document.getElementById("generated-by");
+    const generatedDateField = document.getElementById("generated-date");
+
+    if (periodField) periodField.value = `${startDate} to ${endDate}`;
+    if (generatedByField) generatedByField.value = getUsername() || "Customer";
+    if (generatedDateField)
+        generatedDateField.value = new Date().toLocaleDateString();
+
+    modal.style.display = "block";
+}
+
+function hideExportModal() {
+    const modal = document.getElementById("report-modal");
+    if (modal) {
+        modal.style.display = "none";
+    }
+}
+
+function handleReportSubmission(event) {
+    event.preventDefault();
+
+    const formData = new FormData(event.target);
+    const reportData = {
+        title: formData.get("report-title"),
+        period: formData.get("report-period"),
+        generatedBy: formData.get("generated-by"),
+        generatedDate: formData.get("generated-date"),
+        notes: formData.get("report-notes"),
+        startDate: document.getElementById("date-from").value,
+        endDate: document.getElementById("date-to").value,
+    };
+
+    // Generate and download HTML report
+    generateHTMLReport(reportData);
+
+    // Hide modal
+    hideExportModal();
+
+    // Show success message
+    showNotification(
+        "HTML report generated successfully! Open in browser and print to PDF.",
+        "success"
+    );
+}
+
+function generateHTMLReport(reportData) {
+    console.log("Generating HTML report with data:", reportData);
+    console.log("Date range:", reportData.startDate, "to", reportData.endDate);
+
+    // Use customer sales reports API
+    const url = `../../backend/api/customer_sales_reports.php?action=export&format=html&start_date=${reportData.startDate}&end_date=${reportData.endDate}`;
+
+    console.log("HTML export URL:", url);
+
+    // Create a temporary link to trigger download
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `customer_sales_report_${reportData.startDate}_to_${reportData.endDate}.html`;
+
+    console.log("Triggering HTML download...");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    showNotification(
+        "HTML report generated successfully! Open in browser and print to PDF.",
+        "success"
+    );
+}
+
 function exportReport() {
     const startDate = document.getElementById("date-from").value;
     const endDate = document.getElementById("date-to").value;
@@ -426,4 +608,28 @@ function formatCurrency(amount) {
         minimumFractionDigits: 0,
         maximumFractionDigits: 0,
     }).format(amount);
+}
+
+function showAuthenticationError() {
+    const dashboardContent = document.querySelector(".dashboard-content");
+    if (dashboardContent) {
+        dashboardContent.innerHTML = `
+            <div class="section-card">
+                <div class="section-header">
+                    <h3 class="section-title">Authentication Required</h3>
+                </div>
+                <div class="section-content">
+                    <div class="auth-error-message">
+                        <i class="fas fa-lock" style="font-size: 3rem; color: #dc3545; margin-bottom: 1rem;"></i>
+                        <h3>Please Log In</h3>
+                        <p>You need to be logged in to view your sales reports.</p>
+                        <div class="auth-actions">
+                            <a href="../../pages/login.html" class="btn btn-primary">Log In</a>
+                            <a href="../../pages/signup.html" class="btn btn-secondary">Sign Up</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
 }

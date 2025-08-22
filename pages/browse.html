@@ -969,6 +969,16 @@
             // Initialize browse page
             function initializeBrowsePage() {
                 console.log("🚀 Initializing browse page...");
+                // Pre-read desired category from query and set initial filter
+                const params = new URLSearchParams(window.location.search);
+                const desiredRaw = params.get("category");
+                if (desiredRaw) {
+                    const desired = normalizeCategoryQuery(desiredRaw);
+                    if (desired) {
+                        currentFilters.category = desired;
+                    }
+                }
+
                 loadCategories();
                 loadConditions();
                 loadBooks();
@@ -1000,11 +1010,78 @@
                                 categorySelect.appendChild(option);
                             });
                             console.log("✅ Categories loaded successfully");
+
+                            // After categories are loaded, preselect from URL if present
+                            preselectCategoryFromQuery();
                         }
                     })
                     .catch((error) => {
                         console.error("❌ Error loading categories:", error);
                     });
+            }
+
+            // Map query value to proper category display name
+            function normalizeCategoryQuery(value) {
+                if (!value) return "";
+                const v = decodeURIComponent(value).trim().toLowerCase();
+                const map = {
+                    fiction: "Fiction",
+                    academic: "Academic",
+                    science: "Science & Tech",
+                    "science-tech": "Science & Tech",
+                    science_and_tech: "Science & Tech",
+                    business: "Business",
+                    children: "Children",
+                    history: "History",
+                    "self-help": "Self-Help",
+                    selfhelp: "Self-Help",
+                    cookbooks: "Cookbooks",
+                };
+                return map[v] || value;
+            }
+
+            // Preselect category from URL and apply filters
+            function preselectCategoryFromQuery() {
+                const params = new URLSearchParams(window.location.search);
+                const raw = params.get("category");
+                if (!raw) return;
+
+                const wanted = normalizeCategoryQuery(raw);
+                const select = document.getElementById("category");
+                if (!select) return;
+
+                // Try direct match first
+                let matched = false;
+                for (let i = 0; i < select.options.length; i++) {
+                    const opt = select.options[i];
+                    if (
+                        opt.value.toLowerCase() === wanted.toLowerCase() ||
+                        opt.textContent.toLowerCase() === wanted.toLowerCase()
+                    ) {
+                        select.selectedIndex = i;
+                        matched = true;
+                        break;
+                    }
+                }
+
+                if (matched) {
+                    currentFilters.category = select.value;
+                    currentPage = 1;
+                    loadBooks();
+                    showNotification(
+                        `Filtered by category: ${select.value}`,
+                        "success"
+                    );
+                } else if (wanted) {
+                    // Fallback: apply filter even if option text mismatch
+                    currentFilters.category = wanted;
+                    currentPage = 1;
+                    loadBooks();
+                    showNotification(
+                        `Filtered by category: ${wanted}`,
+                        "success"
+                    );
+                }
             }
 
             // Load conditions
@@ -1094,7 +1171,77 @@
                 books.forEach((book) => {
                     const bookCard = createBookCard(book);
                     booksGrid.appendChild(bookCard);
+
+                    // Load rating for this book
+                    const ratingElement = bookCard.querySelector(
+                        `#rating-${book.id}`
+                    );
+                    if (ratingElement) {
+                        loadBookRating(book.id, ratingElement);
+                    }
                 });
+            }
+
+            // Load rating for a specific book
+            async function loadBookRating(bookId, ratingElement) {
+                try {
+                    const response = await fetch(
+                        `../backend/api/book_reviews.php?action=get_stats&book_id=${bookId}`
+                    );
+                    const data = await response.json();
+
+                    const starsElement =
+                        ratingElement.querySelector(".rating-stars");
+                    const averageElement =
+                        ratingElement.querySelector(".rating-average");
+                    const countElement =
+                        ratingElement.querySelector(".rating-count");
+
+                    if (starsElement && averageElement && countElement) {
+                        // Always show rating section
+                        ratingElement.style.display = "block";
+
+                        if (data.success && data.stats.total_reviews > 0) {
+                            // Display stars with actual rating
+                            const rating = Math.round(
+                                data.stats.average_rating
+                            );
+                            const filledStars = "★".repeat(rating);
+                            const emptyStars = "☆".repeat(5 - rating);
+                            starsElement.innerHTML = filledStars + emptyStars;
+                            averageElement.textContent =
+                                data.stats.average_rating;
+                            countElement.textContent = data.stats.total_reviews;
+                        } else {
+                            // Display 0 stars for books without reviews
+                            starsElement.innerHTML = "☆☆☆☆☆";
+                            averageElement.textContent = "0";
+                            countElement.textContent = "0";
+                        }
+                    }
+                } catch (error) {
+                    console.error(
+                        "Error loading rating for book",
+                        bookId,
+                        ":",
+                        error
+                    );
+
+                    // Show 0 stars even if there's an error
+                    const starsElement =
+                        ratingElement.querySelector(".rating-stars");
+                    const averageElement =
+                        ratingElement.querySelector(".rating-average");
+                    const countElement =
+                        ratingElement.querySelector(".rating-count");
+
+                    if (starsElement && averageElement && countElement) {
+                        ratingElement.style.display = "block";
+                        starsElement.innerHTML = "☆☆☆☆☆";
+                        averageElement.textContent = "0";
+                        countElement.textContent = "0";
+                    }
+                }
             }
 
             // Create a book card element
@@ -1157,6 +1304,22 @@
                             <p class="author">${
                                 book.author || "Unknown Author"
                             }</p>
+                            
+                            <!-- Book Rating Display -->
+                            <div class="book-rating" id="rating-${
+                                book.id
+                            }" style="margin: 0.5rem 0;">
+                                <div style="display: flex; align-items: center; gap: 0.3rem; margin-bottom: 0.3rem;">
+                                    <div class="rating-stars" style="color: #f39c12; font-size: 1rem;">☆☆☆☆☆</div>
+                                    <span style="font-weight: 500; color: var(--dark-color); font-size: 0.9rem;">
+                                        <span class="rating-average">0</span>/5
+                                    </span>
+                                </div>
+                                <div style="color: #666; font-size: 0.8rem;">
+                                    <span class="rating-count">0</span> reviews
+                                </div>
+                            </div>
+                            
                             <div class="condition">
                                 <span>Condition:</span>
                                 <span class="condition-badge">${

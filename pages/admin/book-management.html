@@ -426,45 +426,21 @@
 
                                 <div class="filter-row">
                                     <div class="filter-group">
-                                        <label for="category">Category</label>
-                                        <select id="category">
+                                        <label for="status">Status</label>
+                                        <select id="status">
                                             <option value="">
-                                                All Categories
+                                                All Statuses
                                             </option>
-                                            <option value="fiction">
-                                                Fiction
+                                            <option value="approved">
+                                                Approved
                                             </option>
-                                            <option value="academic">
-                                                Academic
+                                            <option value="pending">
+                                                Pending
                                             </option>
-                                            <option value="science">
-                                                Science & Tech
+                                            <option value="rejected">
+                                                Rejected
                                             </option>
-                                            <option value="business">
-                                                Business
-                                            </option>
-                                            <option value="children">
-                                                Children
-                                            </option>
-                                            <option value="history">
-                                                History
-                                            </option>
-                                        </select>
-                                    </div>
-
-                                    <div class="filter-group">
-                                        <label for="condition">Condition</label>
-                                        <select id="condition">
-                                            <option value="">
-                                                Any Condition
-                                            </option>
-                                            <option value="new">New</option>
-                                            <option value="excellent">
-                                                Excellent
-                                            </option>
-                                            <option value="good">Good</option>
-                                            <option value="fair">Fair</option>
-                                            <option value="poor">Poor</option>
+                                            <option value="sold">Sold</option>
                                         </select>
                                     </div>
                                 </div>
@@ -493,9 +469,9 @@
                                             <th>ID</th>
                                             <th>Title</th>
                                             <th>Author</th>
-                                            <th>Category</th>
                                             <th>Condition</th>
                                             <th>Price</th>
+                                            <th>Status</th>
                                             <th>Seller</th>
                                             <th>Actions</th>
                                         </tr>
@@ -504,20 +480,8 @@
                                 </table>
                             </div>
 
-                            <!-- Pagination -->
-                            <div class="pagination">
-                                <button class="pagination-button">
-                                    <i class="fas fa-chevron-left"></i>
-                                </button>
-                                <button class="pagination-button active">
-                                    1
-                                </button>
-                                <button class="pagination-button">2</button>
-                                <button class="pagination-button">3</button>
-                                <button class="pagination-button">
-                                    <i class="fas fa-chevron-right"></i>
-                                </button>
-                            </div>
+                            <!-- Pagination (rendered dynamically) -->
+                            <div class="pagination"></div>
                         </div>
                     </div>
                 </div>
@@ -696,8 +660,6 @@
                     form.append("page", page);
                     form.append("limit", 10); // Items per page
 
-                    if (filters.category)
-                        form.append("category_id", filters.category);
                     if (filters.status) form.append("status", filters.status);
 
                     fetch("../../backend/books/book_manager.php", {
@@ -717,9 +679,16 @@
                                         <td>#${book.id}</td>
                                         <td>${book.title}</td>
                                         <td>${book.author}</td>
-                                        <td>${book.category_name}</td>
                                         <td>${book.book_condition}</td>
                                         <td>${formatCurrency(book.price)}</td>
+                                        <td><span class="status-badge status-${(
+                                            book.status || ""
+                                        ).toLowerCase()}">${
+                                        (book.status || "N/A")
+                                            .charAt(0)
+                                            .toUpperCase() +
+                                        (book.status || "N/A").slice(1)
+                                    }</span></td>
                                         <td>${formatSellerName(
                                             book.first_name,
                                             book.last_name,
@@ -890,8 +859,8 @@
 
                 if (resetFiltersBtn) {
                     resetFiltersBtn.addEventListener("click", function () {
-                        document.getElementById("category").selectedIndex = 0;
-                        document.getElementById("condition").selectedIndex = 0;
+                        const statusSel = document.getElementById("status");
+                        if (statusSel) statusSel.selectedIndex = 0;
                         loadBooks(1, {});
                         showNotification("Filters reset successfully!", "info");
                     });
@@ -899,20 +868,14 @@
 
                 if (applyFiltersBtn) {
                     applyFiltersBtn.addEventListener("click", function () {
-                        const category =
-                            document.getElementById("category").value;
-                        const condition =
-                            document.getElementById("condition").value;
+                        const status = document.getElementById("status").value;
 
                         const filters = {};
-                        if (category) filters.category = category;
-                        if (condition) filters.status = condition;
+                        if (status) filters.status = status;
 
                         loadBooks(1, filters);
                         showNotification(
-                            `Filters applied: Category: ${
-                                category || "All"
-                            }, Condition: ${condition || "All"}`,
+                            `Filters applied: Status: ${status || "All"}`,
                             "info"
                         );
                     });

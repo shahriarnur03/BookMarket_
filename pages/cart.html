@@ -271,38 +271,6 @@
                 text-decoration: underline;
             }
 
-            .promo-code {
-                margin-top: 1.5rem;
-            }
-
-            .promo-code-form {
-                display: flex;
-                gap: 0.5rem;
-            }
-
-            .promo-code-input {
-                flex-grow: 1;
-                padding: 0.8rem;
-                border: 1px solid #ddd;
-                border-radius: 4px;
-                font-size: 0.9rem;
-            }
-
-            .promo-code-btn {
-                padding: 0.8rem 1rem;
-                background-color: var(--dark-color);
-                color: white;
-                border: none;
-                border-radius: 4px;
-                cursor: pointer;
-                font-weight: 600;
-                transition: all 0.3s ease;
-            }
-
-            .promo-code-btn:hover {
-                background-color: #333;
-            }
-
             @media screen and (max-width: 768px) {
                 .cart-item {
                     flex-direction: column;
@@ -388,20 +356,6 @@
                             <a href="payment.html" class="checkout-btn">
                                 <i class="fas fa-lock"></i> Proceed to Checkout
                             </a>
-
-                            <div class="promo-code">
-                                <h4>Have a promo code?</h4>
-                                <div class="promo-code-form">
-                                    <input
-                                        type="text"
-                                        class="promo-code-input"
-                                        placeholder="Enter code"
-                                    />
-                                    <button class="promo-code-btn">
-                                        Apply
-                                    </button>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -1118,28 +1072,6 @@
                         }, 500);
                     });
                 });
-
-                // Promo code button
-                const promoCodeBtn = document.querySelector(".promo-code-btn");
-
-                if (promoCodeBtn) {
-                    promoCodeBtn.addEventListener("click", function () {
-                        const promoInput =
-                            document.querySelector(".promo-code-input");
-                        if (promoInput.value.trim() === "") {
-                            showNotification(
-                                "Please enter a promo code",
-                                "warning"
-                            );
-                        } else {
-                            showNotification(
-                                "Promo code applied successfully!",
-                                "success"
-                            );
-                            // Here you would normally update the cart total with the discount
-                        }
-                    });
-                }
 
                 // Checkout button
                 const checkoutBtn = document.querySelector(".checkout-btn");

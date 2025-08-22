@@ -308,6 +308,18 @@ class BookManager {
                 $whereConditions[] = "b.seller_id = ?";
                 $params[] = intval($filters['seller_id']);
             }
+
+            // Apply search
+            if (!empty($filters['search'])) {
+                $searchTerm = '%' . cleanInput($filters['search']) . '%';
+                $whereConditions[] = "(b.title LIKE ? OR b.author LIKE ? OR b.isbn LIKE ? OR u.username LIKE ? OR u.first_name LIKE ? OR u.last_name LIKE ?)";
+                $params[] = $searchTerm;
+                $params[] = $searchTerm;
+                $params[] = $searchTerm;
+                $params[] = $searchTerm;
+                $params[] = $searchTerm;
+                $params[] = $searchTerm;
+            }
             
             $whereClause = implode(' AND ', $whereConditions);
             
@@ -349,6 +361,57 @@ class BookManager {
         } catch (Exception $e) {
             error_log("Get All Books Error: " . $e->getMessage());
             return false;
+        }
+    }
+
+    /**
+     * Count all books for admin management (for pagination)
+     * @param array $filters Filter parameters
+     * @return int Total count
+     */
+    public function countAllBooks($filters = []) {
+        try {
+            $whereConditions = ["1=1"];
+            $params = [];
+
+            if (!empty($filters['status'])) {
+                $whereConditions[] = "b.status = ?";
+                $params[] = cleanInput($filters['status']);
+            }
+
+            if (!empty($filters['category_id'])) {
+                $whereConditions[] = "b.category_id = ?";
+                $params[] = intval($filters['category_id']);
+            }
+
+            if (!empty($filters['seller_id'])) {
+                $whereConditions[] = "b.seller_id = ?";
+                $params[] = intval($filters['seller_id']);
+            }
+
+            // Apply search
+            if (!empty($filters['search'])) {
+                $searchTerm = '%' . cleanInput($filters['search']) . '%';
+                $whereConditions[] = "(b.title LIKE ? OR b.author LIKE ? OR b.isbn LIKE ? OR u.username LIKE ? OR u.first_name LIKE ? OR u.last_name LIKE ?)";
+                $params[] = $searchTerm;
+                $params[] = $searchTerm;
+                $params[] = $searchTerm;
+                $params[] = $searchTerm;
+                $params[] = $searchTerm;
+                $params[] = $searchTerm;
+            }
+
+            $whereClause = implode(' AND ', $whereConditions);
+
+            $row = $this->db->selectOne(
+                "SELECT COUNT(*) as total FROM books b JOIN users u ON b.seller_id = u.id WHERE $whereClause",
+                $params
+            );
+
+            return intval($row ? $row['total'] : 0);
+        } catch (Exception $e) {
+            error_log("Count All Books Error: " . $e->getMessage());
+            return 0;
         }
     }
     
@@ -624,12 +687,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (!isAdmin()) {
                 sendErrorResponse('Access denied', 403);
             }
-            $books = $bookManager->getAllBooks($_POST);
-            if ($books !== false) {
-                sendSuccessResponse($books, 'Books retrieved successfully');
-            } else {
+            // Pagination params
+            $page = isset($_POST['page']) ? max(1, intval($_POST['page'])) : 1;
+            $limit = isset($_POST['limit']) ? max(1, intval($_POST['limit'])) : 10;
+            $offset = ($page - 1) * $limit;
+
+            // Fetch data
+            $books = $bookManager->getAllBooks($_POST, $limit, $offset);
+            if ($books === false) {
                 sendErrorResponse('Failed to retrieve books');
+                break;
             }
+
+            // Total count for pagination
+            $totalCount = $bookManager->countAllBooks($_POST);
+            $totalPages = $limit > 0 ? max(1, (int)ceil($totalCount / $limit)) : 1;
+
+            sendJSONResponse([
+                'success' => true,
+                'message' => 'Books retrieved successfully',
+                'data' => $books,
+                'total' => $totalCount,
+                'total_pages' => $totalPages,
+                'current_page' => $page,
+                'per_page' => $limit,
+            ]);
             break;
             
         case 'update_book_status':

@@ -156,6 +156,9 @@ function exportCustomerReport($userId, $startDate, $endDate, $format) {
         case 'csv':
             exportAsCSV($startDate, $endDate, $kpiData, $detailedSales);
             break;
+        case 'html':
+            exportAsHTML($startDate, $endDate, $kpiData, $detailedSales);
+            break;
         case 'excel':
             exportAsExcel($startDate, $endDate, $kpiData, $detailedSales);
             break;
@@ -291,5 +294,308 @@ function exportAsPDF($startDate, $endDate, $kpiData, $detailedSales) {
     // For PDF export, we'll create a CSV for now
     // In a production environment, you might want to use a library like TCPDF or FPDF
     exportAsCSV($startDate, $endDate, $kpiData, $detailedSales);
+}
+
+function exportAsHTML($startDate, $endDate, $kpiData, $detailedSales) {
+    header('Content-Type: text/html');
+    header('Content-Disposition: attachment; filename="customer_sales_report_' . $startDate . '_to_' . $endDate . '.html"');
+    
+    // Calculate additional metrics
+    $totalSales = $kpiData['total_sales'];
+    $totalOrders = $kpiData['total_orders'];
+    $totalBooks = $kpiData['total_books_sold'];
+    
+    $booksPerOrder = $totalOrders > 0 ? $totalBooks / $totalOrders : 0;
+    $commission = $totalSales * 0.05;
+    
+    // Calculate daily averages
+    $startDateObj = new DateTime($startDate);
+    $endDateObj = new DateTime($endDate);
+    $daysDiff = $startDateObj->diff($endDateObj)->days + 1;
+    $dailySales = $daysDiff > 0 ? $totalSales / $daysDiff : 0;
+    $dailyOrders = $daysDiff > 0 ? $totalOrders / $daysDiff : 0;
+    
+    echo '<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Sales Report - BookMarket</title>
+    <style>
+        @page { margin: 1in; }
+        body { 
+            font-family: "Times New Roman", serif; 
+            margin: 0; 
+            padding: 0; 
+            background: white; 
+            color: #333;
+            line-height: 1.4;
+        }
+        .container { 
+            max-width: 8.5in; 
+            margin: 0 auto; 
+            background: white; 
+            padding: 0.5in;
+        }
+        .header { 
+            text-align: center; 
+            margin-bottom: 0.5in; 
+            padding-bottom: 0.3in; 
+            border-bottom: 2px solid #000;
+        }
+        .header h1 { 
+            color: #000; 
+            margin: 0 0 0.2in 0; 
+            font-size: 24pt;
+            font-weight: bold;
+        }
+        .header p { 
+            color: #333; 
+            margin: 0.1in 0; 
+            font-size: 12pt;
+        }
+        .report-info {
+            margin-bottom: 0.4in;
+            padding: 0.2in;
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+        }
+        .report-info table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .report-info td {
+            padding: 0.1in;
+            border: none;
+            vertical-align: top;
+        }
+        .report-info .label {
+            font-weight: bold;
+            width: 30%;
+            color: #000;
+        }
+        .summary-section {
+            margin-bottom: 0.4in;
+        }
+        .summary-section h2 {
+            color: #000;
+            margin: 0 0 0.2in 0;
+            font-size: 16pt;
+            font-weight: bold;
+            border-bottom: 1px solid #000;
+            padding-bottom: 0.1in;
+        }
+        .summary-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 0.3in;
+        }
+        .summary-table th,
+        .summary-table td {
+            padding: 0.15in;
+            text-align: left;
+            border: 1px solid #000;
+            font-size: 11pt;
+        }
+        .summary-table th {
+            background-color: #f0f0f0;
+            font-weight: bold;
+            color: #000;
+        }
+        .summary-table .metric-name {
+            font-weight: bold;
+            background-color: #f9f9f9;
+        }
+        .summary-table .value {
+            text-align: center;
+            font-weight: bold;
+        }
+        .summary-table .description {
+            font-style: italic;
+            color: #666;
+        }
+        .detailed-section {
+            margin-bottom: 0.4in;
+        }
+        .detailed-section h2 {
+            color: #000;
+            margin: 0 0 0.2in 0;
+            font-size: 16pt;
+            font-weight: bold;
+            border-bottom: 1px solid #000;
+            padding-bottom: 0.1in;
+        }
+        .detailed-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 9pt;
+        }
+        .detailed-table th,
+        .detailed-table td {
+            padding: 0.1in;
+            text-align: left;
+            border: 1px solid #000;
+        }
+        .detailed-table th {
+            background-color: #f0f0f0;
+            font-weight: bold;
+            color: #000;
+        }
+        .footer {
+            margin-top: 0.5in;
+            padding-top: 0.3in;
+            border-top: 1px solid #000;
+            text-align: center;
+            font-size: 10pt;
+            color: #666;
+        }
+        .footer .company {
+            font-weight: bold;
+            color: #000;
+            margin-bottom: 0.1in;
+        }
+        @media print {
+            body { background: white; }
+            .container { box-shadow: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>CUSTOMER SALES REPORT</h1>
+            <p>BookMarket - Professional Book Marketplace</p>
+            <p>Period: ' . $startDate . ' to ' . $endDate . '</p>
+            <p>Generated on: ' . date('F j, Y') . ' at ' . date('g:i A') . '</p>
+        </div>
+        
+        <div class="report-info">
+            <table>
+                <tr>
+                    <td class="label">Report Type:</td>
+                    <td>Customer Sales Performance Analysis</td>
+                    <td class="label">Total Orders:</td>
+                    <td>' . $kpiData['total_orders'] . '</td>
+                </tr>
+                <tr>
+                    <td class="label">Report Period:</td>
+                    <td>' . $startDate . ' to ' . $endDate . '</td>
+                    <td class="label">Total Books Sold:</td>
+                    <td>' . $kpiData['total_books_sold'] . '</td>
+                </tr>
+                <tr>
+                    <td class="label">Generated By:</td>
+                    <td>Customer Account</td>
+                    <td class="label">Total Sales Value:</td>
+                    <td>৳' . number_format($kpiData['total_sales'], 0) . '</td>
+                </tr>
+            </table>
+        </div>
+        
+        <div class="summary-section">
+            <h2>EXECUTIVE SUMMARY</h2>
+            <table class="summary-table">
+                <thead>
+                    <tr>
+                        <th>Metric</th>
+                        <th>Value</th>
+                        <th>Calculation Method</th>
+                        <th>Business Impact</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="metric-name">Total Orders</td>
+                        <td class="value">' . $kpiData['total_orders'] . '</td>
+                        <td>Count of completed transactions</td>
+                        <td class="description">Indicates customer demand and market activity</td>
+                    </tr>
+                    <tr>
+                        <td class="metric-name">Total Books Sold</td>
+                        <td class="value">' . $kpiData['total_books_sold'] . '</td>
+                        <td>Sum of all book quantities</td>
+                        <td class="description">Shows inventory movement and sales volume</td>
+                    </tr>
+                    <tr>
+                        <td class="metric-name">Total Sales Revenue</td>
+                        <td class="value">৳' . number_format($kpiData['total_sales'], 0) . '</td>
+                        <td>Sum of all order values</td>
+                        <td class="description">Primary revenue indicator for the period</td>
+                    </tr>
+                    <tr>
+                        <td class="metric-name">Average Order Value</td>
+                        <td class="value">৳' . number_format($kpiData['avg_order_value'], 0) . '</td>
+                        <td>Total Sales ÷ Total Orders</td>
+                        <td class="description">Customer spending behavior and pricing strategy</td>
+                    </tr>
+                    <tr>
+                        <td class="metric-name">Books Per Order</td>
+                        <td class="value">' . round($booksPerOrder, 1) . '</td>
+                        <td>Total Books ÷ Total Orders</td>
+                        <td class="description">Cross-selling effectiveness and customer preferences</td>
+                    </tr>
+                    <tr>
+                        <td class="metric-name">Daily Average Sales</td>
+                        <td class="value">৳' . number_format($dailySales, 0) . '</td>
+                        <td>Total Sales ÷ ' . $daysDiff . ' days</td>
+                        <td class="description">Consistent daily performance indicator</td>
+                    </tr>
+                    <tr>
+                        <td class="metric-name">Commission Earned</td>
+                        <td class="value">৳' . number_format($commission, 0) . '</td>
+                        <td>Total Sales × 5%</td>
+                        <td class="description">Platform revenue from sales transactions</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="detailed-section">
+            <h2>DETAILED TRANSACTION BREAKDOWN</h2>
+            <table class="detailed-table">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Order #</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Book Title</th>
+                        <th>Author</th>
+                        <th>Qty</th>
+                        <th>Unit Price</th>
+                        <th>Total</th>
+                        <th>Customer</th>
+                    </tr>
+                </thead>
+                <tbody>';
+    
+    foreach ($detailedSales as $sale) {
+        echo '<tr>
+                <td>' . htmlspecialchars($sale['order_id']) . '</td>
+                <td>' . htmlspecialchars($sale['order_number']) . '</td>
+                <td>' . htmlspecialchars($sale['order_date']) . '</td>
+                <td>' . htmlspecialchars($sale['order_status']) . '</td>
+                <td>' . htmlspecialchars($sale['book_title']) . '</td>
+                <td>' . htmlspecialchars($sale['book_author']) . '</td>
+                <td>' . htmlspecialchars($sale['quantity']) . '</td>
+                <td>৳' . number_format($sale['price_per_item'], 0) . '</td>
+                <td>৳' . number_format($sale['total_amount'], 0) . '</td>
+                <td>' . htmlspecialchars($sale['customer_name']) . '</td>
+            </tr>';
+    }
+    
+    echo '</tbody>
+            </table>
+        </div>
+        
+        <div class="footer">
+            <div class="company">BookMarket</div>
+            <p>Your trusted online book marketplace</p>
+            <p>This report contains confidential business information</p>
+            <p>Generated automatically on ' . date('F j, Y') . ' at ' . date('g:i A') . '</p>
+        </div>
+    </div>
+</body>
+</html>';
 }
 ?>

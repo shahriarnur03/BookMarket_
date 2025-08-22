@@ -201,6 +201,18 @@
                 box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
             }
 
+            /* Notification animations */
+            @keyframes slideIn {
+                from {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+
             .book-image {
                 height: 200px;
                 overflow: hidden;
@@ -503,20 +515,8 @@
                             <!-- Approval Cards Grid -->
                             <div class="approval-grid" id="approval-grid"></div>
 
-                            <!-- Pagination -->
-                            <div class="pagination">
-                                <button class="pagination-button">
-                                    <i class="fas fa-chevron-left"></i>
-                                </button>
-                                <button class="pagination-button active">
-                                    1
-                                </button>
-                                <button class="pagination-button">2</button>
-                                <button class="pagination-button">3</button>
-                                <button class="pagination-button">
-                                    <i class="fas fa-chevron-right"></i>
-                                </button>
-                            </div>
+                            <!-- Pagination (rendered dynamically) -->
+                            <div class="pagination"></div>
                         </div>
                     </div>
                 </div>
@@ -675,6 +675,7 @@
                 let currentPage = 1;
                 let totalPages = 1;
                 let currentFilters = {};
+                let searchQuery = "";
 
                 function loadPendingBooks(page = 1, filters = {}) {
                     currentPage = page;
@@ -686,10 +687,32 @@
                     form.append("limit", 8); // Items per page
                     form.append("offset", (page - 1) * 8); // Calculate offset from page
 
-                    if (filters.category)
+                    // Add search query if exists
+                    if (searchQuery) {
+                        form.append("search", searchQuery);
+                        console.log("Search query:", searchQuery);
+                    }
+
+                    if (filters.category) {
                         form.append("category_id", filters.category);
-                    if (filters.condition)
+                        console.log("Category filter:", filters.category);
+                    }
+                    if (filters.condition) {
                         form.append("book_condition", filters.condition);
+                        console.log("Condition filter:", filters.condition);
+                    }
+
+                    console.log("Loading books with filters:", {
+                        page,
+                        filters,
+                        searchQuery,
+                    });
+
+                    // Debug: Log what we're sending
+                    console.log("Sending form data:");
+                    for (let [key, value] of form.entries()) {
+                        console.log(`${key}: ${value}`);
+                    }
 
                     fetch("../../backend/books/book_manager.php", {
                         method: "POST",
@@ -697,6 +720,7 @@
                     })
                         .then((response) => response.json())
                         .then((data) => {
+                            console.log("Backend response:", data);
                             const grid =
                                 document.getElementById("approval-grid");
                             grid.innerHTML = "";
@@ -895,6 +919,45 @@
                     });
                 }
 
+                // Search functionality
+                const searchInput = document.querySelector(".search-input");
+                const searchButton = document.querySelector(".search-button");
+
+                if (searchInput) {
+                    console.log("Search input found:", searchInput);
+                    searchInput.addEventListener("input", function () {
+                        searchQuery = this.value.trim();
+                        console.log("Search input changed:", searchQuery);
+                        // Debounce search - wait 500ms after user stops typing
+                        clearTimeout(searchInput.searchTimeout);
+                        searchInput.searchTimeout = setTimeout(() => {
+                            console.log("Executing search for:", searchQuery);
+                            // Combine search with current filters
+                            const combinedFilters = { ...currentFilters };
+                            loadPendingBooks(1, combinedFilters);
+                        }, 500);
+                    });
+                } else {
+                    console.error("Search input not found!");
+                }
+
+                // Search button click handler
+                if (searchButton) {
+                    console.log("Search button found:", searchButton);
+                    searchButton.addEventListener("click", function () {
+                        searchQuery = searchInput
+                            ? searchInput.value.trim()
+                            : "";
+                        console.log(
+                            "Search button clicked, query:",
+                            searchQuery
+                        );
+                        loadPendingBooks(1, currentFilters);
+                    });
+                } else {
+                    console.error("Search button not found!");
+                }
+
                 // Filter functionality
                 const resetFiltersBtn =
                     document.getElementById("reset-filters");
@@ -906,8 +969,16 @@
                         document.getElementById("category").selectedIndex = 0;
                         document.getElementById("condition").selectedIndex = 0;
                         document.getElementById("sort-by").selectedIndex = 0;
+                        // Clear search
+                        if (searchInput) {
+                            searchInput.value = "";
+                            searchQuery = "";
+                        }
                         loadPendingBooks(1, {});
-                        showNotification("Filters reset successfully!", "info");
+                        showNotification(
+                            "Filters and search reset successfully!",
+                            "info"
+                        );
                     });
                 }
 
@@ -923,6 +994,13 @@
                         if (category) filters.category = category;
                         if (condition) filters.condition = condition;
 
+                        // Store current filters
+                        currentFilters = filters;
+
+                        console.log("Applying filters:", filters);
+                        console.log("Current search query:", searchQuery);
+
+                        // Apply filters with current search query
                         loadPendingBooks(1, filters);
                         showNotification(
                             `Filters applied: Category: ${
@@ -935,37 +1013,7 @@
                     });
                 }
 
-                // Pagination buttons
-                const paginationButtons =
-                    document.querySelectorAll(".pagination-button");
-
-                paginationButtons.forEach((button) => {
-                    button.addEventListener("click", function () {
-                        // Remove active class from all buttons
-                        paginationButtons.forEach((btn) =>
-                            btn.classList.remove("active")
-                        );
-
-                        // Add active class to clicked button (except next/prev buttons)
-                        if (!this.innerHTML.includes("fa-chevron")) {
-                            this.classList.add("active");
-                        }
-
-                        // This will be connected to backend later
-                        const page = this.textContent;
-                        if (!this.innerHTML.includes("fa-chevron")) {
-                            showNotification(
-                                `Loading page ${page}. This will be connected to backend later.`,
-                                "info"
-                            );
-                        } else {
-                            showNotification(
-                                "Loading previous/next page. This will be connected to backend later.",
-                                "info"
-                            );
-                        }
-                    });
-                });
+                // Note: Pagination is now handled dynamically by updatePagination function
 
                 // Update book status function
                 function updateBookStatus(
@@ -1011,6 +1059,109 @@
                             );
                         });
                 }
+
+                // Add missing showNotification function
+                function showNotification(message, type = "info") {
+                    // Create notification element
+                    const notification = document.createElement("div");
+                    notification.className = `notification notification-${type}`;
+                    notification.innerHTML = `
+                        <span>${message}</span>
+                        <button class="notification-close">&times;</button>
+                    `;
+
+                    // Add styles
+                    notification.style.cssText = `
+                        position: fixed;
+                        top: 20px;
+                        right: 20px;
+                        padding: 15px 20px;
+                        border-radius: 5px;
+                        color: white;
+                        font-weight: 500;
+                        z-index: 10000;
+                        display: flex;
+                        align-items: center;
+                        gap: 10px;
+                        min-width: 300px;
+                        max-width: 400px;
+                        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                        animation: slideIn 0.3s ease;
+                    `;
+
+                    // Set background color based on type
+                    switch (type) {
+                        case "success":
+                            notification.style.backgroundColor = "#28a745";
+                            break;
+                        case "error":
+                            notification.style.backgroundColor = "#dc3545";
+                            break;
+                        case "warning":
+                            notification.style.backgroundColor = "#ffc107";
+                            notification.style.color = "#212529";
+                            break;
+                        default:
+                            notification.style.backgroundColor = "#17a2b8";
+                    }
+
+                    // Add close button styles
+                    const closeBtn = notification.querySelector(
+                        ".notification-close"
+                    );
+                    closeBtn.style.cssText = `
+                        background: none;
+                        border: none;
+                        color: inherit;
+                        font-size: 20px;
+                        cursor: pointer;
+                        margin-left: auto;
+                        padding: 0;
+                        line-height: 1;
+                    `;
+
+                    // Add close functionality
+                    closeBtn.addEventListener("click", () => {
+                        notification.remove();
+                    });
+
+                    // Add to page
+                    document.body.appendChild(notification);
+
+                    // Auto remove after 5 seconds
+                    setTimeout(() => {
+                        if (notification.parentNode) {
+                            notification.remove();
+                        }
+                    }, 5000);
+                }
+
+                // Test search functionality
+                console.log("Testing search elements...");
+                console.log(
+                    "Search input:",
+                    document.querySelector(".search-input")
+                );
+                console.log(
+                    "Search button:",
+                    document.querySelector(".search-button")
+                );
+                console.log(
+                    "Category select:",
+                    document.getElementById("category")
+                );
+                console.log(
+                    "Condition select:",
+                    document.getElementById("condition")
+                );
+                console.log(
+                    "Apply filters button:",
+                    document.getElementById("apply-filters")
+                );
+                console.log(
+                    "Reset filters button:",
+                    document.getElementById("reset-filters")
+                );
 
                 // Initial load
                 loadPendingBooks(1, {});

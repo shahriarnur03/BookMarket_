@@ -76,6 +76,11 @@ class MyBooksManager {
 
         // Display books
         filteredBooks.forEach((book) => {
+            const quantity = book.stock_quantity || book.quantity || 1;
+            const quantityText = quantity > 0 ? quantity : "Out of Stock";
+            console.log(
+                `Creating card for book: ${book.title} (Status: ${book.status}, Quantity: ${quantityText})`
+            );
             const bookCard = this.createBookCard(book);
             booksGrid.appendChild(bookCard);
         });
@@ -112,6 +117,17 @@ class MyBooksManager {
         const statusClass = this.getStatusClass(book.status);
         const statusText = this.getStatusText(book.status);
 
+        // Debug: Log book data to see what's available
+        console.log("Book data for card:", book);
+        const quantity = book.stock_quantity || book.quantity || 1;
+        const isOutOfStock = quantity <= 0;
+        console.log(
+            "Book quantity:",
+            quantity,
+            isOutOfStock ? "(Out of Stock)" : ""
+        );
+        console.log("Book status:", book.status);
+
         bookCard.innerHTML = `
             <div class="book-image">
                 <img
@@ -132,6 +148,15 @@ class MyBooksManager {
                 <div class="book-price">৳${parseFloat(book.price).toFixed(
                     2
                 )}</div>
+                <div class="book-quantity ${
+                    (book.stock_quantity || book.quantity || 1) > 0
+                        ? ""
+                        : "out-of-stock"
+                }">Quantity: ${
+            (book.stock_quantity || book.quantity || 1) > 0
+                ? book.stock_quantity || book.quantity || 1
+                : "Out of Stock"
+        }</div>
                 <div class="book-condition">Condition: ${this.escapeHtml(
                     book.book_condition
                 )}</div>
@@ -142,15 +167,10 @@ class MyBooksManager {
                 <div class="book-actions">
                     <a href="../book-details.html?id=${
                         book.id
-                    }" class="book-btn view-btn">View</a>
-                    ${
-                        book.status === "pending"
-                            ? `<a href="../sell.html?edit=${book.id}" class="book-btn edit-btn">Edit</a>`
-                            : ""
-                    }
-                    <a href="#" class="book-btn delete-btn" data-book-id="${
+                    }" class="book-btn view-btn" target="_blank">View Details</a>
+                    <button class="book-btn delete-btn" data-book-id="${
                         book.id
-                    }">Delete</a>
+                    }">Delete</button>
                 </div>
             </div>
         `;
@@ -257,14 +277,6 @@ class MyBooksManager {
                 this.handleDeleteBook(e.target);
             }
         });
-
-        // Edit buttons (delegated event)
-        document.addEventListener("click", (e) => {
-            if (e.target.classList.contains("edit-btn")) {
-                e.preventDefault();
-                this.handleEditBook(e.target);
-            }
-        });
     }
 
     handleFilterChange(clickedTab) {
@@ -340,14 +352,6 @@ class MyBooksManager {
                 deleteBtn.disabled = false;
             }
         }
-    }
-
-    handleEditBook(editBtn) {
-        const bookCard = editBtn.closest(".book-card");
-        const bookId = bookCard.getAttribute("data-book-id");
-
-        // Redirect to sell page with edit parameter
-        window.location.href = `../sell.html?edit=${bookId}`;
     }
 
     showNotification(message, type = "info") {

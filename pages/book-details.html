@@ -309,6 +309,26 @@
                 margin-bottom: 1.5rem;
             }
 
+            /* Reviews: modern star rating */
+            .star-rating {
+                display: inline-flex;
+                align-items: center;
+                gap: 0.35rem;
+                user-select: none;
+            }
+            .star-rating .star {
+                font-size: 1.25rem;
+                color: #c9ced6;
+                cursor: pointer;
+                transition: transform 0.15s ease, color 0.2s ease;
+            }
+            .star-rating .star.filled {
+                color: #f39c12;
+            }
+            .star-rating .star:hover {
+                transform: scale(1.06);
+            }
+
             /* Responsive styles */
             @media screen and (max-width: 992px) {
                 .book-details-wrapper {
@@ -409,6 +429,41 @@
 
                     <div class="book-price" id="book-price">Loading...</div>
 
+                    <!-- Book Rating Display -->
+                    <div
+                        class="book-rating-display"
+                        id="book-rating-display"
+                        style="margin: 1rem 0"
+                    >
+                        <div
+                            style="
+                                display: flex;
+                                align-items: center;
+                                gap: 0.5rem;
+                                margin-bottom: 0.5rem;
+                            "
+                        >
+                            <div
+                                class="rating-stars"
+                                id="rating-stars-display"
+                                style="color: #f39c12; font-size: 1.2rem"
+                            >
+                                ☆☆☆☆☆
+                            </div>
+                            <span
+                                style="
+                                    font-weight: 600;
+                                    color: var(--dark-color);
+                                "
+                            >
+                                <span id="rating-average">0</span>/5
+                            </span>
+                        </div>
+                        <div style="color: #666; font-size: 0.9rem">
+                            <span id="rating-count">0</span> reviews
+                        </div>
+                    </div>
+
                     <div class="book-condition">
                         <span class="condition-label">Condition:</span>
                         <span class="condition-value" id="book-condition"
@@ -478,6 +533,161 @@
                                 <td id="book-seller-email">Loading...</td>
                             </tr>
                         </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Customer Reviews -->
+        <div class="book-details-container" id="reviews-section">
+            <div
+                class="section-card"
+                style="
+                    background: #fff;
+                    border-radius: 8px;
+                    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+                    padding: 1.5rem;
+                    margin-bottom: 2rem;
+                "
+            >
+                <h3 class="section-title" style="margin-top: 0">
+                    Customer Reviews
+                </h3>
+
+                <!-- Review Statistics -->
+                <div
+                    id="review-stats"
+                    style="
+                        margin-bottom: 1.5rem;
+                        padding: 1rem;
+                        background: #f8f9fa;
+                        border-radius: 6px;
+                        display: none;
+                    "
+                >
+                    <div
+                        style="
+                            display: flex;
+                            align-items: center;
+                            gap: 1rem;
+                            flex-wrap: wrap;
+                        "
+                    >
+                        <div
+                            style="
+                                display: flex;
+                                align-items: center;
+                                gap: 0.5rem;
+                            "
+                        >
+                            <span style="font-size: 1.5rem; color: #f39c12"
+                                >★</span
+                            >
+                            <span
+                                style="
+                                    font-weight: 600;
+                                    color: var(--dark-color);
+                                "
+                            >
+                                <span id="avg-rating">0</span>/5
+                            </span>
+                        </div>
+                        <span style="color: #666">•</span>
+                        <span style="color: #666">
+                            <span id="total-reviews">0</span> reviews
+                        </span>
+                    </div>
+                </div>
+                <!-- Review Form -->
+                <div
+                    id="review-form-wrapper"
+                    style="
+                        margin-bottom: 1.5rem;
+                        border-bottom: 1px solid var(--border-color);
+                        padding-bottom: 1.5rem;
+                    "
+                >
+                    <div
+                        id="review-login-hint"
+                        style="
+                            display: none;
+                            color: #666;
+                            margin-bottom: 0.75rem;
+                        "
+                    >
+                        Please login to write a review.
+                    </div>
+                    <form
+                        id="review-form"
+                        style="
+                            display: flex;
+                            flex-direction: column;
+                            gap: 0.75rem;
+                        "
+                    >
+                        <div
+                            style="
+                                display: flex;
+                                gap: 0.75rem;
+                                align-items: center;
+                            "
+                        >
+                            <label
+                                style="
+                                    font-weight: 600;
+                                    color: var(--dark-color);
+                                "
+                                >Rating</label
+                            >
+                            <div
+                                class="star-rating"
+                                id="star-rating"
+                                aria-label="Choose rating from 1 to 5"
+                            >
+                                <span class="star" data-value="1">★</span>
+                                <span class="star" data-value="2">★</span>
+                                <span class="star" data-value="3">★</span>
+                                <span class="star" data-value="4">★</span>
+                                <span class="star" data-value="5">★</span>
+                            </div>
+                            <input type="hidden" id="review-rating" value="5" />
+                        </div>
+                        <textarea
+                            id="review-text"
+                            rows="4"
+                            placeholder="Write your review..."
+                            style="
+                                padding: 0.8rem;
+                                border: 1px solid var(--border-color);
+                                border-radius: 4px;
+                                resize: vertical;
+                            "
+                        ></textarea>
+                        <div
+                            style="
+                                display: flex;
+                                gap: 0.75rem;
+                                justify-content: flex-end;
+                            "
+                        >
+                            <button
+                                type="submit"
+                                class="btn btn-primary"
+                                id="submit-review-btn"
+                                style="min-width: 160px"
+                            >
+                                Submit Review
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Reviews List -->
+                <div id="reviews-list">
+                    <div class="empty-state">
+                        <i class="fas fa-comment-dots"></i>
+                        <h3>No reviews yet</h3>
+                        <p>Be the first to write a review for this book.</p>
                     </div>
                 </div>
             </div>
@@ -718,7 +928,8 @@
                             console.log("📚 Book data:", bookData);
 
                             displayBookDetails(bookData);
-                            displayReviews(bookData.reviews);
+                            // Load reviews from database
+                            loadReviewsFromDatabase();
                         } else {
                             console.error(
                                 "❌ API returned error:",
@@ -954,11 +1165,330 @@
                 console.log("✅ Book details displayed successfully");
             }
 
-            // Display reviews (placeholder for future implementation)
-            function displayReviews(reviews) {
-                // This will be implemented when reviews are added
-                console.log("📝 Reviews data:", reviews);
+            // Load reviews from database
+            async function loadReviewsFromDatabase() {
+                try {
+                    const bookId = new URLSearchParams(
+                        window.location.search
+                    ).get("id");
+                    if (!bookId) return;
+
+                    // Load reviews
+                    const reviewsResponse = await fetch(
+                        `../backend/api/book_reviews.php?action=get_reviews&book_id=${bookId}`
+                    );
+                    const reviewsData = await reviewsResponse.json();
+
+                    if (reviewsData.success) {
+                        displayReviews(reviewsData.reviews || []);
+                    } else {
+                        console.error(
+                            "Failed to load reviews:",
+                            reviewsData.message
+                        );
+                        handleReviewsError();
+                    }
+
+                    // Load review statistics
+                    const statsResponse = await fetch(
+                        `../backend/api/book_reviews.php?action=get_stats&book_id=${bookId}`
+                    );
+                    const statsData = await statsResponse.json();
+
+                    if (statsData.success) {
+                        displayReviewStats(statsData.stats);
+                    } else {
+                        console.error(
+                            "Failed to load review stats:",
+                            statsData.message
+                        );
+                    }
+                } catch (error) {
+                    console.error("Error loading reviews:", error);
+                    handleReviewsError();
+                }
             }
+
+            // Display review statistics
+            function displayReviewStats(stats) {
+                const statsContainer = document.getElementById("review-stats");
+                const avgRating = document.getElementById("avg-rating");
+                const totalReviews = document.getElementById("total-reviews");
+
+                if (statsContainer && avgRating && totalReviews) {
+                    if (stats.total_reviews > 0) {
+                        avgRating.textContent = stats.average_rating;
+                        totalReviews.textContent = stats.total_reviews;
+                        statsContainer.style.display = "block";
+                    } else {
+                        statsContainer.style.display = "none";
+                    }
+                }
+
+                // Also update the main book rating display
+                displayBookRating(stats);
+            }
+
+            // Display book rating in the main book info section
+            function displayBookRating(stats) {
+                const ratingDisplay = document.getElementById(
+                    "book-rating-display"
+                );
+                const ratingStars = document.getElementById(
+                    "rating-stars-display"
+                );
+                const ratingAverage = document.getElementById("rating-average");
+                const ratingCount = document.getElementById("rating-count");
+
+                if (
+                    ratingDisplay &&
+                    ratingStars &&
+                    ratingAverage &&
+                    ratingCount
+                ) {
+                    // Always show rating section
+                    ratingDisplay.style.display = "block";
+
+                    if (stats.total_reviews > 0) {
+                        // Display stars with actual rating
+                        const rating = Math.round(stats.average_rating);
+                        const filledStars = "★".repeat(rating);
+                        const emptyStars = "☆".repeat(5 - rating);
+                        ratingStars.innerHTML = filledStars + emptyStars;
+
+                        // Display average and count
+                        ratingAverage.textContent = stats.average_rating;
+                        ratingCount.textContent = stats.total_reviews;
+                    } else {
+                        // Display 0 stars for books without reviews
+                        ratingStars.innerHTML = "☆☆☆☆☆";
+                        ratingAverage.textContent = "0";
+                        ratingCount.textContent = "0";
+                    }
+                }
+            }
+
+            // Add error handling for when reviews fail to load
+            function handleReviewsError() {
+                const list = document.getElementById("reviews-list");
+                if (list) {
+                    list.innerHTML = `
+                        <div class="empty-state" style="text-align: center; padding: 2rem; color: #666;">
+                            <i class="fas fa-exclamation-triangle" style="font-size: 2rem; color: #f39c12; margin-bottom: 1rem;"></i>
+                            <h3>Unable to load reviews</h3>
+                            <p>There was an error loading reviews. Please try refreshing the page.</p>
+                        </div>`;
+                }
+            }
+
+            // Display reviews
+            function displayReviews(reviews) {
+                const list = document.getElementById("reviews-list");
+                if (!list) return;
+
+                // Normalize reviews
+                const items = Array.isArray(reviews) ? reviews : [];
+
+                if (!items.length) {
+                    list.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-comment-dots"></i>
+                            <h3>No reviews yet</h3>
+                            <p>Be the first to write a review for this book.</p>
+                        </div>`;
+                    return;
+                }
+
+                // Render reviews
+                list.innerHTML = items
+                    .map((r) => {
+                        const rating = Math.max(
+                            1,
+                            Math.min(5, parseInt(r.rating || 0))
+                        );
+                        const stars = "★★★★★☆☆☆☆☆".slice(
+                            5 - rating,
+                            10 - rating
+                        );
+                        return `
+                        <div class="review-item" style="display:flex; gap:0.75rem; padding:1rem 0; border-bottom:1px solid var(--border-color);">
+                            <div class="review-avatar" style="width:40px; height:40px; border-radius:50%; background:#f0f2f5; display:flex; align-items:center; justify-content:center; font-weight:700; color:var(--primary-color);">${(
+                                r.author || "U"
+                            )
+                                .toString()
+                                .charAt(0)
+                                .toUpperCase()}</div>
+                            <div class="review-body" style="flex:1;">
+                                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.25rem;">
+                                    <strong style="color:var(--dark-color);">${
+                                        r.author || "Anonymous"
+                                    }</strong>
+                                    <span style="font-size:0.85rem; color:#888;">${formatDate(
+                                        r.created_at || new Date()
+                                    )}</span>
+                                </div>
+                                <div class="review-rating" aria-label="${rating} out of 5" style="color:#f39c12; margin-bottom:0.35rem;">${"★".repeat(
+                            rating
+                        )}${"☆".repeat(5 - rating)}</div>
+                                <div class="review-text" style="color:#444;">${(
+                                    r.review_text || ""
+                                )
+                                    .toString()
+                                    .replace(/</g, "&lt;")}</div>
+                            </div>
+                        </div>`;
+                    })
+                    .join("");
+            }
+
+            // Submit review (frontend only demo; wire to backend later)
+            document.addEventListener("DOMContentLoaded", () => {
+                const form = document.getElementById("review-form");
+                const text = document.getElementById("review-text");
+                const rating = document.getElementById("review-rating");
+                const loginHint = document.getElementById("review-login-hint");
+                const submitBtn = document.getElementById("submit-review-btn");
+                const starContainer = document.getElementById("star-rating");
+
+                const isUserLoggedIn = () => {
+                    try {
+                        const u = JSON.parse(
+                            localStorage.getItem("bookmarket_user") || "{}"
+                        );
+                        return !!u.userId;
+                    } catch (_) {
+                        return false;
+                    }
+                };
+
+                const updateFormState = () => {
+                    const loggedIn = isUserLoggedIn();
+                    if (loginHint)
+                        loginHint.style.display = loggedIn ? "none" : "block";
+                    if (text) text.disabled = !loggedIn;
+                    if (rating) rating.disabled = !loggedIn;
+                    if (submitBtn) submitBtn.disabled = !loggedIn;
+                };
+
+                updateFormState();
+
+                // Interactive star rating behavior
+                if (starContainer && rating) {
+                    const stars = Array.from(
+                        starContainer.querySelectorAll(".star")
+                    );
+                    const setStars = (val) => {
+                        stars.forEach((s) => {
+                            const v = parseInt(s.getAttribute("data-value"));
+                            s.classList.toggle("filled", v <= val);
+                        });
+                    };
+                    // initialize default
+                    setStars(parseInt(rating.value || 5));
+                    stars.forEach((star) => {
+                        star.addEventListener("mouseenter", () => {
+                            if (submitBtn && submitBtn.disabled) return;
+                            setStars(parseInt(star.getAttribute("data-value")));
+                        });
+                        star.addEventListener("click", () => {
+                            if (submitBtn && submitBtn.disabled) return;
+                            const val = parseInt(
+                                star.getAttribute("data-value")
+                            );
+                            rating.value = String(val);
+                            setStars(val);
+                        });
+                    });
+                    starContainer.addEventListener("mouseleave", () => {
+                        setStars(parseInt(rating.value || 5));
+                    });
+                }
+
+                if (form) {
+                    form.addEventListener("submit", async (e) => {
+                        e.preventDefault();
+                        if (!isUserLoggedIn()) return;
+
+                        const bookId = new URLSearchParams(
+                            window.location.search
+                        ).get("id");
+                        const ratingValue = parseInt(rating.value || 5);
+                        const commentText = text.value.trim();
+
+                        if (!commentText) {
+                            try {
+                                showNotification(
+                                    "Please write something in your review",
+                                    "warning"
+                                );
+                            } catch (_) {}
+                            return;
+                        }
+
+                        try {
+                            // Submit review to backend
+                            const response = await fetch(
+                                "../backend/api/book_reviews.php?action=create_review",
+                                {
+                                    method: "POST",
+                                    headers: {
+                                        "Content-Type": "application/json",
+                                    },
+                                    body: JSON.stringify({
+                                        book_id: bookId,
+                                        rating: ratingValue,
+                                        comment: commentText,
+                                    }),
+                                }
+                            );
+
+                            const data = await response.json();
+
+                            if (data.success) {
+                                // Clear form
+                                text.value = "";
+                                rating.value = "5";
+
+                                // Reset stars to default
+                                if (starContainer) {
+                                    const stars = Array.from(
+                                        starContainer.querySelectorAll(".star")
+                                    );
+                                    stars.forEach((s, index) => {
+                                        s.classList.toggle("filled", index < 5);
+                                    });
+                                }
+
+                                // Reload reviews from database
+                                await loadReviewsFromDatabase();
+
+                                try {
+                                    showNotification(
+                                        "Review submitted successfully!",
+                                        "success"
+                                    );
+                                } catch (_) {}
+                            } else {
+                                try {
+                                    showNotification(
+                                        data.message ||
+                                            "Failed to submit review",
+                                        "error"
+                                    );
+                                } catch (_) {}
+                            }
+                        } catch (error) {
+                            console.error("Error submitting review:", error);
+                            try {
+                                showNotification(
+                                    "Failed to submit review. Please try again.",
+                                    "error"
+                                );
+                            } catch (_) {}
+                        }
+                    });
+                }
+            });
 
             // Update thumbnails
             function updateThumbnails(book) {

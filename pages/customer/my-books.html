@@ -204,6 +204,18 @@
                 font-size: 1.1rem;
             }
 
+            .book-quantity {
+                color: #28a745;
+                font-size: 0.9rem;
+                margin-bottom: 0.8rem;
+                font-weight: 500;
+            }
+
+            .book-quantity.out-of-stock {
+                color: #dc3545;
+                font-weight: 600;
+            }
+
             .book-status {
                 margin-bottom: 1rem;
                 font-size: 0.9rem;
@@ -255,6 +267,12 @@
                 font-size: 0.9rem;
                 font-weight: 600;
                 transition: all 0.3s ease;
+                cursor: pointer;
+                border: none;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                min-height: 36px;
             }
 
             .view-btn {
@@ -264,16 +282,6 @@
 
             .view-btn:hover {
                 background-color: #3a5a97;
-            }
-
-            .edit-btn {
-                background-color: transparent;
-                border: 1px solid var(--primary-color);
-                color: var(--primary-color);
-            }
-
-            .edit-btn:hover {
-                background-color: rgba(74, 111, 165, 0.1);
             }
 
             .delete-btn {
@@ -660,28 +668,6 @@
                                 }
                             }, 500);
                         }
-                    });
-                });
-
-                // Edit button functionality
-                const editButtons = document.querySelectorAll(".edit-btn");
-
-                editButtons.forEach((btn) => {
-                    btn.addEventListener("click", function (e) {
-                        // This would normally go to the edit page with the book ID
-                        // For demo purposes, we'll just show a notification
-                        showNotification("Editing book listing", "info");
-                    });
-                });
-
-                // View button functionality
-                const viewButtons = document.querySelectorAll(".view-btn");
-
-                viewButtons.forEach((btn) => {
-                    btn.addEventListener("click", function (e) {
-                        // This would normally go to the book details page with the book ID
-                        // For demo purposes, we'll just show a notification
-                        showNotification("Viewing book details", "info");
                     });
                 });
             });

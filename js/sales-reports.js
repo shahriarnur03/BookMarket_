@@ -7,45 +7,93 @@
 // Note: This file is initialized by the authentication check in the HTML
 
 function initSalesReports() {
+    console.log("initSalesReports called");
     setupEventListeners();
     setDefaultDates();
     loadInitialData();
+
+    // Test modal functionality
+    setTimeout(() => {
+        const modal = document.getElementById("report-modal");
+        console.log("Modal element found:", modal);
+        if (modal) {
+            console.log("Modal display style:", modal.style.display);
+            console.log(
+                "Modal computed style:",
+                window.getComputedStyle(modal).display
+            );
+        }
+    }, 1000);
 }
 
 function setupEventListeners() {
+    console.log("setupEventListeners called");
+
     // Date range change handler
     const dateRangeSelect = document.getElementById("date-range");
     if (dateRangeSelect) {
         dateRangeSelect.addEventListener("change", handleDateRangeChange);
+        console.log("Date range change listener added");
     }
 
     // Generate report button
     const generateBtn = document.getElementById("generate-report");
     if (generateBtn) {
         generateBtn.addEventListener("click", generateReport);
+        console.log("Generate report listener added");
     }
 
     // Reset filters button
     const resetBtn = document.getElementById("reset-filters");
     if (resetBtn) {
         resetBtn.addEventListener("click", resetFilters);
+        console.log("Reset filters listener added");
     }
 
-    // Export buttons
-    const exportPdfBtn = document.getElementById("export-pdf");
-    if (exportPdfBtn) {
-        exportPdfBtn.addEventListener("click", () => exportReport("pdf"));
+    // Export report button
+    const exportBtn = document.getElementById("export-report");
+    console.log("Export button element:", exportBtn);
+    if (exportBtn) {
+        console.log("Adding click event listener to export button");
+        exportBtn.addEventListener("click", function () {
+            console.log("Export button clicked!");
+            showExportModal();
+        });
+        console.log("Export button listener added");
+    } else {
+        console.error("Export button not found!");
     }
 
-    const exportExcelBtn = document.getElementById("export-excel");
-    if (exportExcelBtn) {
-        exportExcelBtn.addEventListener("click", () => exportReport("excel"));
+    // Modal close button
+    const closeBtn = document.querySelector(".close");
+    if (closeBtn) {
+        closeBtn.addEventListener("click", hideExportModal);
+        console.log("Close button listener added");
     }
 
-    const exportCsvBtn = document.getElementById("export-csv");
-    if (exportCsvBtn) {
-        exportCsvBtn.addEventListener("click", () => exportReport("csv"));
+    // Cancel button
+    const cancelBtn = document.getElementById("cancel-report");
+    if (cancelBtn) {
+        cancelBtn.addEventListener("click", hideExportModal);
+        console.log("Cancel button listener added");
     }
+
+    // Report form submission
+    const reportForm = document.getElementById("report-form");
+    if (reportForm) {
+        reportForm.addEventListener("submit", handleReportSubmission);
+        console.log("Report form listener added");
+    }
+
+    // Close modal when clicking outside
+    window.addEventListener("click", function (event) {
+        const modal = document.getElementById("report-modal");
+        if (event.target === modal) {
+            hideExportModal();
+        }
+    });
+
+    console.log("All event listeners setup completed");
 }
 
 function setDefaultDates() {
@@ -322,6 +370,124 @@ function resetFilters() {
 
     setDefaultDates();
     generateReport();
+}
+
+function showExportModal() {
+    console.log("=== showExportModal called ===");
+    const modal = document.getElementById("report-modal");
+    const startDate = document.getElementById("start-date").value;
+    const endDate = document.getElementById("end-date").value;
+
+    console.log("Modal element:", modal);
+    console.log("Start date:", startDate);
+    console.log("End date:", endDate);
+
+    if (!startDate || !endDate) {
+        console.log("Dates missing, showing error notification");
+        showNotification(
+            "Please select both start and end dates before exporting",
+            "error"
+        );
+        return;
+    }
+
+    if (!modal) {
+        console.error("Modal element not found!");
+        alert("Modal element not found! Check console for details.");
+        return;
+    }
+
+    // Populate form fields
+    const periodField = document.getElementById("report-period");
+    const generatedByField = document.getElementById("generated-by");
+    const generatedDateField = document.getElementById("generated-date");
+
+    console.log("Form fields found:", {
+        periodField: !!periodField,
+        generatedByField: !!generatedByField,
+        generatedDateField: !!generatedDateField,
+    });
+
+    if (periodField) periodField.value = `${startDate} to ${endDate}`;
+    if (generatedByField) generatedByField.value = getUsername() || "Admin";
+    if (generatedDateField)
+        generatedDateField.value = new Date().toLocaleDateString();
+
+    console.log("Setting modal display to block");
+    modal.style.display = "block";
+    console.log("Modal display style:", modal.style.display);
+
+    // Force a reflow to ensure the modal is visible
+    modal.offsetHeight;
+
+    // Check if modal is actually visible
+    const computedStyle = window.getComputedStyle(modal);
+    console.log("Modal computed display:", computedStyle.display);
+    console.log("Modal computed visibility:", computedStyle.visibility);
+    console.log("Modal computed opacity:", computedStyle.opacity);
+
+    if (modal.style.display === "block") {
+        console.log("Modal should be visible now");
+    } else {
+        console.error("Modal display not set to block!");
+    }
+}
+
+function hideExportModal() {
+    const modal = document.getElementById("report-modal");
+    modal.style.display = "none";
+}
+
+function handleReportSubmission(event) {
+    event.preventDefault();
+
+    const formData = new FormData(event.target);
+    const reportData = {
+        title: formData.get("report-title"),
+        period: formData.get("report-period"),
+        generatedBy: formData.get("generated-by"),
+        generatedDate: formData.get("generated-date"),
+        notes: formData.get("report-notes"),
+        startDate: document.getElementById("start-date").value,
+        endDate: document.getElementById("end-date").value,
+    };
+
+    // Generate and download HTML report
+    generateHTMLReport(reportData);
+
+    // Hide modal
+    hideExportModal();
+
+    // Show success message
+    showNotification(
+        "HTML report generated successfully! Open in browser and print to PDF.",
+        "success"
+    );
+}
+
+function generateHTMLReport(reportData) {
+    console.log("Generating HTML report with data:", reportData);
+    console.log("Date range:", reportData.startDate, "to", reportData.endDate);
+
+    // Use main sales reports API
+    const url = `../../backend/api/sales_reports.php?action=export&format=pdf&start_date=${reportData.startDate}&end_date=${reportData.endDate}`;
+
+    console.log("HTML export URL:", url);
+
+    // Create a temporary link to trigger download
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `sales_report_${reportData.startDate}_to_${reportData.endDate}.html`;
+
+    console.log("Triggering HTML download...");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    showNotification(
+        "HTML report generated successfully! Open in browser and print to PDF.",
+        "success"
+    );
 }
 
 function exportReport(format) {

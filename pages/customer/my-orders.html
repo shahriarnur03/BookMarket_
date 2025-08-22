@@ -38,13 +38,16 @@
             }
 
             .dashboard-layout {
-                display: flex;
+                display: flex !important;
                 gap: 2rem;
+                flex-direction: row !important;
             }
 
             .dashboard-sidebar {
                 width: 250px;
                 flex-shrink: 0;
+                display: block !important;
+                visibility: visible !important;
             }
 
             .dashboard-content {
@@ -56,6 +59,8 @@
                 border-radius: 8px;
                 overflow: hidden;
                 box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+                display: block !important;
+                visibility: visible !important;
             }
 
             .sidebar-menu-item {
@@ -294,7 +299,7 @@
                         <a href="my-books.html" class="sidebar-menu-item">
                             <i class="fas fa-book"></i> My Books
                         </a>
-
+                        <a href="sales-reports.html" class="sidebar-menu-item">
                             <i class="fas fa-dollar-sign"></i> Sales Reports
                         </a>
                         <a href="profile.html" class="sidebar-menu-item">
@@ -414,6 +419,30 @@
         <!-- My Orders specific JavaScript -->
         <script>
             document.addEventListener("DOMContentLoaded", function () {
+                // Debug: Check if sidebar is visible
+                console.log("DOM Content Loaded - My Orders Page");
+
+                const sidebar = document.querySelector(".dashboard-sidebar");
+                const sidebarMenu = document.querySelector(".sidebar-menu");
+
+                console.log("Sidebar element:", sidebar);
+                console.log("Sidebar menu element:", sidebarMenu);
+
+                if (sidebar) {
+                    console.log(
+                        "Sidebar display style:",
+                        sidebar.style.display
+                    );
+                    console.log(
+                        "Sidebar computed display:",
+                        window.getComputedStyle(sidebar).display
+                    );
+                    console.log(
+                        "Sidebar visibility:",
+                        window.getComputedStyle(sidebar).visibility
+                    );
+                }
+
                 // Handle sidebar logout
                 const sidebarLogout = document.getElementById("sidebar-logout");
                 if (sidebarLogout) {

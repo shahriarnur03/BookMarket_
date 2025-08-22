@@ -34,8 +34,8 @@ class HomeDataManager {
                  FROM books b
                  JOIN categories c ON b.category_id = c.id
                  JOIN users u ON b.seller_id = u.id
-                 WHERE b.status = 'approved'
-                 ORDER BY b.views_count DESC, b.created_at DESC
+                 WHERE b.status = 'approved' AND b.cover_image_path IS NOT NULL
+                 ORDER BY RAND()
                  LIMIT ?",
                 [intval($limit)]
             );
@@ -44,6 +44,32 @@ class HomeDataManager {
             
         } catch (Exception $e) {
             error_log("Get Featured Books Error: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Get old books (older listings) for home page diversity
+     * @param int $limit Number of books to return
+     * @return array|false Old books array or false on failure
+     */
+    public function getOldBooks($limit = 6) {
+        try {
+            $books = $this->db->select(
+                "SELECT b.*, c.name as category_name, u.username as seller_name, u.city as seller_city
+                 FROM books b
+                 JOIN categories c ON b.category_id = c.id
+                 JOIN users u ON b.seller_id = u.id
+                 WHERE b.status = 'approved' AND b.cover_image_path IS NOT NULL
+                 ORDER BY b.created_at ASC
+                 LIMIT ?",
+                [intval($limit)]
+            );
+
+            return $books;
+
+        } catch (Exception $e) {
+            error_log("Get Old Books Error: " . $e->getMessage());
             return false;
         }
     }
@@ -297,6 +323,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 sendErrorResponse('Failed to retrieve featured books');
             }
             break;
+        case 'get_old_books':
+            $limit = $_POST['limit'] ?? 6;
+            $books = $homeDataManager->getOldBooks($limit);
+            if ($books !== false) {
+                sendSuccessResponse($books, 'Old books retrieved successfully');
+            } else {
+                sendErrorResponse('Failed to retrieve old books');
+            }
+            break;
             
         case 'get_categories_with_counts':
             $categories = $homeDataManager->getCategoriesWithCounts();
@@ -407,6 +442,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                 sendSuccessResponse($books, 'Featured books retrieved successfully');
             } else {
                 sendErrorResponse('Failed to retrieve featured books');
+            }
+            break;
+        case 'old_books':
+            $limit = $_GET['limit'] ?? 6;
+            $books = $homeDataManager->getOldBooks($limit);
+            if ($books !== false) {
+                sendSuccessResponse($books, 'Old books retrieved successfully');
+            } else {
+                sendErrorResponse('Failed to retrieve old books');
             }
             break;
             
