@@ -65,6 +65,9 @@ document.addEventListener("DOMContentLoaded", function () {
                         <div class="dropdown-content">
                             <a href="${basePath}profile.html">Profile</a>
                             <a href="${basePath}dashboard.html">Dashboard</a>
+                            <a href="${basePath}order-management.html">Order Management</a>
+                            <a href="${basePath}book-management.html">Book Management</a>
+                            <a href="${basePath}user-management.html">User Management</a>
                             <a href="${basePath}sales-reports.html">Sales Reports</a>
                             <a href="#" id="logout-btn">Logout</a>
                         </div>

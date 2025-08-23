@@ -135,6 +135,10 @@
                 border-top: 3px solid var(--primary-color);
             }
 
+            .stat-delivered-orders {
+                border-top: 3px solid var(--success-color);
+            }
+
             .stat-users {
                 border-top: 3px solid var(--success-color);
             }
@@ -410,6 +414,20 @@
                             </div>
                         </div>
 
+                        <div class="stat-card stat-delivered-orders">
+                            <div class="stat-icon">
+                                <i class="fas fa-truck"></i>
+                            </div>
+                            <div class="stat-label">Delivered Orders</div>
+                            <div class="stat-value" id="stat-total-sold-books">
+                                0
+                            </div>
+                            <div class="stat-trend trend-up">
+                                <i class="fas fa-arrow-up"></i> 8% from last
+                                month
+                            </div>
+                        </div>
+
                         <div class="stat-card stat-users">
                             <div class="stat-icon">
                                 <i class="fas fa-users"></i>
@@ -462,7 +480,6 @@
                     <div class="section-card">
                         <div class="section-header">
                             <h3 class="section-title">Platform Overview</h3>
-                            <a href="#" class="section-action">View Report</a>
                         </div>
 
                         <div class="section-content">
@@ -493,7 +510,6 @@
                     <div class="section-card">
                         <div class="section-header">
                             <h3 class="section-title">Sales Overview</h3>
-                            <a href="#" class="section-action">View Details</a>
                         </div>
                         <div class="section-content">
                             <div class="chart-container">
@@ -836,10 +852,16 @@
                                     d.data.total_admin_earnings || 0
                                 );
 
+                                // Display total sold books (based on delivered orders)
+                                document.getElementById(
+                                    "stat-total-sold-books"
+                                ).textContent = d.data.delivered_orders || 0;
+
                                 console.log("📊 Order Stats:", {
                                     revenue: d.data.total_revenue,
                                     platform_earnings:
                                         d.data.total_admin_earnings,
+                                    sold_books: d.data.delivered_orders,
                                 });
                             }
                         });

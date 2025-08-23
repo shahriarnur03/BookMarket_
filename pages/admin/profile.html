@@ -3,17 +3,14 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>My Profile - Customer Dashboard - BookMarket</title>
+        <title>Admin Profile - Admin Dashboard - BookMarket</title>
         <link rel="stylesheet" href="../../css/styles.css" />
-        <!-- Additional CSS for Dashboard page -->
         <style>
-            /* Dashboard Page Specific Styles */
             .dashboard-container {
                 max-width: var(--container-width);
                 margin: 2rem auto;
                 padding: 0 1rem;
             }
-
             .dashboard-header {
                 display: flex;
                 align-items: center;
@@ -22,72 +19,54 @@
                 flex-wrap: wrap;
                 gap: 1rem;
             }
-
             .welcome-message h1 {
                 margin-bottom: 0.5rem;
                 color: var(--dark-color);
             }
-
             .welcome-message p {
                 color: #666;
             }
-
-            .dashboard-actions {
-                display: flex;
-                gap: 1rem;
-            }
-
             .dashboard-layout {
                 display: flex;
                 gap: 2rem;
             }
-
             .dashboard-sidebar {
                 width: 250px;
                 flex-shrink: 0;
             }
-
             .dashboard-content {
                 flex: 1;
             }
-
             .sidebar-menu {
-                background-color: white;
+                background-color: #2c3e50;
                 border-radius: 8px;
                 overflow: hidden;
                 box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             }
-
             .sidebar-menu-item {
                 padding: 1rem 1.5rem;
                 display: flex;
                 align-items: center;
-                border-bottom: 1px solid var(--border-color);
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
                 cursor: pointer;
                 transition: all 0.3s ease;
-                color: var(--dark-color);
+                color: white;
                 text-decoration: none;
             }
-
             .sidebar-menu-item:last-child {
                 border-bottom: none;
             }
-
             .sidebar-menu-item.active {
                 background-color: var(--primary-color);
-                color: white;
             }
-
             .sidebar-menu-item:hover:not(.active) {
-                background-color: #f5f5f5;
+                background-color: rgba(255, 255, 255, 0.1);
             }
-
             .sidebar-menu-item i {
                 margin-right: 0.8rem;
                 width: 20px;
                 text-align: center;
             }
-
             .section-card {
                 background-color: white;
                 border-radius: 8px;
@@ -95,7 +74,6 @@
                 box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
                 margin-bottom: 2rem;
             }
-
             .section-header {
                 padding: 1rem 1.5rem;
                 border-bottom: 1px solid var(--border-color);
@@ -103,23 +81,19 @@
                 justify-content: space-between;
                 align-items: center;
             }
-
             .section-title {
                 margin: 0;
                 font-size: 1.2rem;
                 color: var(--dark-color);
             }
-
             .section-content {
                 padding: 1.5rem;
             }
-
             .profile-header {
                 display: flex;
                 align-items: center;
                 margin-bottom: 2rem;
             }
-
             .profile-avatar {
                 width: 100px;
                 height: 100px;
@@ -133,34 +107,23 @@
                 margin-right: 1.5rem;
                 overflow: hidden;
             }
-
-            .profile-avatar img {
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-            }
-
             .profile-info h2 {
                 margin-bottom: 0.5rem;
                 color: var(--dark-color);
             }
-
             .profile-info p {
                 color: #666;
                 margin-bottom: 0.5rem;
             }
-
             .profile-info .member-since {
                 font-size: 0.9rem;
                 color: #888;
             }
-
             .profile-tabs {
                 display: flex;
                 border-bottom: 1px solid var(--border-color);
                 margin-bottom: 1.5rem;
             }
-
             .profile-tab {
                 padding: 1rem 1.5rem;
                 cursor: pointer;
@@ -168,11 +131,9 @@
                 color: var(--dark-color);
                 position: relative;
             }
-
             .profile-tab.active {
                 color: var(--primary-color);
             }
-
             .profile-tab.active::after {
                 content: "";
                 position: absolute;
@@ -182,26 +143,21 @@
                 height: 2px;
                 background-color: var(--primary-color);
             }
-
             .profile-content {
                 display: none;
             }
-
             .profile-content.active {
                 display: block;
             }
-
             .form-group {
                 margin-bottom: 1.5rem;
             }
-
             .form-group label {
                 display: block;
                 margin-bottom: 0.5rem;
                 font-weight: 600;
                 color: var(--dark-color);
             }
-
             .form-group input,
             .form-group textarea,
             .form-group select {
@@ -211,30 +167,21 @@
                 border-radius: 4px;
                 font-size: 1rem;
             }
-
-            .form-group textarea {
-                height: 120px;
-                resize: vertical;
-            }
-
             .form-row {
                 display: flex;
                 gap: 1.5rem;
                 margin-bottom: 1.5rem;
             }
-
             .form-row .form-group {
                 flex: 1;
                 margin-bottom: 0;
             }
-
             .form-buttons {
                 display: flex;
                 justify-content: flex-end;
                 gap: 1rem;
                 margin-top: 2rem;
             }
-
             .danger-zone {
                 margin-top: 3rem;
                 padding: 1.5rem;
@@ -242,80 +189,83 @@
                 border-radius: 8px;
                 background-color: rgba(231, 76, 60, 0.05);
             }
-
             .danger-zone h3 {
                 color: var(--danger-color);
                 margin-bottom: 1rem;
             }
-
             .danger-zone p {
                 margin-bottom: 1.5rem;
                 color: #666;
             }
-
-            /* Responsive styles */
             @media screen and (max-width: 992px) {
                 .dashboard-layout {
                     flex-direction: column;
                 }
-
                 .dashboard-sidebar {
                     width: 100%;
                 }
             }
-
             @media screen and (max-width: 768px) {
                 .profile-header {
                     flex-direction: column;
                     text-align: center;
                 }
-
                 .profile-avatar {
                     margin-right: 0;
                     margin-bottom: 1rem;
                 }
-
                 .form-row {
                     flex-direction: column;
                     gap: 1.5rem;
                 }
             }
         </style>
-        <!-- Font Awesome for icons -->
         <link
             rel="stylesheet"
             href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
         />
     </head>
     <body>
-        <!-- Navbar (Common Customer Navbar) -->
-        <nav class="navbar">
-            <!-- Navbar will be generated by customer-navbar.js -->
-        </nav>
+        <nav class="navbar"></nav>
 
-        <!-- Dashboard Content -->
         <div class="dashboard-container">
             <div class="dashboard-header">
                 <div class="welcome-message">
-                    <h1>My Profile</h1>
-                    <p>Manage your account settings and preferences</p>
+                    <h1>Admin Profile</h1>
+                    <p>Manage your admin account settings and preferences</p>
                 </div>
             </div>
 
             <div class="dashboard-layout">
-                <!-- Dashboard Sidebar -->
                 <div class="dashboard-sidebar">
                     <div class="sidebar-menu">
                         <a href="dashboard.html" class="sidebar-menu-item">
                             <i class="fas fa-chart-line"></i> Dashboard
                         </a>
-                        <a href="my-orders.html" class="sidebar-menu-item">
-                            <i class="fas fa-shopping-bag"></i> My Orders
+                        <a
+                            href="order-management.html"
+                            class="sidebar-menu-item"
+                        >
+                            <i class="fas fa-shopping-bag"></i> Order Management
                         </a>
-                        <a href="my-books.html" class="sidebar-menu-item">
-                            <i class="fas fa-book"></i> My Books
+                        <a
+                            href="book-management.html"
+                            class="sidebar-menu-item"
+                        >
+                            <i class="fas fa-book"></i> Book Management
                         </a>
-
+                        <a
+                            href="user-management.html"
+                            class="sidebar-menu-item"
+                        >
+                            <i class="fas fa-users"></i> User Management
+                        </a>
+                        <a href="book-upload.html" class="sidebar-menu-item">
+                            <i class="fas fa-upload"></i> Book Upload
+                        </a>
+                        <a href="book-approval.html" class="sidebar-menu-item">
+                            <i class="fas fa-check-circle"></i> Book Approval
+                        </a>
                         <a href="sales-reports.html" class="sidebar-menu-item">
                             <i class="fas fa-dollar-sign"></i> Sales Reports
                         </a>
@@ -332,7 +282,6 @@
                     </div>
                 </div>
 
-                <!-- Dashboard Main Content -->
                 <div class="dashboard-content">
                     <div class="section-card">
                         <div class="section-header">
@@ -340,17 +289,16 @@
                         </div>
 
                         <div class="section-content">
-                            <!-- Profile Header -->
                             <div class="profile-header">
                                 <div class="profile-avatar">
-                                    <i class="fas fa-user"></i>
+                                    <i class="fas fa-user-shield"></i>
                                 </div>
                                 <div class="profile-info">
                                     <h2 id="profile-name">Loading...</h2>
                                     <p id="profile-email">Loading...</p>
                                     <p id="profile-phone">Loading...</p>
                                     <p class="member-since">
-                                        Member since:
+                                        Admin since:
                                         <span id="profile-joined"
                                             >Loading...</span
                                         >
@@ -358,7 +306,6 @@
                                 </div>
                             </div>
 
-                            <!-- Profile Tabs -->
                             <div class="profile-tabs">
                                 <div
                                     class="profile-tab active"
@@ -372,15 +319,17 @@
                                 >
                                     Change Password
                                 </div>
-                                <div class="profile-tab" data-tab="address">
-                                    Address
+                                <div
+                                    class="profile-tab"
+                                    data-tab="admin-settings"
+                                >
+                                    Admin Settings
                                 </div>
                                 <div class="profile-tab" data-tab="preferences">
                                     Preferences
                                 </div>
                             </div>
 
-                            <!-- Personal Information Tab -->
                             <div
                                 class="profile-content active"
                                 id="personal-info-content"
@@ -408,7 +357,6 @@
                                             />
                                         </div>
                                     </div>
-
                                     <div class="form-row">
                                         <div class="form-group">
                                             <label for="email">Email</label>
@@ -430,7 +378,6 @@
                                             />
                                         </div>
                                     </div>
-
                                     <div class="form-buttons">
                                         <button
                                             type="submit"
@@ -442,7 +389,6 @@
                                 </form>
                             </div>
 
-                            <!-- Change Password Tab -->
                             <div
                                 class="profile-content"
                                 id="change-password-content"
@@ -458,7 +404,6 @@
                                             required
                                         />
                                     </div>
-
                                     <div class="form-group">
                                         <label for="new-password"
                                             >New Password</label
@@ -469,7 +414,6 @@
                                             required
                                         />
                                     </div>
-
                                     <div class="form-group">
                                         <label for="confirm-password"
                                             >Confirm New Password</label
@@ -480,7 +424,6 @@
                                             required
                                         />
                                     </div>
-
                                     <div class="form-buttons">
                                         <button
                                             type="submit"
@@ -492,95 +435,150 @@
                                 </form>
                             </div>
 
-                            <!-- Address Tab -->
-                            <div class="profile-content" id="address-content">
-                                <form id="address-form">
+                            <div
+                                class="profile-content"
+                                id="admin-settings-content"
+                            >
+                                <form id="admin-settings-form">
                                     <div class="form-group">
-                                        <label for="street-address"
-                                            >Street Address</label
+                                        <label for="admin-role"
+                                            >Admin Role</label
                                         >
-                                        <input
-                                            type="text"
-                                            id="street-address"
-                                            value=""
-                                        />
+                                        <select id="admin-role">
+                                            <option value="super_admin">
+                                                Super Admin
+                                            </option>
+                                            <option value="admin">Admin</option>
+                                            <option value="moderator">
+                                                Moderator
+                                            </option>
+                                        </select>
                                     </div>
-
-                                    <div class="form-row">
-                                        <div class="form-group">
-                                            <label for="city">City</label>
-                                            <input
-                                                type="text"
-                                                id="city"
-                                                value=""
-                                            />
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="postal-code"
-                                                >Postal Code</label
+                                    <div class="form-group">
+                                        <label>Permissions</label>
+                                        <div style="margin-top: 0.5rem">
+                                            <div
+                                                style="
+                                                    display: flex;
+                                                    align-items: center;
+                                                    margin-bottom: 0.5rem;
+                                                "
                                             >
-                                            <input
-                                                type="text"
-                                                id="postal-code"
-                                                value=""
-                                            />
-                                        </div>
-                                    </div>
-
-                                    <div class="form-row">
-                                        <div class="form-group">
-                                            <label for="state"
-                                                >State/Division</label
-                                            >
-                                            <input
-                                                type="text"
-                                                id="state"
-                                                value=""
-                                            />
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="country">Country</label>
-                                            <select id="country">
-                                                <option
-                                                    value="Bangladesh"
-                                                    selected
+                                                <input
+                                                    type="checkbox"
+                                                    id="perm-users"
+                                                    checked
+                                                    style="
+                                                        width: auto;
+                                                        margin-right: 0.5rem;
+                                                    "
+                                                />
+                                                <label
+                                                    for="perm-users"
+                                                    style="font-weight: normal"
+                                                    >User Management</label
                                                 >
-                                                    Bangladesh
-                                                </option>
-                                                <option value="India">
-                                                    India
-                                                </option>
-                                                <option value="Pakistan">
-                                                    Pakistan
-                                                </option>
-                                                <option value="Nepal">
-                                                    Nepal
-                                                </option>
-                                                <option value="Bhutan">
-                                                    Bhutan
-                                                </option>
-                                                <option value="Sri Lanka">
-                                                    Sri Lanka
-                                                </option>
-                                                <option value="Maldives">
-                                                    Maldives
-                                                </option>
-                                            </select>
+                                            </div>
+                                            <div
+                                                style="
+                                                    display: flex;
+                                                    align-items: center;
+                                                    margin-bottom: 0.5rem;
+                                                "
+                                            >
+                                                <input
+                                                    type="checkbox"
+                                                    id="perm-books"
+                                                    checked
+                                                    style="
+                                                        width: auto;
+                                                        margin-right: 0.5rem;
+                                                    "
+                                                />
+                                                <label
+                                                    for="perm-books"
+                                                    style="font-weight: normal"
+                                                    >Book Management</label
+                                                >
+                                            </div>
+                                            <div
+                                                style="
+                                                    display: flex;
+                                                    align-items: center;
+                                                    margin-bottom: 0.5rem;
+                                                "
+                                            >
+                                                <input
+                                                    type="checkbox"
+                                                    id="perm-orders"
+                                                    checked
+                                                    style="
+                                                        width: auto;
+                                                        margin-right: 0.5rem;
+                                                    "
+                                                />
+                                                <label
+                                                    for="perm-orders"
+                                                    style="font-weight: normal"
+                                                    >Order Management</label
+                                                >
+                                            </div>
+                                            <div
+                                                style="
+                                                    display: flex;
+                                                    align-items: center;
+                                                    margin-bottom: 0.5rem;
+                                                "
+                                            >
+                                                <input
+                                                    type="checkbox"
+                                                    id="perm-reports"
+                                                    checked
+                                                    style="
+                                                        width: auto;
+                                                        margin-right: 0.5rem;
+                                                    "
+                                                />
+                                                <label
+                                                    for="perm-reports"
+                                                    style="font-weight: normal"
+                                                    >Sales Reports</label
+                                                >
+                                            </div>
+                                            <div
+                                                style="
+                                                    display: flex;
+                                                    align-items: center;
+                                                "
+                                            >
+                                                <input
+                                                    type="checkbox"
+                                                    id="perm-settings"
+                                                    checked
+                                                    style="
+                                                        width: auto;
+                                                        margin-right: 0.5rem;
+                                                    "
+                                                />
+                                                <label
+                                                    for="perm-settings"
+                                                    style="font-weight: normal"
+                                                    >System Settings</label
+                                                >
+                                            </div>
                                         </div>
                                     </div>
-
                                     <div class="form-buttons">
                                         <button
                                             type="submit"
                                             class="btn btn-primary"
                                         >
-                                            Save Address
+                                            Save Admin Settings
                                         </button>
                                     </div>
                                 </form>
                             </div>
 
-                            <!-- Preferences Tab -->
                             <div
                                 class="profile-content"
                                 id="preferences-content"
@@ -630,7 +628,8 @@
                                                 <label
                                                     for="notify-approvals"
                                                     style="font-weight: normal"
-                                                    >Book Approval Status</label
+                                                    >Book Approval
+                                                    Requests</label
                                                 >
                                             </div>
                                             <div
@@ -642,7 +641,7 @@
                                             >
                                                 <input
                                                     type="checkbox"
-                                                    id="notify-sales"
+                                                    id="notify-users"
                                                     checked
                                                     style="
                                                         width: auto;
@@ -650,9 +649,9 @@
                                                     "
                                                 />
                                                 <label
-                                                    for="notify-sales"
+                                                    for="notify-users"
                                                     style="font-weight: normal"
-                                                    >Sales Notifications</label
+                                                    >User Registration</label
                                                 >
                                             </div>
                                             <div
@@ -663,22 +662,21 @@
                                             >
                                                 <input
                                                     type="checkbox"
-                                                    id="notify-marketing"
+                                                    id="notify-system"
+                                                    checked
                                                     style="
                                                         width: auto;
                                                         margin-right: 0.5rem;
                                                     "
                                                 />
                                                 <label
-                                                    for="notify-marketing"
+                                                    for="notify-system"
                                                     style="font-weight: normal"
-                                                    >Marketing &
-                                                    Promotions</label
+                                                    >System Alerts</label
                                                 >
                                             </div>
                                         </div>
                                     </div>
-
                                     <div class="form-group">
                                         <label for="language">Language</label>
                                         <select id="language">
@@ -690,7 +688,23 @@
                                             </option>
                                         </select>
                                     </div>
-
+                                    <div class="form-group">
+                                        <label for="timezone">Timezone</label>
+                                        <select id="timezone">
+                                            <option value="Asia/Dhaka" selected>
+                                                Asia/Dhaka (UTC+6)
+                                            </option>
+                                            <option value="UTC">
+                                                UTC (UTC+0)
+                                            </option>
+                                            <option value="America/New_York">
+                                                America/New_York (UTC-5)
+                                            </option>
+                                            <option value="Europe/London">
+                                                Europe/London (UTC+0)
+                                            </option>
+                                        </select>
+                                    </div>
                                     <div class="form-buttons">
                                         <button
                                             type="submit"
@@ -702,21 +716,20 @@
                                 </form>
                             </div>
 
-                            <!-- Danger Zone -->
                             <div class="danger-zone">
                                 <h3>
                                     <i class="fas fa-exclamation-triangle"></i>
                                     Danger Zone
                                 </h3>
                                 <p>
-                                    Once you delete your account, there is no
-                                    going back. Please be certain.
+                                    Once you delete your admin account, there is
+                                    no going back. Please be certain.
                                 </p>
                                 <button
                                     class="btn btn-danger"
                                     id="delete-account-btn"
                                 >
-                                    Delete My Account
+                                    Delete Admin Account
                                 </button>
                             </div>
                         </div>
@@ -725,7 +738,6 @@
             </div>
         </div>
 
-        <!-- Footer (Same as index.html) -->
         <footer class="footer">
             <div class="footer-container">
                 <div class="footer-top">
@@ -733,49 +745,36 @@
                         <h3>BookMarket</h3>
                         <p>
                             Your one-stop destination for buying and selling
-                            books online. Find your next favorite book or give
-                            your old books a new home.
+                            books online.
                         </p>
-                        <div class="social-links">
-                            <a href="#"><i class="fab fa-facebook-f"></i></a>
-                            <a href="#"><i class="fab fa-twitter"></i></a>
-                            <a href="#"><i class="fab fa-instagram"></i></a>
-                            <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                        </div>
                     </div>
                     <div class="footer-column">
                         <h3>Quick Links</h3>
                         <ul class="footer-links">
                             <li><a href="../../index.html">Home</a></li>
-                            <li><a href="../browse.html">Browse Books</a></li>
-                            <li><a href="../sell.html">Sell Books</a></li>
-                            <li><a href="../about.html">About Us</a></li>
-                            <li><a href="../contact.html">Contact Us</a></li>
-                        </ul>
-                    </div>
-                    <div class="footer-column">
-                        <h3>Support</h3>
-                        <ul class="footer-links">
-                            <li><a href="#">Help Center</a></li>
-                            <li><a href="#">FAQs</a></li>
-                            <li><a href="#">Shipping Policy</a></li>
-                            <li><a href="#">Return Policy</a></li>
-                            <li><a href="#">Privacy Policy</a></li>
+                            <li>
+                                <a href="order-management.html"
+                                    >Order Management</a
+                                >
+                            </li>
+                            <li>
+                                <a href="book-management.html"
+                                    >Book Management</a
+                                >
+                            </li>
+                            <li>
+                                <a href="user-management.html"
+                                    >User Management</a
+                                >
+                            </li>
                         </ul>
                     </div>
                     <div class="footer-column">
                         <h3>Contact</h3>
                         <ul class="contact-info">
                             <li>
-                                <i class="fas fa-map-marker-alt"></i> 123 Book
-                                Street, Dhaka, Bangladesh
-                            </li>
-                            <li>
-                                <i class="fas fa-phone"></i> +880 123 456789
-                            </li>
-                            <li>
                                 <i class="fas fa-envelope"></i>
-                                support@bookmarket.com
+                                admin@bookmarket.com
                             </li>
                         </ul>
                     </div>
@@ -786,60 +785,34 @@
             </div>
         </footer>
 
-        <!-- JavaScript -->
         <script src="../../js/main.js"></script>
         <script src="../../js/auth.js"></script>
-        <script src="../../js/customer-navbar.js"></script>
-        <!-- Dashboard specific JavaScript -->
+        <script src="../../js/admin-navbar.js"></script>
         <script>
             document.addEventListener("DOMContentLoaded", function () {
-                console.log("DOM Content Loaded - Profile Page");
+                console.log("DOM Content Loaded - Admin Profile Page");
 
-                // Check if user is logged in
-                let isUserLoggedIn = false;
-                let userId = null;
+                // Check if admin is logged in
+                let isAdminLoggedIn = false;
+                let adminId = null;
 
-                // Method 1: Try window.bookmarketAuth
                 if (
                     window.bookmarketAuth &&
                     window.bookmarketAuth.isLoggedIn()
                 ) {
-                    isUserLoggedIn = true;
-                    userId = window.bookmarketAuth.getUserId();
-                    console.log(
-                        "User logged in via window.bookmarketAuth, userId:",
-                        userId
-                    );
+                    isAdminLoggedIn = true;
+                    adminId = window.bookmarketAuth.getUserId();
                 }
 
-                // Method 2: Try global functions
-                if (
-                    !isUserLoggedIn &&
-                    typeof isLoggedIn === "function" &&
-                    isLoggedIn()
-                ) {
-                    isUserLoggedIn = true;
-                    userId = getUserId();
-                    console.log(
-                        "User logged in via global functions, userId:",
-                        userId
-                    );
-                }
-
-                // Method 3: Check localStorage directly
-                if (!isUserLoggedIn) {
+                if (!isAdminLoggedIn) {
                     const bookmarketUser =
                         localStorage.getItem("bookmarket_user");
                     if (bookmarketUser) {
                         try {
                             const userData = JSON.parse(bookmarketUser);
                             if (userData.userId) {
-                                isUserLoggedIn = true;
-                                userId = userData.userId;
-                                console.log(
-                                    "User logged in via localStorage, userId:",
-                                    userId
-                                );
+                                isAdminLoggedIn = true;
+                                adminId = userData.userId;
                             }
                         } catch (e) {
                             console.error(
@@ -850,52 +823,31 @@
                     }
                 }
 
-                if (!isUserLoggedIn || !userId) {
-                    console.log(
-                        "User not logged in or no userId, redirecting to login"
-                    );
-                    window.location.href = "../login.html";
+                if (!isAdminLoggedIn || !adminId) {
+                    console.log("Admin not logged in, redirecting to login");
+                    window.location.href = "login.html";
                     return;
                 }
 
                 // Load profile data
-                console.log(
-                    "About to call loadProfileData with userId:",
-                    userId
-                );
-                loadProfileData(userId);
+                loadProfileData(adminId);
 
                 // Logout functionality
-                const logoutBtn = document.getElementById("logout-btn");
                 const sidebarLogoutBtn =
                     document.getElementById("sidebar-logout");
-
-                function handleLogout() {
-                    if (
-                        window.bookmarketAuth &&
-                        typeof window.bookmarketAuth.logoutUser === "function"
-                    ) {
-                        window.bookmarketAuth.logoutUser();
-                    } else if (typeof logoutUser === "function") {
-                        logoutUser();
-                    } else {
-                        // Fallback logout
-                        localStorage.removeItem("bookmarket_user");
-                        window.location.href = "../../index.html";
-                    }
-                }
-
-                if (logoutBtn) {
-                    logoutBtn.addEventListener("click", function (e) {
-                        e.preventDefault();
-                        handleLogout();
-                    });
-                }
-
                 if (sidebarLogoutBtn) {
                     sidebarLogoutBtn.addEventListener("click", function (e) {
                         e.preventDefault();
-                        handleLogout();
+                        if (
+                            window.bookmarketAuth &&
+                            typeof window.bookmarketAuth.logoutUser ===
+                                "function"
+                        ) {
+                            window.bookmarketAuth.logoutUser();
+                        } else {
+                            localStorage.removeItem("bookmarket_user");
+                            window.location.href = "../../index.html";
+                        }
                     });
                 }
 
@@ -907,16 +859,12 @@
                 profileTabs.forEach((tab) => {
                     tab.addEventListener("click", function () {
                         const tabId = this.getAttribute("data-tab");
-
-                        // Remove active class from all tabs and contents
                         profileTabs.forEach((t) =>
                             t.classList.remove("active")
                         );
                         profileContents.forEach((c) =>
                             c.classList.remove("active")
                         );
-
-                        // Add active class to clicked tab and corresponding content
                         this.classList.add("active");
                         document
                             .getElementById(tabId + "-content")
@@ -924,33 +872,22 @@
                     });
                 });
 
-                // Load profile data from backend
-                function loadProfileData(userId) {
-                    console.log("loadProfileData called with userId:", userId);
+                // Load profile data
+                function loadProfileData() {
+                    console.log("Loading profile data for admin");
 
                     const form = new FormData();
                     form.append("action", "get_profile");
-                    form.append("user_id", userId); // Use the passed userId parameter
+                    form.append("admin_id", adminId || "1");
 
-                    console.log(
-                        "Sending request to backend with user_id:",
-                        userId
-                    );
-
-                    fetch("../../backend/api/customer_profile.php", {
+                    fetch("../../backend/api/admin_profile.php", {
                         method: "POST",
                         body: form,
                     })
-                        .then((response) => {
-                            console.log("Response status:", response.status);
-                            return response.json();
-                        })
+                        .then((response) => response.json())
                         .then((data) => {
-                            console.log("Profile data response:", data);
-
                             if (data.success && data.data) {
                                 const profile = data.data;
-                                console.log("Profile data received:", profile);
 
                                 // Update profile header
                                 document.getElementById(
@@ -978,81 +915,71 @@
                                     profile.email || "";
                                 document.getElementById("phone").value =
                                     profile.phone || "";
-                                document.getElementById(
-                                    "street-address"
-                                ).value = profile.address || "";
-                                document.getElementById("city").value =
-                                    profile.city || "";
-                                document.getElementById("postal-code").value =
-                                    profile.postal_code || "";
-                                document.getElementById("state").value =
-                                    profile.city || ""; // Using city as state for now
 
-                                // Set country
-                                const countrySelect =
-                                    document.getElementById("country");
-                                if (countrySelect) {
-                                    countrySelect.value =
-                                        profile.country || "Bangladesh";
+                                // Set admin role
+                                const adminRoleSelect =
+                                    document.getElementById("admin-role");
+                                if (adminRoleSelect) {
+                                    adminRoleSelect.value =
+                                        profile.role || "admin";
                                 }
-
-                                console.log("Profile data loaded successfully");
                             } else {
                                 console.error(
                                     "Failed to load profile:",
                                     data.message
                                 );
-                                // Show error message to user
+                                // Set default values if API fails
                                 document.getElementById(
                                     "profile-name"
-                                ).textContent = "Error loading profile";
+                                ).textContent = "Admin User";
                                 document.getElementById(
                                     "profile-email"
-                                ).textContent = "Error loading profile";
+                                ).textContent = "admin@bookmarket.com";
                                 document.getElementById(
                                     "profile-phone"
-                                ).textContent = "Error loading profile";
+                                ).textContent = "+880 123 456789";
                                 document.getElementById(
                                     "profile-joined"
-                                ).textContent = "Error loading profile";
+                                ).textContent = "January 2023";
                             }
                         })
                         .catch((error) => {
                             console.error("Error loading profile:", error);
-                            // Show error message to user
+                            // Set default values if API fails
                             document.getElementById(
                                 "profile-name"
-                            ).textContent = "Error loading profile";
+                            ).textContent = "Admin User";
                             document.getElementById(
                                 "profile-email"
-                            ).textContent = "Error loading profile";
+                            ).textContent = "admin@bookmarket.com";
                             document.getElementById(
                                 "profile-phone"
-                            ).textContent = "Error loading profile";
+                            ).textContent = "+880 123 456789";
                             document.getElementById(
                                 "profile-joined"
-                            ).textContent = "Error loading profile";
+                            ).textContent = "January 2023";
                         });
                 }
 
                 // Form Submissions
                 const personalInfoForm =
                     document.getElementById("personal-info-form");
-                const addressForm = document.getElementById("address-form");
+                const adminSettingsForm = document.getElementById(
+                    "admin-settings-form"
+                );
                 const changePasswordForm = document.getElementById(
                     "change-password-form"
                 );
                 const preferencesForm =
                     document.getElementById("preferences-form");
 
-                // Personal Info Form
                 if (personalInfoForm) {
                     personalInfoForm.addEventListener("submit", function (e) {
                         e.preventDefault();
 
                         const formData = new FormData();
                         formData.append("action", "update_profile");
-                        formData.append("user_id", userId); // Use actual user ID
+                        formData.append("admin_id", adminId || "1");
                         formData.append(
                             "first_name",
                             document.getElementById("first-name").value
@@ -1065,24 +992,8 @@
                             "phone",
                             document.getElementById("phone").value
                         );
-                        formData.append(
-                            "address",
-                            document.getElementById("street-address").value
-                        );
-                        formData.append(
-                            "city",
-                            document.getElementById("city").value
-                        );
-                        formData.append(
-                            "postal_code",
-                            document.getElementById("postal-code").value
-                        );
-                        formData.append(
-                            "country",
-                            document.getElementById("country").value
-                        );
 
-                        fetch("../../backend/api/customer_profile.php", {
+                        fetch("../../backend/api/admin_profile.php", {
                             method: "POST",
                             body: formData,
                         })
@@ -1090,7 +1001,7 @@
                             .then((data) => {
                                 if (data.success) {
                                     alert("Profile updated successfully!");
-                                    loadProfileData(userId); // Reload profile data with userId
+                                    loadProfileData(); // Reload profile data
                                 } else {
                                     alert(
                                         "Failed to update profile: " +
@@ -1107,69 +1018,65 @@
                     });
                 }
 
-                // Address Form
-                if (addressForm) {
-                    addressForm.addEventListener("submit", function (e) {
+                if (adminSettingsForm) {
+                    adminSettingsForm.addEventListener("submit", function (e) {
                         e.preventDefault();
 
                         const formData = new FormData();
-                        formData.append("action", "update_profile");
-                        formData.append("user_id", userId); // Use actual user ID
+                        formData.append("action", "update_admin_settings");
+                        formData.append("admin_id", adminId || "1");
                         formData.append(
-                            "first_name",
-                            document.getElementById("first-name").value
-                        );
-                        formData.append(
-                            "last_name",
-                            document.getElementById("last-name").value
-                        );
-                        formData.append(
-                            "phone",
-                            document.getElementById("phone").value
-                        );
-                        formData.append(
-                            "address",
-                            document.getElementById("street-address").value
-                        );
-                        formData.append(
-                            "city",
-                            document.getElementById("city").value
-                        );
-                        formData.append(
-                            "postal_code",
-                            document.getElementById("postal-code").value
-                        );
-                        formData.append(
-                            "country",
-                            document.getElementById("country").value
+                            "role",
+                            document.getElementById("admin-role").value
                         );
 
-                        fetch("../../backend/api/customer_profile.php", {
+                        // Get permissions
+                        const permissions = [];
+                        if (document.getElementById("perm-users").checked)
+                            permissions.push("users");
+                        if (document.getElementById("perm-books").checked)
+                            permissions.push("books");
+                        if (document.getElementById("perm-orders").checked)
+                            permissions.push("orders");
+                        if (document.getElementById("perm-reports").checked)
+                            permissions.push("reports");
+                        if (document.getElementById("perm-settings").checked)
+                            permissions.push("settings");
+
+                        formData.append(
+                            "permissions",
+                            JSON.stringify(permissions)
+                        );
+
+                        fetch("../../backend/api/admin_profile.php", {
                             method: "POST",
                             body: formData,
                         })
                             .then((response) => response.json())
                             .then((data) => {
                                 if (data.success) {
-                                    alert("Address updated successfully!");
-                                    loadProfileData(userId); // Reload profile data with userId
+                                    alert(
+                                        "Admin settings updated successfully!"
+                                    );
                                 } else {
                                     alert(
-                                        "Failed to update address: " +
+                                        "Failed to update admin settings: " +
                                             data.message
                                     );
                                 }
                             })
                             .catch((error) => {
-                                console.error("Error updating address:", error);
+                                console.error(
+                                    "Error updating admin settings:",
+                                    error
+                                );
                                 alert(
-                                    "Error updating address. Please try again."
+                                    "Error updating admin settings. Please try again."
                                 );
                             });
                     });
                 }
 
-                // Change Password Form
                 if (changePasswordForm) {
                     changePasswordForm.addEventListener("submit", function (e) {
                         e.preventDefault();
@@ -1195,11 +1102,11 @@
 
                         const formData = new FormData();
                         formData.append("action", "change_password");
-                        formData.append("user_id", userId); // Use actual user ID
+                        formData.append("admin_id", adminId || "1");
                         formData.append("current_password", currentPassword);
                         formData.append("new_password", newPassword);
 
-                        fetch("../../backend/api/customer_profile.php", {
+                        fetch("../../backend/api/admin_profile.php", {
                             method: "POST",
                             body: formData,
                         })
@@ -1236,12 +1143,11 @@
                     });
                 }
 
-                // Preferences Form
                 if (preferencesForm) {
                     preferencesForm.addEventListener("submit", function (e) {
                         e.preventDefault();
                         alert(
-                            "Preferences saved successfully! (This feature will be implemented later)"
+                            "Preferences saved successfully! (This feature will be implemented with backend API)"
                         );
                     });
                 }
@@ -1249,11 +1155,10 @@
                 // Delete Account
                 const deleteAccountBtn =
                     document.getElementById("delete-account-btn");
-
                 if (deleteAccountBtn) {
                     deleteAccountBtn.addEventListener("click", function () {
                         const confirmDelete = confirm(
-                            "Are you sure you want to delete your account? This action cannot be undone."
+                            "Are you sure you want to delete your admin account? This action cannot be undone."
                         );
 
                         if (confirmDelete) {
@@ -1264,21 +1169,18 @@
                             if (password) {
                                 const formData = new FormData();
                                 formData.append("action", "delete_account");
-                                formData.append("user_id", userId); // Use actual user ID
+                                formData.append("admin_id", adminId || "1");
                                 formData.append("password", password);
 
-                                fetch(
-                                    "../../backend/api/customer_profile.php",
-                                    {
-                                        method: "POST",
-                                        body: formData,
-                                    }
-                                )
+                                fetch("../../backend/api/admin_profile.php", {
+                                    method: "POST",
+                                    body: formData,
+                                })
                                     .then((response) => response.json())
                                     .then((data) => {
                                         if (data.success) {
                                             alert(
-                                                "Account deleted successfully!"
+                                                "Admin account deleted successfully!"
                                             );
                                             // Clear localStorage and redirect to home
                                             localStorage.clear();

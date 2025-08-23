@@ -8,10 +8,13 @@
  */
 
 // Prevent any output before JSON response
+if (ob_get_level()) {
+    ob_end_clean();
+}
 ob_start();
 
 // Include required files
-require_once '../config/session.php';
+require_once __DIR__ . '/../config/session.php';
 
 /**
  * File Upload Manager Class
@@ -23,12 +26,18 @@ class FileUploadManager {
     private $allowedImageTypes;
     
     public function __construct() {
-        // Set upload directory (relative to this file)
-        $this->uploadDir = dirname(__DIR__) . '/uploads/';
+        // Set upload directory to the root uploads folder
+        $this->uploadDir = dirname(dirname(__DIR__)) . '/uploads/';
+        
+        // Debug logging
+        error_log("Upload directory path: " . $this->uploadDir);
+        error_log("Upload directory exists: " . (is_dir($this->uploadDir) ? 'Yes' : 'No'));
+        error_log("Upload directory writable: " . (is_writable($this->uploadDir) ? 'Yes' : 'No'));
         
         // Create upload directory if it doesn't exist
         if (!is_dir($this->uploadDir)) {
-            mkdir($this->uploadDir, 0755, true);
+            $created = mkdir($this->uploadDir, 0777, true);
+            error_log("Created upload directory: " . ($created ? 'Yes' : 'No'));
         }
         
         // Create subdirectories
@@ -36,12 +45,29 @@ class FileUploadManager {
         foreach ($subdirs as $subdir) {
             $path = $this->uploadDir . $subdir . '/';
             if (!is_dir($path)) {
-                mkdir($path, 0755, true);
+                $created = mkdir($path, 0777, true);
+                error_log("Created subdirectory {$subdir}: " . ($created ? 'Yes' : 'No'));
             }
+            
+            // Ensure directory is writable
+            if (!is_writable($path)) {
+                chmod($path, 0777);
+                error_log("Changed permissions for {$subdir} to 777");
+            }
+            
+            error_log("Subdirectory {$subdir} path: " . $path . " (exists: " . (is_dir($path) ? 'Yes' : 'No') . ", writable: " . (is_writable($path) ? 'Yes' : 'No') . ")");
         }
         
-        // Set upload limits
-        $this->maxFileSize = 5 * 1024 * 1024; // 5MB
+        // Set upload limits - check PHP configuration
+        $phpMaxUploadSize = min(
+            $this->parseSize(ini_get('upload_max_filesize')),
+            $this->parseSize(ini_get('post_max_size')),
+            5 * 1024 * 1024 // 5MB hard limit
+        );
+        $this->maxFileSize = $phpMaxUploadSize;
+        error_log("Max file size set to: " . ($this->maxFileSize / (1024 * 1024)) . "MB");
+        error_log("PHP upload_max_filesize: " . ini_get('upload_max_filesize'));
+        error_log("PHP post_max_size: " . ini_get('post_max_size'));
         $this->allowedImageTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
     }
     
@@ -53,6 +79,9 @@ class FileUploadManager {
      */
     public function uploadBookImages($files, $uploadType = 'cover') {
         try {
+            error_log("Starting uploadBookImages with type: " . $uploadType);
+            error_log("Files structure: " . print_r($files, true));
+            
             $uploadedFiles = [];
             $errors = [];
             
@@ -81,7 +110,10 @@ class FileUploadManager {
                 }
                 
                 // Validate file
-                $validation = $this->validateFile($fileName, $fileType, $fileSize, $fileError);
+                error_log("Validating file: " . $fileName . " (type: " . $fileType . ", size: " . $fileSize . ", error: " . $fileError . ")");
+                $validation = $this->validateFile($fileName, $fileType, $fileSize, $fileError, $fileTmpName);
+                error_log("Validation result: " . print_r($validation, true));
+                
                 if (!$validation['valid']) {
                     $errors[] = $fileName . ': ' . $validation['message'];
                     continue;
@@ -93,9 +125,24 @@ class FileUploadManager {
                 
                 // Determine upload path
                 $uploadPath = $this->uploadDir . 'books/' . $uniqueFileName;
+                error_log("Upload path: " . $uploadPath);
+                error_log("Upload directory: " . $this->uploadDir);
+                error_log("Full path: " . realpath($this->uploadDir));
                 
                 // Move uploaded file
+                error_log("Moving file from " . $fileTmpName . " to " . $uploadPath);
+                
+                // Check if destination directory is writable
+                $destDir = dirname($uploadPath);
+                if (!is_writable($destDir)) {
+                    $errorMsg = "Destination directory not writable: " . $destDir;
+                    error_log($errorMsg);
+                    $errors[] = $fileName . ': ' . $errorMsg;
+                    continue;
+                }
+                
                 if (move_uploaded_file($fileTmpName, $uploadPath)) {
+                    error_log("File moved successfully");
                     $uploadedFiles[] = [
                         'original_name' => $fileName,
                         'file_name' => $uniqueFileName,
@@ -104,12 +151,22 @@ class FileUploadManager {
                         'file_type' => $fileType
                     ];
                 } else {
-                    $errors[] = $fileName . ': Failed to move uploaded file';
+                    $lastError = error_get_last();
+                    $errorMsg = "Failed to move uploaded file";
+                    if ($lastError) {
+                        $errorMsg .= ": " . $lastError['message'];
+                    }
+                    error_log($errorMsg);
+                    $errors[] = $fileName . ': ' . $errorMsg;
                 }
             }
             
             if (empty($uploadedFiles)) {
-                return ['success' => false, 'message' => 'No files were uploaded successfully'];
+                $errorMessage = 'No files were uploaded successfully';
+                if (!empty($errors)) {
+                    $errorMessage .= '. Errors: ' . implode(', ', $errors);
+                }
+                return ['success' => false, 'message' => $errorMessage, 'errors' => $errors];
             }
             
             if (!empty($errors)) {
@@ -145,7 +202,8 @@ class FileUploadManager {
                 $file['name'],
                 $file['type'],
                 $file['size'],
-                $file['error']
+                $file['error'],
+                $file['tmp_name']
             );
             
             if (!$validation['valid']) {
@@ -213,9 +271,10 @@ class FileUploadManager {
      * @param string $fileType File MIME type
      * @param int $fileSize File size in bytes
      * @param int $fileError Upload error code
+     * @param string $fileTmpName Temporary file path
      * @return array Validation result
      */
-    private function validateFile($fileName, $fileType, $fileSize, $fileError) {
+    private function validateFile($fileName, $fileType, $fileSize, $fileError, $fileTmpName) {
         // Check for upload errors
         if ($fileError !== UPLOAD_ERR_OK) {
             $errorMessages = [
@@ -252,7 +311,7 @@ class FileUploadManager {
         }
         
         // Additional security check: verify file is actually an image
-        if (!getimagesize($file['tmp_name'])) {
+        if (!getimagesize($fileTmpName)) {
             return ['valid' => false, 'message' => 'File is not a valid image'];
         }
         
@@ -362,6 +421,28 @@ class FileUploadManager {
     }
     
     /**
+     * Parse size string (e.g., "2M", "8M") to bytes
+     * @param string $size Size string
+     * @return int Size in bytes
+     */
+    private function parseSize($size) {
+        $size = trim($size);
+        $last = strtolower($size[strlen($size) - 1]);
+        $size = (int) $size;
+        
+        switch ($last) {
+            case 'g':
+                $size *= 1024;
+            case 'm':
+                $size *= 1024;
+            case 'k':
+                $size *= 1024;
+        }
+        
+        return $size;
+    }
+    
+    /**
      * Create thumbnail from image
      * @param string $sourcePath Source image path
      * @param string $destinationPath Destination thumbnail path
@@ -377,7 +458,9 @@ class FileUploadManager {
 // Handle AJAX requests
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Clear any output buffer
-    ob_clean();
+    if (ob_get_level()) {
+        ob_clean();
+    }
     
     // Disable error display (only log to file)
     error_reporting(E_ALL);
@@ -387,28 +470,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Log the incoming request
     error_log("File Upload Request: " . json_encode($_POST));
     error_log("Files: " . json_encode($_FILES));
+    error_log("Request headers: " . json_encode(getallheaders()));
+    error_log("Cookie data: " . json_encode($_COOKIE));
     
     try {
+        // Debug logging
+        error_log("POST data: " . print_r($_POST, true));
+        error_log("FILES data: " . print_r($_FILES, true));
+        error_log("Session data: " . print_r($_SESSION, true));
+        error_log("Session ID: " . session_id());
+        error_log("Session name: " . session_name());
+        
         $uploadManager = new FileUploadManager();
         $action = $_POST['action'] ?? '';
         
         switch ($action) {
             case 'upload_book_images':
+                error_log("Checking if user is logged in...");
+                error_log("Session status: " . session_status());
+                error_log("Session data: " . print_r($_SESSION, true));
+                
                 if (!isLoggedIn()) {
                     error_log("User not logged in for file upload");
                     sendErrorResponse('User not logged in', 401);
                 }
-            
-            if (!isset($_FILES['images'])) {
-                sendErrorResponse('No files uploaded');
-            }
-            
-            $uploadType = $_POST['upload_type'] ?? 'cover';
-            $result = $uploadManager->uploadBookImages($_FILES['images'], $uploadType);
-            sendJSONResponse($result);
-            break;
-            
-        case 'upload_profile_picture':
+                
+                error_log("User is logged in, proceeding with upload...");
+                
+                if (!isset($_FILES['images'])) {
+                    sendErrorResponse('No files uploaded');
+                }
+                
+                $uploadType = $_POST['upload_type'] ?? 'cover';
+                error_log("Files array structure: " . print_r($_FILES['images'], true));
+                error_log("Upload type: " . $uploadType);
+                $result = $uploadManager->uploadBookImages($_FILES['images'], $uploadType);
+                error_log("Upload result: " . print_r($result, true));
+                sendJSONResponse($result);
+                break;
+                
+            case 'upload_profile_picture':
             if (!isLoggedIn()) {
                 sendErrorResponse('User not logged in', 401);
             }
@@ -441,6 +542,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     } catch (Exception $e) {
         error_log("General error in file upload: " . $e->getMessage());
+        error_log("Stack trace: " . $e->getTraceAsString());
         sendErrorResponse('Server error: ' . $e->getMessage(), 500);
     }
 }

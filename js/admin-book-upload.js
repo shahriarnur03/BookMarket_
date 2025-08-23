@@ -645,6 +645,7 @@ class AdminBookUpload {
 
         const formData = new FormData();
         formData.append("action", "upload_book_images");
+        formData.append("upload_type", "cover");
 
         // Upload cover image
         if (this.uploadedFiles.cover) {

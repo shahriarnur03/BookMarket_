@@ -1257,28 +1257,44 @@
                     book.cover_image_path.trim() !== ""
                 ) {
                     // If cover_image_path exists and is not empty, use it
+                    // Get the base URL for proper path construction
+                    const baseUrl = getBaseApiUrl();
+
                     if (book.cover_image_path.startsWith("uploads/")) {
-                        imagePath = `../${book.cover_image_path}`;
-                    } else if (
-                        book.cover_image_path.startsWith("../uploads/")
-                    ) {
-                        imagePath = book.cover_image_path;
+                        imagePath = `${baseUrl}${book.cover_image_path}`;
                     } else if (book.cover_image_path.startsWith("images/")) {
                         // Handle images from the images directory
-                        imagePath = `../${book.cover_image_path}`;
+                        imagePath = `${baseUrl}${book.cover_image_path}`;
                     } else {
-                        imagePath = `../uploads/books/${book.cover_image_path}`;
+                        // Assume it's just a filename, construct full path
+                        imagePath = `${baseUrl}uploads/books/${book.cover_image_path}`;
                     }
+
+                    // Add debugging
+                    console.log(`📖 Book "${book.title}" image path:`, {
+                        original: book.cover_image_path,
+                        constructed: imagePath,
+                        bookId: book.id,
+                    });
                 } else {
                     // Use a rotating set of default images based on book ID
+                    const baseUrl = getBaseApiUrl();
                     const defaultImages = [
-                        "../images/b_cover1.jpg",
-                        "../images/b_cover2.jpg",
-                        "../images/b_cover3.png",
-                        "../images/b_cover4.webp",
+                        `${baseUrl}images/b_cover1.jpg`,
+                        `${baseUrl}images/b_cover2.jpg`,
+                        `${baseUrl}images/b_cover3.png`,
+                        `${baseUrl}images/b_cover4.webp`,
                     ];
                     const imageIndex = (book.id - 1) % defaultImages.length;
                     imagePath = defaultImages[imageIndex];
+
+                    console.log(
+                        `📖 Book "${book.title}" using default image:`,
+                        {
+                            bookId: book.id,
+                            defaultImage: imagePath,
+                        }
+                    );
                 }
 
                 // Add error handling for images

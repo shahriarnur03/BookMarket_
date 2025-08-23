@@ -751,6 +751,289 @@ class OrderManager {
             error_log("Log Admin Action Error: " . $e->getMessage());
         }
     }
+    
+    /**
+     * Generate PDF invoice for an order
+     * @param int $orderId Order ID
+     * @param int $userId User ID requesting the invoice
+     * @return string|false PDF content or false on failure
+     */
+    public function generateInvoice($orderId, $userId) {
+        try {
+            // Get order details
+            $order = $this->getOrderDetails($orderId, $userId);
+            if (!$order) {
+                return false;
+            }
+            
+            // Get order items
+            $orderItems = $this->db->select(
+                "SELECT oi.*, b.title, b.author, b.isbn, u.first_name, u.last_name, u.email
+                 FROM order_items oi
+                 JOIN books b ON oi.book_id = b.id
+                 JOIN users u ON oi.seller_id = u.id
+                 WHERE oi.order_id = ?",
+                [intval($orderId)]
+            );
+            
+            if (!$orderItems) {
+                return false;
+            }
+            
+            // Generate HTML invoice
+            $html = $this->generateInvoiceHTML($order, $orderItems);
+            
+            // Convert HTML to PDF using a simple approach
+            // For production, consider using a library like TCPDF, mPDF, or wkhtmltopdf
+            return $this->htmlToPDF($html);
+            
+        } catch (Exception $e) {
+            error_log("Generate Invoice Error: " . $e->getMessage());
+            return false;
+        }
+    }
+    
+    /**
+     * Generate HTML content for invoice
+     * @param array $order Order data
+     * @param array $orderItems Order items data
+     * @return string HTML content
+     */
+    private function generateInvoiceHTML($order, $orderItems) {
+        $orderDate = new DateTime($order['order_date']);
+        $totalAmount = floatval($order['total_amount']);
+        $shippingCost = 10.0;
+        $taxRate = 0.03;
+        $taxAmount = ($totalAmount - $shippingCost) * $taxRate;
+        $subtotal = $totalAmount - $shippingCost - $taxAmount;
+        
+        $html = '
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>Invoice - Order ' . $order['order_number'] . '</title>
+            <style>
+                @media print {
+                    body { margin: 0; padding: 20px; }
+                    .no-print { display: none; }
+                }
+                body { 
+                    font-family: Arial, sans-serif; 
+                    margin: 20px; 
+                    line-height: 1.6;
+                    color: #333;
+                }
+                .header { 
+                    text-align: center; 
+                    margin-bottom: 30px; 
+                    border-bottom: 3px solid #2c3e50; 
+                    padding-bottom: 20px; 
+                }
+                .header h1 { 
+                    color: #2c3e50; 
+                    margin: 0 0 10px 0; 
+                    font-size: 28px;
+                }
+                .header h2 { 
+                    color: #7f8c8d; 
+                    margin: 0; 
+                    font-size: 20px;
+                    font-weight: normal;
+                }
+                .invoice-info { 
+                    margin-bottom: 30px; 
+                    background: #f8f9fa;
+                    padding: 20px;
+                    border-radius: 8px;
+                }
+                .invoice-info table { 
+                    width: 100%; 
+                    border-collapse: collapse;
+                }
+                .invoice-info td { 
+                    padding: 8px; 
+                    border-bottom: 1px solid #dee2e6;
+                }
+                .invoice-info td:first-child { 
+                    font-weight: bold; 
+                    width: 120px;
+                }
+                .items-table { 
+                    width: 100%; 
+                    border-collapse: collapse; 
+                    margin-bottom: 30px; 
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                }
+                .items-table th, .items-table td { 
+                    border: 1px solid #dee2e6; 
+                    padding: 12px; 
+                    text-align: left; 
+                }
+                .items-table th { 
+                    background-color: #2c3e50; 
+                    color: white;
+                    font-weight: bold;
+                }
+                .items-table tr:nth-child(even) { 
+                    background-color: #f8f9fa; 
+                }
+                .totals { 
+                    text-align: right; 
+                    margin-top: 20px; 
+                    background: #f8f9fa;
+                    padding: 20px;
+                    border-radius: 8px;
+                }
+                .totals table { 
+                    margin-left: auto; 
+                    border-collapse: collapse;
+                }
+                .totals td { 
+                    padding: 8px 16px; 
+                    border-bottom: 1px solid #dee2e6;
+                }
+                .totals tr:last-child td { 
+                    border-bottom: none; 
+                    font-weight: bold;
+                    font-size: 18px;
+                    color: #2c3e50;
+                }
+                .footer { 
+                    margin-top: 40px; 
+                    text-align: center; 
+                    color: #7f8c8d; 
+                    font-size: 14px;
+                    border-top: 1px solid #dee2e6;
+                    padding-top: 20px;
+                }
+                .print-instructions {
+                    background: #e3f2fd;
+                    border: 1px solid #2196f3;
+                    border-radius: 8px;
+                    padding: 15px;
+                    margin: 20px 0;
+                    text-align: center;
+                    color: #1976d2;
+                }
+                .print-instructions .no-print {
+                    display: block;
+                }
+                @media print {
+                    .print-instructions { display: none; }
+                }
+            </style>
+        </head>
+        <body>
+            <div class="print-instructions no-print">
+                <strong>💡 Print Instructions:</strong> Press Ctrl+P (or Cmd+P on Mac) to print this invoice as PDF
+            </div>
+            
+            <div class="header">
+                <h1>📚 BookMarket Invoice</h1>
+                <h2>Order #' . $order['order_number'] . '</h2>
+            </div>
+            
+            <div class="invoice-info">
+                <table>
+                    <tr>
+                        <td>Order Date:</td>
+                        <td>' . $orderDate->format('F j, Y') . '</td>
+                        <td>Order Status:</td>
+                        <td><span style="color: #27ae60; font-weight: bold;">' . ucfirst($order['status']) . '</span></td>
+                    </tr>
+                    <tr>
+                        <td>Customer:</td>
+                        <td>' . htmlspecialchars($order['customer_name'] ?? 'N/A') . '</td>
+                        <td>Email:</td>
+                        <td>' . htmlspecialchars($order['customer_email'] ?? 'N/A') . '</td>
+                    </tr>
+                </table>
+            </div>
+            
+            <table class="items-table">
+                <thead>
+                    <tr>
+                        <th>📖 Book Title</th>
+                        <th>✍️ Author</th>
+                        <th>🔢 ISBN</th>
+                        <th>👤 Seller</th>
+                        <th>📦 Quantity</th>
+                        <th>💰 Price</th>
+                        <th>💵 Total</th>
+                    </tr>
+                </thead>
+                <tbody>';
+        
+        foreach ($orderItems as $item) {
+            $itemTotal = floatval($item['price_per_item']) * intval($item['quantity']);
+            $html .= '
+                    <tr>
+                        <td>' . htmlspecialchars($item['title']) . '</td>
+                        <td>' . htmlspecialchars($item['author'] ?? 'N/A') . '</td>
+                        <td>' . htmlspecialchars($item['isbn'] ?? 'N/A') . '</td>
+                        <td>' . htmlspecialchars($item['first_name'] . ' ' . $item['last_name']) . '</td>
+                        <td>' . intval($item['quantity']) . '</td>
+                        <td>$' . number_format($item['price_per_item'], 2) . '</td>
+                        <td>$' . number_format($itemTotal, 2) . '</td>
+                    </tr>';
+        }
+        
+        $html .= '
+                </tbody>
+            </table>
+            
+            <div class="totals">
+                <table>
+                    <tr><td><strong>Subtotal:</strong></td><td>$' . number_format($subtotal, 2) . '</td></tr>
+                    <tr><td><strong>Shipping:</strong></td><td>$' . number_format($shippingCost, 2) . '</td></tr>
+                    <tr><td><strong>Tax (' . ($taxRate * 100) . '%):</strong></td><td>$' . number_format($taxAmount, 2) . '</td></tr>
+                    <tr><td><strong>Total:</strong></td><td>$' . number_format($totalAmount, 2) . '</td></tr>
+                </table>
+            </div>
+            
+            <div class="footer">
+                <p><strong>Thank you for your purchase from BookMarket! 📚</strong></p>
+                <p>For any questions or support, please contact us:</p>
+                <p>📧 support@bookmarket.com | 📞 +880 123 456789</p>
+                <p>📍 123 Book Street, Dhaka, Bangladesh</p>
+                <p style="margin-top: 20px; font-size: 12px; color: #95a5a6;">
+                    This is an official invoice from BookMarket. Please keep this document for your records.
+                </p>
+            </div>
+        </body>
+        </html>';
+        
+        return $html;
+    }
+    
+    /**
+     * Convert HTML to PDF (simple implementation)
+     * @param string $html HTML content
+     * @return string PDF content
+     */
+    private function htmlToPDF($html) {
+        // This is a simple implementation that returns HTML
+        // In production, you should use a proper PDF library like TCPDF, mPDF, or wkhtmltopdf
+        
+        // For now, we'll return the HTML as-is, which browsers can handle
+        // You can install a PDF library and modify this method accordingly
+        
+        // Example with TCPDF (uncomment if you have TCPDF installed):
+        /*
+        require_once('tcpdf/tcpdf.php');
+        $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+        $pdf->SetCreator('BookMarket');
+        $pdf->SetAuthor('BookMarket System');
+        $pdf->SetTitle('Invoice');
+        $pdf->AddPage();
+        $pdf->writeHTML($html, true, false, true, false, '');
+        return $pdf->Output('', 'S');
+        */
+        
+        // For now, return HTML that can be printed as PDF
+        return $html;
+    }
 }
 
 // Handle AJAX requests
@@ -911,6 +1194,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 sendSuccessResponse($orders, 'User orders retrieved successfully');
             } else {
                 sendErrorResponse('Failed to retrieve user orders');
+            }
+            break;
+            
+        case 'generate_invoice':
+            if (!isLoggedIn()) {
+                sendErrorResponse('User not logged in', 401);
+            }
+            $orderId = $_POST['order_id'] ?? 0;
+            if (!$orderId) {
+                sendErrorResponse('Order ID is required');
+            }
+            $result = $orderManager->generateInvoice($orderId, getCurrentUserId());
+            if ($result !== false) {
+                // Send HTML file that can be printed as PDF
+                header('Content-Type: text/html');
+                header('Content-Disposition: attachment; filename="invoice_order_' . $orderId . '.html"');
+                echo $result;
+                exit;
+            } else {
+                sendErrorResponse('Failed to generate invoice');
             }
             break;
             

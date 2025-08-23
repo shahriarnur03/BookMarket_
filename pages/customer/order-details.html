@@ -462,12 +462,9 @@
 
             <!-- Action Buttons -->
             <div class="action-buttons">
-                <a href="#" class="btn btn-primary">
-                    <i class="fas fa-download"></i> Download Invoice
-                </a>
-                <a href="#" class="btn btn-secondary">
-                    <i class="fas fa-headset"></i> Contact Support
-                </a>
+                <button id="print-invoice-btn" class="btn btn-primary">
+                    <i class="fas fa-print"></i> Print Invoice
+                </button>
             </div>
         </div>
 
@@ -604,31 +601,73 @@
                     });
                 }
 
-                // Download invoice button (existing)
-                const downloadButton = document.querySelector(
-                    ".action-buttons .btn-primary"
-                );
-                if (downloadButton) {
-                    downloadButton.addEventListener("click", function (e) {
+                // Print invoice button
+                const printButton =
+                    document.getElementById("print-invoice-btn");
+                if (printButton) {
+                    printButton.addEventListener("click", function (e) {
                         e.preventDefault();
-                        showNotification(
-                            "Invoice downloaded successfully",
-                            "success"
-                        );
-                    });
-                }
-
-                // Contact support button (existing)
-                const supportButton = document.querySelector(
-                    ".action-buttons .btn-secondary"
-                );
-                if (supportButton) {
-                    supportButton.addEventListener("click", function (e) {
-                        e.preventDefault();
-                        showNotification("Support request sent", "success");
+                        printInvoice(orderId);
                     });
                 }
             });
+
+            async function printInvoice(orderId) {
+                try {
+                    showNotification(
+                        "Generating invoice for printing...",
+                        "info"
+                    );
+
+                    const formData = new FormData();
+                    formData.append("action", "generate_invoice");
+                    formData.append("order_id", orderId);
+
+                    // Include user_id from localStorage if present
+                    try {
+                        const raw = localStorage.getItem("bookmarket_user");
+                        if (raw) {
+                            const u = JSON.parse(raw);
+                            const uid =
+                                u && (u.userId || u.id)
+                                    ? u.userId || u.id
+                                    : null;
+                            if (uid) formData.append("user_id", uid);
+                        }
+                    } catch (e) {}
+
+                    const apiUrl =
+                        getBaseApiUrl() + "backend/orders/order_manager.php";
+                    const response = await fetch(apiUrl, {
+                        method: "POST",
+                        body: formData,
+                    });
+
+                    if (!response.ok) {
+                        throw new Error("HTTP " + response.status);
+                    }
+
+                    const responseText = await response.text();
+
+                    // Open invoice in new tab for printing
+                    const newWindow = window.open("", "_blank");
+                    newWindow.document.write(responseText);
+                    newWindow.document.close();
+
+                    // Wait for content to load then trigger print
+                    newWindow.onload = function () {
+                        newWindow.print();
+                    };
+
+                    showNotification("Invoice opened for printing!", "success");
+                } catch (error) {
+                    console.error("Error printing invoice:", error);
+                    showNotification(
+                        "Failed to open invoice for printing. Please try again.",
+                        "error"
+                    );
+                }
+            }
 
             async function fetchOrderDetails(orderId) {
                 try {
